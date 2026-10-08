@@ -4,8 +4,8 @@
   "description": "Spots digital-arrest scams live during a call and warns you before money moves.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0b1220",
-  "theme_color": "#0b1220",
+  "background_color": "#eceef8",
+  "theme_color": "#6c5dd3",
   "icons": [
     { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
