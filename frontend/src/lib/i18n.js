@@ -464,6 +464,8 @@ const S = {
   },
 }
 
+export const STRINGS = S
+
 // t(lang, 'nTactics', { n: 3 }) fills {n}-style placeholders.
 export function t(lang, key, vars) {
   let s = (S[lang] && S[lang][key]) || S.en[key] || key
