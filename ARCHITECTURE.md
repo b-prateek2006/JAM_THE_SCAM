@@ -73,18 +73,20 @@ JAM_THE_SCAM/
 │   │   └── icons/
 │   └── src/
 │       ├── main.jsx
-│       ├── App.jsx               screens: Home → Guard (live call) → Report; Settings drawer
+│       ├── App.jsx               dashboard shell: sidebar + pages (Live call, Past incidents, Settings, Help,
+│       │                         Report) with hash routes (#/history, #/report/<id>); call start/stop/abort
 │       ├── api.js                REST + WebSocket client
 │       ├── audio/
 │       │   ├── micCapture.js     C  WebAudio mic → 16 kHz PCM frames over the WebSocket
 │       │   └── browserStt.js     C  Web Speech API fallback (te-IN / hi-IN / en-IN)
 │       ├── components/
-│       │   ├── RiskMeter.jsx     C  0–100 gauge
-│       │   ├── TacticChips.jsx   C  chips that light up with evidence on hover
-│       │   ├── Transcript.jsx    C  rolling transcript with highlighted evidence
-│       │   ├── AlertBanner.jsx   C  caution banner / full-screen warning / critical takeover
-│       │   ├── StageTrack.jsx    C  Hook → Authority → Isolation → Urgency → Money ask
-│       │   └── ReportView.jsx    C  incident report + copyable complaint
+│       │   ├── HeroPhone.jsx     C  hero illustration; its scam-tell chips light up as tactics are detected
+│       │   ├── RiskMeter.jsx     C  0–100 ring gauge (40 / 65 / 85 thresholds)
+│       │   ├── StageTrack.jsx    C  Hook → Authority → Isolation → Threat → Money ask, with evidence quotes
+│       │   ├── Transcript.jsx    C  rolling transcript with flagged lines (aria-live log)
+│       │   ├── AlertBanner.jsx   C  level 2/3 full-screen takeover (focus-trapped dialog)
+│       │   ├── ReportView.jsx    C  incident report, copy / share complaint, 1930 links
+│       │   └── Icon.jsx          C  inline SVG icon set
 │       ├── lib/
 │       │   ├── tts.js            C  spoken warnings via speechSynthesis
 │       │   └── i18n.js           C  EN / HI / TE UI strings

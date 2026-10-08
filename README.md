@@ -30,7 +30,7 @@ Each utterance goes through three layers, fused into one confidence per tactic:
 
 The **risk scorer** models the call's trajectory, not keywords: tactic weights, combination multipliers (authority + secrecy, authority + money ask), a bonus for the script progressing through its stages in order, hard rules (authority followed by a money / OTP / remote-access ask is always critical), a benign dampener for genuine-call language, and asymmetric smoothing so small talk can't reset it.
 
-Alert levels: **Caution 40+** (banner), **Warning 65+** (full screen, vibration, spoken warning), **Critical 85+ or hard rule** (hang-up button, family alert).
+Alert levels: **Caution 40+** (alert in the live-call panel), **Warning 65+** (full screen, vibration, spoken warning), **Critical 85+ or hard rule** (hang-up button, family alert).
 
 ## Evaluation
 
