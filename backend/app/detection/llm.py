@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import time
 from dataclasses import dataclass, field
 
 import httpx
@@ -45,9 +46,10 @@ Legitimate counter-patterns (these are NOT scams; do not tag tactics for them):
 - A relative asking for money is not a digital-arrest scam unless it comes with authority/arrest claims.
 
 Rules:
-- Only tag a tactic if a CALLER line supports it, and quote the exact words as evidence.
+- Only tag a tactic if a CALLER line supports it, and quote the shortest exact words that show it (at most
+  ~12 words) as evidence. Keep every string short: free API tiers cap output tokens.
 - confidence is 0..1.
-- user_compliance_signals: quotes where the victim is complying ("okay sir I won't tell anyone").
+- user_compliance_signals: short quotes where the victim is complying ("okay sir I won't tell anyone").
 - explanation_for_user: ONE short sentence, plain words, in the language code given, telling the user what is wrong (or that the call looks normal).
 Return only JSON matching the schema."""
 
@@ -78,6 +80,10 @@ JSON_SCHEMA = {
     "additionalProperties": False,
 }
 
+# Groq and Gemini JSON modes only guarantee valid JSON, not this shape, so the schema goes in the prompt.
+# (Claude gets it as a structured-output format instead.)
+SYSTEM_PROMPT_WITH_SCHEMA = SYSTEM_PROMPT + "\nThe JSON must match this JSON Schema:\n" + json.dumps(JSON_SCHEMA)
+
 
 @dataclass
 class LLMResult:
@@ -89,6 +95,19 @@ class LLMResult:
     explanation: str = ""
     lang: str = "en"
     latency_ms: int = 0
+
+
+STAGE_BY_NAME = {"hook": 1, "accusation": 1, "authority": 2, "isolation": 3, "urgency": 4, "threat": 4,
+                 "extraction": 5}
+
+
+def parse_stage(value) -> int:
+    """Models in plain JSON mode sometimes name the stage ("Extraction") instead of numbering it."""
+    try:
+        return max(0, min(5, int(value or 0)))
+    except (TypeError, ValueError):
+        words = str(value).lower().replace("/", " ").split()
+        return next((STAGE_BY_NAME[w] for w in words if w in STAGE_BY_NAME), 0)
 
 
 def build_user_prompt(transcript: str, summary: str, lang: str) -> str:
@@ -114,7 +133,7 @@ def parse_result(raw: dict, latency_ms: int = 0) -> LLMResult:
         if conf > res.tactics.get(typ, 0):
             res.tactics[typ] = max(0.0, min(1.0, conf))
             res.evidence[typ] = str(t.get("evidence", ""))[:300]
-    res.stage = int(raw.get("stage", 0) or 0)
+    res.stage = parse_stage(raw.get("stage"))
     res.legit_possible = bool(raw.get("legit_explanation_possible", True))
     res.compliance = [str(x) for x in raw.get("user_compliance_signals", []) or []][:5]
     res.explanation = str(raw.get("explanation_for_user", ""))[:400]
@@ -123,9 +142,12 @@ def parse_result(raw: dict, latency_ms: int = 0) -> LLMResult:
 
 
 KEY_ENV = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}
+# Checked against each provider's model list (Oct 2026): Groq retired its Llama 70B models, and
+# Gemini closed gemini-2.5-flash to new keys. On a Telugu/English scam call and a genuine bank call
+# both of these tag correctly; qwen3.8-27b answers in ~1 s, gemini-3.5-flash in ~5 s.
 DEFAULT_MODELS = {
-    "groq": "llama-3.3-70b-versatile",
-    "gemini": "gemini-2.5-flash",
+    "groq": "qwen/qwen3.8-27b",
+    "gemini": "gemini-3.5-flash",
     "anthropic": "claude-opus-5-5",
 }
 
@@ -136,8 +158,9 @@ class LLMReasoner:
 
     def __init__(self):
         self.providers = self._pick_providers()
-        self.timeout = float(os.getenv("LLM_TIMEOUT_S", "8"))
+        self.timeout = float(os.getenv("LLM_TIMEOUT_S", "10"))
         self._anthropic = None
+        self._cooldown: dict[str, float] = {}  # provider -> monotonic time it may be called again
         if self.providers:
             log.info("L3 LLM reasoner on: %s", ", then ".join(f"{p} ({self.model_for(p)})" for p in self.providers))
         else:
@@ -174,21 +197,31 @@ class LLMReasoner:
     def model(self) -> str:
         return self.model_for(self.provider) if self.provider else ""
 
+    def _note_rate_limit(self, provider: str, error: Exception) -> None:
+        """On HTTP 429, rest the provider for its retry-after (default 20 s, at most 2 min)."""
+        if isinstance(error, httpx.HTTPStatusError) and error.response.status_code == 429:
+            try:
+                wait = float(error.response.headers.get("retry-after", 20))
+            except ValueError:
+                wait = 20.0
+            self._cooldown[provider] = time.monotonic() + min(max(wait, 1.0), 120.0)
+
     async def analyze(self, transcript: str, summary: str = "", lang: str = "en") -> LLMResult | None:
         if not self.enabled:
             return None
-        import time
-
         prompt = build_user_prompt(transcript, summary, lang)
         calls = {"groq": self._groq, "gemini": self._gemini, "anthropic": self._claude}
-        for provider in self.providers[:2]:
+        now = time.monotonic()
+        ready = [p for p in self.providers if self._cooldown.get(p, 0.0) <= now]  # skip rate-limited ones
+        for provider in ready[:2]:
             t0 = time.perf_counter()
             try:
                 raw = await calls[provider](prompt, self.model_for(provider))
                 # Valid JSON in the wrong shape (a list, "confidence": "high") is treated like no answer.
                 return parse_result(raw, int((time.perf_counter() - t0) * 1000))
             except Exception as e:  # the scorer must keep working if the LLM is slow, down or off-schema
-                log.warning("L3 call failed (%s): %s", provider, e)
+                self._note_rate_limit(provider, e)
+                log.warning("L3 call failed (%s): %s: %s", provider, type(e).__name__, e)
         return None
 
     async def _groq(self, prompt: str, model: str) -> dict:
@@ -201,7 +234,7 @@ class LLMReasoner:
                     "temperature": 0,
                     "response_format": {"type": "json_object"},
                     "messages": [
-                        {"role": "system", "content": SYSTEM_PROMPT + "\nJSON keys: " + ", ".join(JSON_SCHEMA["required"])},
+                        {"role": "system", "content": SYSTEM_PROMPT_WITH_SCHEMA},
                         {"role": "user", "content": prompt},
                     ],
                 },
@@ -216,7 +249,7 @@ class LLMReasoner:
                 url,
                 headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"]},
                 json={
-                    "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+                    "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT_WITH_SCHEMA}]},
                     "contents": [{"role": "user", "parts": [{"text": prompt}]}],
                     "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
                 },

@@ -256,7 +256,7 @@ def test_llm_falls_back_to_second_provider(monkeypatch):
     monkeypatch.setattr(reasoner, "_groq", ok)
     res = asyncio.run(reasoner.analyze("CALLER: send money"))
     assert res.tactics == {"MONEY_ASK": 0.9}
-    assert used == [("gemini", "gemini-2.5-flash"), ("groq", "llama-3.3-70b-versatile")]
+    assert used == [("gemini", llm_mod.DEFAULT_MODELS["gemini"]), ("groq", llm_mod.DEFAULT_MODELS["groq"])]
 
 
 def _counting_engine(explanation=""):
@@ -281,7 +281,11 @@ def test_analyze_caps_llm_calls(client, monkeypatch):
     assert eng.llm.calls == main.ANALYZE_LLM_BUDGET
 
 
-def test_llm_pacing_gap_and_stop_after_critical():
+def test_llm_pacing_gap_and_stop_after_critical(monkeypatch):
+    from app import session as session_mod
+    monkeypatch.setattr(session_mod, "settings",
+                        dataclasses.replace(session_mod.settings, llm_interval_s=20, llm_min_gap_s=8))
+
     async def run(eng, lines, step):
         sess = CallSession(eng, SessionOptions(llm_mode="sync"))
         for i, text in enumerate(lines):
@@ -297,3 +301,33 @@ def test_llm_pacing_gap_and_stop_after_critical():
     sess = asyncio.run(run(eng, ["I am Inspector Sharma from CBI.", "Transfer your savings to the RBI safe account."]
                            + ["Do it now."] * 10, step=30))
     assert sess.alerts.level == 3 and eng.llm.calls == 2
+
+
+def test_llm_stage_accepts_names():
+    from app.detection.llm import parse_stage
+    assert [parse_stage(v) for v in (3, "4", "Extraction", "Stage 2: Authority", "urgency/threat", None, "??", 9)] == \
+        [3, 4, 5, 2, 4, 0, 0, 5]
+
+
+def test_llm_skips_rate_limited_provider(monkeypatch):
+    import httpx
+    from app.detection import llm as llm_mod
+    reasoner = llm_mod.LLMReasoner()
+    reasoner.providers = ["groq", "gemini"]
+    calls = []
+
+    async def limited(prompt, model):
+        calls.append("groq")
+        req = httpx.Request("POST", "https://api.groq.com/x")
+        raise httpx.HTTPStatusError("429", request=req,
+                                    response=httpx.Response(429, headers={"retry-after": "30"}, request=req))
+
+    async def ok(prompt, model):
+        calls.append("gemini")
+        return {"tactics": [], "stage": 0}
+
+    monkeypatch.setattr(reasoner, "_groq", limited)
+    monkeypatch.setattr(reasoner, "_gemini", ok)
+    assert asyncio.run(reasoner.analyze("x")) is not None
+    assert asyncio.run(reasoner.analyze("x")) is not None
+    assert calls == ["groq", "gemini", "gemini"]  # groq rests for its retry-after instead of failing again
