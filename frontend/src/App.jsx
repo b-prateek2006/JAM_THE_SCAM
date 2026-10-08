@@ -2,25 +2,21 @@ import { useEffect, useState } from 'react'
 import { api } from './api.js'
 import { browserSttSupported } from './audio/browserStt.js'
 import AlertBanner from './components/AlertBanner.jsx'
-import HeroPhone, { ScammerAvatar } from './components/HeroPhone.jsx'
+import HeroPhone from './components/HeroPhone.jsx'
 import HowItWorks from './components/HowItWorks.jsx'
 import Icon from './components/Icon.jsx'
 import LangSwitch from './components/LangSwitch.jsx'
+import LivePanel from './components/LivePanel.jsx'
 import ReportView from './components/ReportView.jsx'
-import RiskMeter from './components/RiskMeter.jsx'
 import SideRail from './components/SideRail.jsx'
-import StageTrack from './components/StageTrack.jsx'
-import Transcript from './components/Transcript.jsx'
 import { useGuardCall } from './hooks/useGuardCall.js'
-import { callStatus, familyWhatsApp, fmtClock, hardRuleText } from './lib/format.js'
+import { callStatus, familyWhatsApp } from './lib/format.js'
 import { t } from './lib/i18n.js'
 import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
 import { useHashRoute } from './lib/route.js'
 import HelpScreen from './screens/HelpScreen.jsx'
 import HistoryScreen from './screens/HistoryScreen.jsx'
 import SettingsScreen from './screens/SettingsScreen.jsx'
-
-const LEVEL_KEY = ['safe', 'caution', 'warning', 'critical']
 
 const NAV = [
   { id: 'live', icon: 'phone', key: 'liveCall' },
@@ -103,13 +99,10 @@ export default function App() {
   }
 
   const lvl = state.level
-  const levelLabel = active || state.score > 0 ? t(lang, LEVEL_KEY[lvl] || 'safe') : ''
   const waLink = alert?.family?.whatsapp_link || familyWhatsApp(settings.family_phone, settings.user_name)
   const online = !!health?.ok
   const status = callStatus(lvl, active)
   const showRail = screen === 'live' || screen === 'report'
-  const tacticLabels = Object.fromEntries(state.tactics.map((x) => [x.type, x.label]))
-  const hardRule = hardRuleText(state.hard_rule, tacticLabels)
   const langSwitch = (className = '') => <LangSwitch lang={lang} onChange={setLang} disabled={active} className={className} />
 
   // ---------------------------------------------------------------- screens
@@ -157,80 +150,6 @@ export default function App() {
         )}
       </div>
       <HeroPhone tactics={state.tactics} number={settings.caller_number} lang={lang} />
-    </section>
-  )
-
-  const alertBox = (() => {
-    if (lvl >= 3) {
-      return (
-        <div className="callout crit">
-          <span className="callout-icon"><Icon name="alert" size={22} /></span>
-          <div>
-            <span className="eyebrow">{t(lang, 'highRisk')}</span>
-            <strong>{t(lang, 'hangUpShout')}</strong>
-            <p>{alert?.message || t(lang, 'critFallback')}</p>
-          </div>
-        </div>
-      )
-    }
-    if (lvl >= 1) {
-      return (
-        <div className={`callout ${lvl === 2 ? 'warn' : 'caution'}`}>
-          <span className="callout-icon"><Icon name="triangle" size={20} /></span>
-          <div>
-            <span className="eyebrow">{t(lang, LEVEL_KEY[lvl])}</span>
-            <p>{alert?.message || state.explanation}</p>
-          </div>
-        </div>
-      )
-    }
-    return (
-      <div className={`callout ${active ? 'ok' : 'idle'}`}>
-        <span className="callout-icon"><Icon name={active ? 'checkCircle' : 'shield'} size={20} /></span>
-        <div>
-          <span className="eyebrow">{active ? t(lang, 'listening') : t(lang, 'ready')}</span>
-          <p>{active ? t(lang, 'noTactics') : t(lang, 'readyHint', { x: t(lang, 'guard') })}</p>
-        </div>
-      </div>
-    )
-  })()
-
-  const livePanel = (
-    <section className={`card live-panel level-${lvl}`}>
-      {/* Screen readers hear each change of alert level once, not every score tick. */}
-      <div className="sr-only" aria-live="assertive">{active && lvl > 0 ? `${levelLabel}. ${alert?.message || ''}` : ''}</div>
-      <div className="live-left">
-        <div className="live-head">
-          <span className={`live-tag ${active ? 'on' : ''}`}><span className="rec" /> {t(lang, active ? 'liveTag' : 'noCall')}</span>
-          <span className="live-time">
-            {fmtClock(elapsed)}
-            <span className={`wave ${active ? 'on' : ''}`} style={{ '--vu': Math.min(1, 0.35 + level * 6) }} aria-hidden="true"><i /><i /><i /><i /><i /></span>
-          </span>
-        </div>
-        <div className="caller">
-          <ScammerAvatar size={56} />
-          <div>
-            <b>{t(lang, 'unknownCaller')}</b>
-            <span className="caller-num">{settings.caller_number || t(lang, 'unknownNumber')}</span>
-            <span className={`status-pill ${status[1]}`}>{t(lang, status[0])}</span>
-          </div>
-        </div>
-        <RiskMeter score={state.score} label={levelLabel} caption={t(lang, 'riskScore')} />
-        {state.hard_rule && <p className="hard-rule">{t(lang, 'hardRule')}: {hardRule}</p>}
-        {alertBox}
-      </div>
-      <div className="live-right">
-        <h3 className="card-title">{t(lang, 'stages')}</h3>
-        <StageTrack tactics={state.tactics} lang={lang} />
-        <div className="transcript-head">
-          <h3 className="card-title">{t(lang, 'transcript')} {active && <span className="live-dot">{t(lang, 'liveDot')}</span>}</h3>
-          {langSwitch('small')}
-        </div>
-        <Transcript lines={lines} interim={interim} lang={lang} labels={tacticLabels} emptyText={active ? t(lang, 'listening') : t(lang, 'idle')} />
-        <div className={`listening ${active ? 'on' : ''}`}>
-          <Icon name="waves" size={16} /> {t(lang, active ? 'listeningCall' : 'micOff')}
-        </div>
-      </div>
     </section>
   )
 
@@ -282,7 +201,8 @@ export default function App() {
         {screen === 'live' && (
           <>
             {hero}
-            {livePanel}
+            <LivePanel lang={lang} onLang={setLang} active={active} state={state} lines={lines} interim={interim}
+              alert={alert} level={level} elapsed={elapsed} callerNumber={settings.caller_number} status={status} />
             <HowItWorks lang={lang} />
           </>
         )}
