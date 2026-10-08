@@ -40,7 +40,7 @@ describe('App', () => {
     await renderApp()
     expect(screen.getByText('NO ACTIVE CALL')).toBeTruthy()
     expect(screen.getByText('Protection active')).toBeTruthy()
-    expect(screen.getByRole('option', { name: /Microphone \(call on speaker\)/ }).disabled).toBe(true)
+    expect(screen.getByRole('option', { name: /Microphone \(speakerphone next to this device\)/ }).disabled).toBe(true)
   })
 
   it('navigates between pages through the sidebar and the URL hash', async () => {
@@ -51,6 +51,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Settings' })).toBeTruthy()
     await navigateTo('#/help')
     expect(screen.getByText(/Real police and agencies never/)).toBeTruthy()
+    expect(screen.getByText(/open Jam the Scam on a second device/i)).toBeTruthy()
   })
 
   it('opens a report from its URL and falls back to the list for unknown ids', async () => {

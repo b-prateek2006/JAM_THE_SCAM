@@ -12,6 +12,12 @@ export default function HelpScreen({ lang }) {
           {[1, 2, 3, 4].map((n) => <li key={n}><Icon name="x" size={16} /> {t(lang, `never${n}`)}</li>)}
         </ul>
       </section>
+      <section className="card real-call">
+        <h3 className="card-title">{t(lang, 'realCallTitle')}</h3>
+        <ol className="real-call-steps">
+          {[1, 2, 3].map((n) => <li key={n}>{t(lang, `realCall${n}`, { x: t(lang, 'guard') })}</li>)}
+        </ol>
+      </section>
       <HowItWorks lang={lang} />
       <section className="card helplines">
         <h3 className="card-title">{t(lang, 'reportScam')}</h3>

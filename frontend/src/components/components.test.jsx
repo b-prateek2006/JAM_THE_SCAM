@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import AlertBanner from './AlertBanner.jsx'
+import LivePanel from './LivePanel.jsx'
 import ReportView from './ReportView.jsx'
 import RiskMeter from './RiskMeter.jsx'
 import StageTrack from './StageTrack.jsx'
@@ -108,5 +109,23 @@ describe('ReportView', () => {
     fireEvent.click(screen.getByRole('button', { name: /Share/ }))
     expect(share).toHaveBeenCalledWith({ title: 'Incident report', text: 'Subject: complaint' })
     delete navigator.share
+  })
+})
+
+describe('LivePanel', () => {
+  const props = {
+    lang: 'en', onLang: () => {}, active: true, lines: [], interim: '', alert: null, level: 0, elapsed: 3,
+    callerNumber: '', status: ['monitoring', 'ok'], state: { score: 0, level: 0, stage: 0, tactics: [], hard_rule: '' },
+  }
+
+  it('explains why it cannot hear the call, and names the microphone', () => {
+    render(<LivePanel {...props} hint="no_speech" device="Realtek Mic" />)
+    expect(screen.getByRole('alert').textContent).toMatch(/second device/)
+    expect(screen.getByText(/Realtek Mic/)).toBeTruthy()
+  })
+
+  it('shows no hint while the call is heard', () => {
+    render(<LivePanel {...props} hint="" device="" />)
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 })

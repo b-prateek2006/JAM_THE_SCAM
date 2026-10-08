@@ -46,7 +46,9 @@ function AlertCallout({ lang, level, active, alert, explanation }) {
 }
 
 // The live-call card: caller, risk ring and alert on the left; scam stages and transcript on the right.
-export default function LivePanel({ lang, onLang, active, state, lines, interim, alert, level, elapsed, callerNumber, status }) {
+const HINT_KEY = { no_audio: 'hintNoAudio', no_speech: 'hintNoSpeech', muted: 'hintMuted' }
+
+export default function LivePanel({ lang, onLang, active, state, lines, interim, alert, level, elapsed, callerNumber, status, hint, device }) {
   const lvl = state.level
   const levelLabel = active || state.score > 0 ? t(lang, LEVEL_KEY[lvl] || 'safe') : ''
   const tacticLabels = Object.fromEntries(state.tactics.map((x) => [x.type, x.label]))
@@ -81,9 +83,19 @@ export default function LivePanel({ lang, onLang, active, state, lines, interim,
           <h3 className="card-title">{t(lang, 'transcript')} {active && <span className="live-dot">{t(lang, 'liveDot')}</span>}</h3>
           <LangSwitch lang={lang} onChange={onLang} disabled={active} className="small" />
         </div>
+        {active && HINT_KEY[hint] && (
+          <div className="callout warn mic-hint" role="alert">
+            <span className="callout-icon"><Icon name="mic" size={20} /></span>
+            <div>
+              <span className="eyebrow">{t(lang, 'hintTitle')}</span>
+              <p>{t(lang, HINT_KEY[hint])}</p>
+            </div>
+          </div>
+        )}
         <Transcript lines={lines} interim={interim} lang={lang} labels={tacticLabels} emptyText={active ? t(lang, 'listening') : t(lang, 'idle')} />
         <div className={`listening ${active ? 'on' : ''}`}>
           <Icon name="waves" size={16} /> {t(lang, active ? 'listeningCall' : 'micOff')}
+          {active && device && <span className="mic-device"> · {device}</span>}
         </div>
       </div>
     </section>

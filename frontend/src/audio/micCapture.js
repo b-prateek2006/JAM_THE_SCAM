@@ -4,14 +4,19 @@
 // Served from public/ so the worklet loads as a plain same-origin script.
 const workletUrl = '/pcm-worklet.js'
 
-export async function startAudioStream({ file, onChunk, onLevel, onEnded }) {
+// onMuted(true|false) reports the OS muting the mic, which is what a phone does to other apps
+// while it is on a call. Resolves to { stop(), label } (label: the microphone's name, if any).
+export async function startAudioStream({ file, onChunk, onLevel, onEnded, onMuted }) {
   const ctx = new AudioContext()
+  // Created after an await, so some browsers start it suspended; nothing would be captured.
+  if (ctx.state === 'suspended') await ctx.resume().catch(() => {})
   await ctx.audioWorklet.addModule(workletUrl)
   const node = new AudioWorkletNode(ctx, 'pcm-downsampler')
   const analyser = ctx.createAnalyser()
   analyser.fftSize = 512
   let source
   let stream
+  let label = ''
   let stopped = false
 
   if (file) {
@@ -26,8 +31,17 @@ export async function startAudioStream({ file, onChunk, onLevel, onEnded }) {
     source.start()
   } else {
     stream = await navigator.mediaDevices.getUserMedia({
-      audio: { channelCount: 1, echoCancellation: false, noiseSuppression: true, autoGainControl: true },
+      // The source is a loudspeaker a short way off: noise suppression treats that as noise and
+      // strips it, so only gain control stays on.
+      audio: { channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: true },
     })
+    const track = stream.getAudioTracks()[0]
+    if (track) {
+      label = track.label || ''
+      track.onmute = () => onMuted?.(true)
+      track.onunmute = () => onMuted?.(false)
+      if (track.muted) onMuted?.(true)
+    }
     source = ctx.createMediaStreamSource(stream)
   }
   source.connect(node)
@@ -46,6 +60,7 @@ export async function startAudioStream({ file, onChunk, onLevel, onEnded }) {
   tick()
 
   return {
+    label,
     stop() {
       stopped = true
       cancelAnimationFrame(raf)

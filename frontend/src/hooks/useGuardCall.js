@@ -25,6 +25,9 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
   const [level, setLevel] = useState(0)
   const [elapsed, setElapsed] = useState(0)
   const [connecting, setConnecting] = useState(false)
+  // Why the server can't hear an audio call ('no_audio' | 'no_speech' | 'muted'), and the mic in use.
+  const [hint, setHint] = useState('')
+  const [device, setDevice] = useState('')
   const sock = useRef(null)
   const stopper = useRef(null)
   const demoTimer = useRef(null)
@@ -56,11 +59,16 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
       // The server can end the call itself (time limit), so stop listening here too.
       stopInput()
       setOverlay(false)
+      setHint('')
       clearTimeout(reportTimer.current)
       if (sock.current) sock.current.done = true
       setActive(false)
       sock.current?.close()
       onReport(msg.report)
+    } else if (msg.type === 'stt') {
+      if (msg.text) setHint('') // it can hear the call after all
+    } else if (msg.type === 'hint') {
+      setHint(msg.code)
     } else if (msg.type === 'error') {
       setError(msg.message)
     }
@@ -80,6 +88,7 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
     setOverlay(false)
     setActive(false)
     setInterim('')
+    setHint('')
     const s = sock.current
     if (s) {
       s.done = true
@@ -133,7 +142,7 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
     }
     s.started = true
     s.start({
-      lang, user_name: settings.user_name, family_phone: settings.family_phone,
+      lang, source: settings.source, user_name: settings.user_name, family_phone: settings.family_phone,
       caller_number: settings.caller_number, use_l3: settings.use_l3,
     })
     setActive(true)
@@ -145,7 +154,9 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
           onLevel: setLevel,
           // Tracked like the demo timer, so ending or restarting the call cancels it.
           onEnded: () => { demoTimer.current = setTimeout(end, 2500) },
+          onMuted: (muted) => setHint((h) => (muted ? 'muted' : h === 'muted' ? '' : h)),
         })
+        setDevice(stopper.current.label || '')
       } else if (settings.source === 'browser') {
         stopper.current = startBrowserStt({
           lang,
@@ -189,6 +200,7 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
   function end() {
     stopInput()
     setOverlay(false)
+    setHint('')
     const s = sock.current
     if (!s || s.done) return
     s.stop(true)
@@ -204,10 +216,12 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
     setAlert(null)
     setOverlay(false)
     setInterim('')
+    setHint('')
+    setDevice('')
   }
 
   return {
-    active, connecting, state, lines, interim, alert, overlay, error, level, elapsed,
+    active, connecting, state, lines, interim, alert, overlay, error, level, elapsed, hint, device,
     start, end, reset, setError, dismissOverlay: () => setOverlay(false),
   }
 }

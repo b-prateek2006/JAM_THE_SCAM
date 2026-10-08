@@ -28,7 +28,7 @@ vi.mock('../api.js', () => ({
 vi.mock('../lib/tts.js', () => ({ speak: vi.fn(), stopSpeaking: vi.fn() }))
 // Captures the audio callbacks so tests can play the end of a recorded file.
 vi.mock('../audio/micCapture.js', () => ({
-  startAudioStream: vi.fn(async (opts) => { h.audio = opts; return { stop: vi.fn() } }),
+  startAudioStream: vi.fn(async (opts) => { h.audio = opts; return { stop: vi.fn(), label: 'Test mic' } }),
 }))
 
 const SCENARIO = { lang: 'en', lines: [{ delay: 0, speaker: 'caller', text: 'This is CBI.' }] }
@@ -175,5 +175,45 @@ describe('useGuardCall during a call', () => {
     expect(call().active).toBe(false)
     expect(call().error).toMatch(/Connection to the server was lost/)
     expect(onReport).not.toHaveBeenCalled()
+  })
+})
+
+describe('useGuardCall when the server cannot hear the call', () => {
+  async function liveMic() {
+    const t = setup({ source: 'mic' })
+    await act(async () => { await t.call().start() })
+    return t
+  }
+  const server = (msg) => act(() => h.sockets[0].onMessage(msg))
+
+  it('tells the server the source and shows the microphone in use', async () => {
+    const { call } = await liveMic()
+    expect(h.sockets[0].sent[0][1].source).toBe('mic')
+    expect(call().device).toBe('Test mic')
+  })
+
+  it('shows the server hint until speech is heard', async () => {
+    const { call } = await liveMic()
+    server({ type: 'hint', code: 'no_speech', speech_s: 0 })
+    expect(call().hint).toBe('no_speech')
+    server({ type: 'stt', text: '' }) // Whisper heard noise only: keep the hint
+    expect(call().hint).toBe('no_speech')
+    server({ type: 'stt', text: 'I am calling from CBI.' })
+    expect(call().hint).toBe('')
+  })
+
+  it('shows a hint while the system mutes the microphone', async () => {
+    const { call } = await liveMic()
+    act(() => h.audio.onMuted(true))
+    expect(call().hint).toBe('muted')
+    act(() => h.audio.onMuted(false))
+    expect(call().hint).toBe('')
+  })
+
+  it('clears the hint when the call ends', async () => {
+    const { call } = await liveMic()
+    server({ type: 'hint', code: 'no_audio' })
+    server({ type: 'report', report: { call_id: 'x' } })
+    expect(call().hint).toBe('')
   })
 })
