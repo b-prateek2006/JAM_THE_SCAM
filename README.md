@@ -14,7 +14,7 @@ short_description: Spots digital-arrest scam calls live
 
 **This scam follows a script. Our AI knows the script.**
 
-Jam the Scam listens alongside a call (on speakerphone, or from a second device), recognises the script of a "digital arrest" / impersonation scam as it unfolds, and gets the victim off the call before money moves: a live risk meter, a spoken warning in Telugu, Hindi or English, a family alert, and a pre-filled complaint for 1930 / cybercrime.gov.in.
+Jam the Scam listens to a call from a second device next to the speakerphone (a laptop or another phone), recognises the script of a "digital arrest" / impersonation scam as it unfolds, and gets the victim off the call before money moves: a live risk meter, a spoken warning in Telugu, Hindi or English, a family alert, and a pre-filled complaint for 1930 / cybercrime.gov.in.
 
 HackVibe 2.0 entry. See [ARCHITECTURE.md](ARCHITECTURE.md) for the file layout and call flow.
 
@@ -90,14 +90,20 @@ Frontend tests (Vitest + Testing Library, no backend needed): `npm test` in `fro
 
 Phones need HTTPS for the microphone: expose port 8000 with a tunnel (for example `cloudflared tunnel --url http://localhost:8000`) and open the HTTPS URL on the phone.
 
+### Guarding a real call
+
+Put the call on speakerphone on phone A and run Jam the Scam on **another device** next to it (a laptop or a second phone), with Source = Microphone. The app can't run on the phone that has the call: Android and iOS give other apps silence while a call is using the microphone. If it hears only silence it says so ("I can't hear the call") instead of sitting at 0. The test checklist and how to read the server's per-call log line are in [docs/TESTING.md](docs/TESTING.md).
+
 ### Input sources (same pipeline for all)
 
 - **Demo scenario**: scripted calls in `demo/scenarios/` (Inspector Sharma, genuine bank call, Hindi, Telugu).
-- **Microphone**: 16 kHz PCM over the WebSocket → VAD → faster-whisper.
+- **Microphone**: 16 kHz PCM over the WebSocket → endpointer → faster-whisper (a speakerphone across a desk, about -45 dBFS, still counts as speech).
 - **Microphone, browser speech-to-text**: Chrome's recogniser (te-IN / hi-IN / en-IN) sends text; useful for Telugu.
 - **Recorded call**: plays an audio file aloud and streams it exactly like the mic.
 
 ### Tests and eval
+
+All suites, the end-to-end tests and the manual real-call checklist: [docs/TESTING.md](docs/TESTING.md).
 
 ```bash
 cd backend

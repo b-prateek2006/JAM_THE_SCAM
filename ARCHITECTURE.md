@@ -10,7 +10,8 @@ JAM_THE_SCAM/
 ├── Dockerfile                    one image: built PWA + backend + baked-in models (Hugging Face Space / VM)
 ├── docker-compose.yml            local / cloud-VM run of the same image (slide 7)
 ├── .dockerignore                 keeps host venvs, node_modules and .env out of the build
-├── .github/workflows/ci.yml      tests + eval smoke, frontend tests + build, Docker image boot check
+├── .github/workflows/ci.yml      tests + eval smoke, frontend tests + build, Docker image boot check + e2e
+├── docs/TESTING.md               automated suites, real-call test checklist, reading the per-call log line
 ├── .env.example                  every optional key (LLM, STT, SMS) with comments
 │
 ├── backend/                      Python FastAPI service
@@ -23,7 +24,8 @@ JAM_THE_SCAM/
 │   │   ├── session.py            A  CallSession: one guarded call; wires STT → detectors → scorer → alerts
 │   │   │
 │   │   ├── audio/                     ── 4.1 Audio → text ──
-│   │   │   ├── vad.py            A  utterance endpointing on the 16 kHz PCM stream (Silero via faster-whisper, energy fallback)
+│   │   │   ├── vad.py            A  utterance endpointing on the 16 kHz PCM stream (minimum-statistics noise floor,
+│   │   │                        level stats for the per-call log and the "can't hear" hint); Silero inside Whisper trims
 │   │   │   ├── stt_whisper.py    A  faster-whisper transcription (EN/HI, code-mixed)
 │   │   │   └── stt_sarvam.py     A  hosted Indic STT for Telugu (optional, needs key)
 │   │   │
@@ -58,11 +60,10 @@ JAM_THE_SCAM/
 │   │   ├── scripts_heldout/{scam,benign}/  held-out set: 10 + 10 scripts never tuned against (--set heldout)
 │   │   ├── run_eval.py           B  recall/false alerts at Level 2, time-to-alert vs money ask,
 │   │   │                             and the L1 → L1+L2 → L1+L2+L3 ablation table for the slide
-│   │   ├── make_audio.py         A  (todo) TTS the scripts into WAVs to test the audio path
 │   │   └── results/              generated metrics: RESULTS.md (dev), RESULTS_heldout.md (held-out)
 │   │
 │   └── tests/
-│       └── test_core.py          lexicon, hard rules, smoothing, entity extraction, whole calls
+│       └── test_core.py          lexicon, hard rules, smoothing, entity extraction, whole calls, endpointer levels, hints
 │
 ├── frontend/                     React PWA (Vite)
 │   ├── index.html
@@ -108,15 +109,20 @@ JAM_THE_SCAM/
 │       ├── **/*.test.js(x)       unit, component, hook and App tests
 │       └── styles.css            theme tokens, layout, three breakpoints
 │
-└── demo/
-    ├── scenarios/*.json          scripted calls for stage (Inspector Sharma, genuine bank call)
-    └── DEMO.md                   3-minute run sheet from section 9, plus the judge Q&A from section 11
+├── demo/
+│   ├── scenarios/*.json          scripted calls for stage (Inspector Sharma, genuine bank call)
+│   └── DEMO.md                   3-minute run sheet from section 9, plus the judge Q&A from section 11
+│
+└── e2e/                          Playwright: the real PWA in Chromium, a WAV file as the microphone
+    ├── make_fixtures.py          voices the English scenarios (SAPI, --tts) and derives far-field / silent variants
+    ├── fixtures/*.wav            scam.wav, genuine.wav (committed); generated/ is derived and git-ignored
+    └── tests/call.spec.js        mic scam / far-field / genuine / silence, recorded file, demo scenario
 ```
 
 ## How a call flows through the files
 
 1. `micCapture.js` streams PCM to `/ws/guard` (or `browserStt.js` / a demo scenario sends text).
-2. `session.py` passes audio to `vad.py` → `stt_whisper.py` and gets utterances back.
+2. `main.py` cuts the audio into utterances with `vad.py` and transcribes them with `stt_whisper.py`. If an audio call sends nothing, or only silence (the app on the same phone as the call), it sends a `hint` the PWA shows; every call ends with one log line of its audio levels and counts.
 3. Each utterance goes through `lexicon.py` (L1) and `semantic.py` (L2) instantly; `llm.py` (L3) runs every ~20 s, or sooner (but ≥15 s apart) when L1/L2 flags something, and stops once it has explained a critical call.
 4. `fusion.py` merges the layers, `scorer.py` updates the risk score, `manager.py` decides the alert level.
 5. The WebSocket pushes score, chips, evidence and alerts to the UI; level 3 triggers `notify.py`.
