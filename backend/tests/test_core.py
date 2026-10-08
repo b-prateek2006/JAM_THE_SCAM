@@ -148,9 +148,9 @@ def test_extract_amounts_and_long_digit_runs_stay_fast():
 def test_llm_off_schema_output_is_ignored(monkeypatch):
     from app.detection import llm as llm_mod
     reasoner = llm_mod.LLMReasoner()
-    reasoner.provider = "groq"
+    reasoner.providers = ["groq"]
     for bad in (["not", "an", "object"], {"tactics": [{"type": "AUTHORITY", "confidence": "high"}]}):
-        async def fake(prompt, bad=bad):
+        async def fake(prompt, model, bad=bad):
             return bad
         monkeypatch.setattr(reasoner, "_groq", fake)
         assert asyncio.run(reasoner.analyze("CALLER: hello")) is None
@@ -231,3 +231,29 @@ def test_spa_does_not_serve_files_outside_dist(client):
     r = client.get("/..%2F..%2Fbackend%2Fapp%2Fconfig.py")
     assert r.status_code == 200 and "<html" in r.text.lower()  # falls back to index.html
     assert "_load_dotenv" not in r.text
+
+
+def test_llm_falls_back_to_second_provider(monkeypatch):
+    from app.detection import llm as llm_mod
+    monkeypatch.setenv("LLM_PROVIDER", "gemini")
+    monkeypatch.setenv("GROQ_API_KEY", "g")
+    monkeypatch.setenv("GEMINI_API_KEY", "m")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("LLM_MODEL", raising=False)
+    reasoner = llm_mod.LLMReasoner()
+    assert reasoner.providers == ["gemini", "groq"] and reasoner.fallback == "groq"
+    used = []
+
+    async def rate_limited(prompt, model):
+        used.append(("gemini", model))
+        raise RuntimeError("429 Too Many Requests")
+
+    async def ok(prompt, model):
+        used.append(("groq", model))
+        return {"tactics": [{"type": "MONEY_ASK", "confidence": 0.9, "evidence": "send money"}], "stage": 5}
+
+    monkeypatch.setattr(reasoner, "_gemini", rate_limited)
+    monkeypatch.setattr(reasoner, "_groq", ok)
+    res = asyncio.run(reasoner.analyze("CALLER: send money"))
+    assert res.tactics == {"MONEY_ASK": 0.9}
+    assert used == [("gemini", "gemini-2.5-flash"), ("groq", "llama-3.3-70b-versatile")]

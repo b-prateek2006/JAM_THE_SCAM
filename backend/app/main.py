@@ -108,7 +108,8 @@ def health():
     return {
         "ok": True,
         "l2": engine.semantic.backend_name if engine and engine.semantic else None,
-        "l3": {"provider": engine.llm.provider, "model": engine.llm.model} if engine and engine.llm.enabled else None,
+        "l3": {"provider": engine.llm.provider, "model": engine.llm.model, "fallback": engine.llm.fallback}
+              if engine and engine.llm.enabled else None,
         "stt": {**stt_status, "name": getattr(engine.stt, "name", None) if engine else None},
     }
 

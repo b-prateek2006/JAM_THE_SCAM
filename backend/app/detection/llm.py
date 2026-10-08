@@ -4,9 +4,10 @@ Gets the rolling transcript (last ~2 minutes plus a short summary of what came
 before) and returns strict JSON: tactics with quoted evidence, the script
 stage, and a one-line explanation in the user's language.
 
-Provider is picked from env: LLM_PROVIDER=groq|gemini|anthropic, or the first
-of GROQ_API_KEY / GEMINI_API_KEY / ANTHROPIC_API_KEY that is set. With no key
-the layer is simply off and the scorer runs on L1 + L2.
+Providers are the ones with a key (GROQ_API_KEY / GEMINI_API_KEY /
+ANTHROPIC_API_KEY), LLM_PROVIDER first. A failed call (a free key's rate limit,
+a timeout, an off-schema reply) is retried once on the next provider. With no
+key the layer is simply off and the scorer runs on L1 + L2.
 """
 from __future__ import annotations
 
@@ -121,41 +122,57 @@ def parse_result(raw: dict, latency_ms: int = 0) -> LLMResult:
     return res
 
 
+KEY_ENV = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}
+DEFAULT_MODELS = {
+    "groq": "llama-3.3-70b-versatile",
+    "gemini": "gemini-2.5-flash",
+    "anthropic": "claude-opus-5-5",
+}
+
+
 class LLMReasoner:
+    """Calls the primary provider; if it fails (rate limit on a free key, timeout, off-schema
+    reply), retries the same request once on the next provider that has a key."""
+
     def __init__(self):
-        self.provider = self._pick_provider()
+        self.providers = self._pick_providers()
         self.timeout = float(os.getenv("LLM_TIMEOUT_S", "8"))
         self._anthropic = None
-        if self.provider:
-            log.info("L3 LLM reasoner on: %s (%s)", self.provider, self.model)
+        if self.providers:
+            log.info("L3 LLM reasoner on: %s", ", then ".join(f"{p} ({self.model_for(p)})" for p in self.providers))
         else:
             log.info("L3 LLM reasoner off: no GROQ_API_KEY / GEMINI_API_KEY / ANTHROPIC_API_KEY set")
 
     @staticmethod
-    def _pick_provider() -> str | None:
+    def _pick_providers() -> list[str]:
+        """Providers with a key, LLM_PROVIDER first. LLM_PROVIDER=none turns the layer off."""
         forced = os.getenv("LLM_PROVIDER", "").strip().lower()
         if forced == "none":
-            return None
-        keys = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}
-        if forced in keys:
-            return forced if os.getenv(keys[forced]) else None
-        for name, env in keys.items():
-            if os.getenv(env):
-                return name
-        return None
+            return []
+        order = sorted(KEY_ENV, key=lambda name: name != forced)  # stable: forced first, rest in KEY_ENV order
+        return [name for name in order if os.getenv(KEY_ENV[name])]
+
+    @property
+    def provider(self) -> str | None:
+        return self.providers[0] if self.providers else None
+
+    @property
+    def fallback(self) -> str | None:
+        return self.providers[1] if len(self.providers) > 1 else None
 
     @property
     def enabled(self) -> bool:
-        return self.provider is not None
+        return bool(self.providers)
+
+    def model_for(self, provider: str) -> str:
+        # LLM_MODEL overrides the primary provider only; a fallback uses its own default.
+        if provider == self.provider and os.getenv("LLM_MODEL"):
+            return os.environ["LLM_MODEL"]
+        return DEFAULT_MODELS.get(provider, "")
 
     @property
     def model(self) -> str:
-        defaults = {
-            "groq": "llama-3.3-70b-versatile",
-            "gemini": "gemini-2.5-flash",
-            "anthropic": "claude-opus-5-5",
-        }
-        return os.getenv("LLM_MODEL") or defaults.get(self.provider or "", "")
+        return self.model_for(self.provider) if self.provider else ""
 
     async def analyze(self, transcript: str, summary: str = "", lang: str = "en") -> LLMResult | None:
         if not self.enabled:
@@ -163,27 +180,24 @@ class LLMReasoner:
         import time
 
         prompt = build_user_prompt(transcript, summary, lang)
-        t0 = time.perf_counter()
-        try:
-            if self.provider == "groq":
-                raw = await self._groq(prompt)
-            elif self.provider == "gemini":
-                raw = await self._gemini(prompt)
-            else:
-                raw = await self._claude(prompt)
-            # Valid JSON in the wrong shape (a list, "confidence": "high") is treated like no answer.
-            return parse_result(raw, int((time.perf_counter() - t0) * 1000))
-        except Exception as e:  # the scorer must keep working if the LLM is slow, down or off-schema
-            log.warning("L3 call failed (%s): %s", self.provider, e)
-            return None
+        calls = {"groq": self._groq, "gemini": self._gemini, "anthropic": self._claude}
+        for provider in self.providers[:2]:
+            t0 = time.perf_counter()
+            try:
+                raw = await calls[provider](prompt, self.model_for(provider))
+                # Valid JSON in the wrong shape (a list, "confidence": "high") is treated like no answer.
+                return parse_result(raw, int((time.perf_counter() - t0) * 1000))
+            except Exception as e:  # the scorer must keep working if the LLM is slow, down or off-schema
+                log.warning("L3 call failed (%s): %s", provider, e)
+        return None
 
-    async def _groq(self, prompt: str) -> dict:
+    async def _groq(self, prompt: str, model: str) -> dict:
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             r = await client.post(
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {os.environ['GROQ_API_KEY']}"},
                 json={
-                    "model": self.model,
+                    "model": model,
                     "temperature": 0,
                     "response_format": {"type": "json_object"},
                     "messages": [
@@ -195,8 +209,8 @@ class LLMReasoner:
             r.raise_for_status()
             return json.loads(r.json()["choices"][0]["message"]["content"])
 
-    async def _gemini(self, prompt: str) -> dict:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+    async def _gemini(self, prompt: str, model: str) -> dict:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             r = await client.post(
                 url,
@@ -211,7 +225,7 @@ class LLMReasoner:
             text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
             return json.loads(text)
 
-    async def _claude(self, prompt: str) -> dict:
+    async def _claude(self, prompt: str, model: str) -> dict:
         import anthropic
 
         if self._anthropic is None:
@@ -222,7 +236,7 @@ class LLMReasoner:
                 timeout=self.timeout,
             )
         resp = await self._anthropic.messages.create(
-            model=self.model,
+            model=model,
             max_tokens=2048,
             system=SYSTEM_PROMPT,
             output_config={"effort": os.getenv("LLM_EFFORT", "low"),
