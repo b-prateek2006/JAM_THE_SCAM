@@ -8,10 +8,30 @@ const ENTITY_LABELS = {
   fir_numbers: 'FIR / case no.', amounts: 'Amounts', apps_mentioned: 'Apps',
 }
 
+// navigator.clipboard only exists on secure origins; a phone opening the dev
+// server over LAN http (vite host: true) needs the execCommand fallback.
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text)
+  const ta = document.createElement('textarea')
+  ta.value = text
+  ta.setAttribute('readonly', '')
+  ta.style.position = 'fixed'
+  ta.style.opacity = '0'
+  document.body.appendChild(ta)
+  ta.select()
+  const ok = document.execCommand('copy')
+  ta.remove()
+  return ok ? Promise.resolve() : Promise.reject(new Error('Copy failed'))
+}
+
 export default function ReportView({ report, lang, onNew }) {
   const [copied, setCopied] = useState(false)
   const copy = async () => {
-    await navigator.clipboard.writeText(report.complaint_text)
+    try {
+      await copyText(report.complaint_text)
+    } catch {
+      return
+    }
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }
