@@ -58,6 +58,7 @@ export default function App() {
 
   const set = (k) => (e) => setSettings((s) => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
   const setLang = (code) => setSettings((s) => ({ ...s, lang: code }))
+  const setTheme = (theme) => setSettings((s) => ({ ...s, theme }))
 
   // Server STT is only usable when /api/health says it loaded. Unknown health (still fetching) is allowed.
   const micReady = !health || !!health.stt?.ready
@@ -126,7 +127,7 @@ export default function App() {
           <HistoryScreen lang={lang} history={history} onOpen={(id) => go('report', id)}
             onDelete={deleteIncident} onClear={clearHistory} onStart={() => go('live')} />
         )}
-        {screen === 'settings' && <SettingsScreen lang={lang} settings={settings} set={set} onLang={setLang} locked={active} health={health} />}
+        {screen === 'settings' && <SettingsScreen lang={lang} settings={settings} set={set} onLang={setLang} onTheme={setTheme} locked={active} health={health} />}
         {screen === 'help' && <HelpScreen lang={lang} />}
         {screen === 'report' && shownReport && (
           <ReportView report={shownReport} lang={lang} onBack={() => go('history')}

@@ -1,6 +1,10 @@
 // UI strings in English, Hindi and Telugu.
 const S = {
   en: {
+    appearance: 'Appearance',
+    themeSystem: 'System',
+    themeLight: 'Light',
+    themeDark: 'Dark',
     scenario: 'Scenario',
     audioFile: 'Audio file',
     sttUnavailable: 'Server speech-to-text is not available. Choose "Microphone, browser speech-to-text" instead.',
@@ -155,6 +159,10 @@ const S = {
     privacy: 'Audio is never stored. Reports are kept only on this device.',
   },
   hi: {
+    appearance: 'रूप-रंग',
+    themeSystem: 'सिस्टम जैसा',
+    themeLight: 'हल्का',
+    themeDark: 'गहरा',
     scenario: 'डेमो कॉल',
     audioFile: 'ऑडियो फ़ाइल',
     sttUnavailable: 'सर्वर स्पीच-टू-टेक्स्ट उपलब्ध नहीं है. इसके बजाय "माइक्रोफ़ोन, ब्राउज़र स्पीच-टू-टेक्स्ट" चुनें.',
@@ -309,6 +317,10 @@ const S = {
     privacy: 'ऑडियो कभी सेव नहीं होता.',
   },
   te: {
+    appearance: 'రూపం',
+    themeSystem: 'సిస్టమ్ లాగా',
+    themeLight: 'లేత',
+    themeDark: 'ముదురు',
     scenario: 'డెమో కాల్',
     audioFile: 'ఆడియో ఫైల్',
     sttUnavailable: 'సర్వర్ స్పీచ్-టు-టెక్స్ట్ అందుబాటులో లేదు. బదులుగా "మైక్రోఫోన్, బ్రౌజర్ స్పీచ్-టు-టెక్స్ట్" ఎంచుకోండి.',

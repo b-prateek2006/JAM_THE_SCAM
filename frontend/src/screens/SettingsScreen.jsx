@@ -1,8 +1,11 @@
 import LangSwitch from '../components/LangSwitch.jsx'
 import { t } from '../lib/i18n.js'
+import { THEMES } from '../lib/theme.js'
+
+const THEME_KEY = { system: 'themeSystem', light: 'themeLight', dark: 'themeDark' }
 
 // set(key) returns an onChange handler for that setting (checkboxes use .checked).
-export default function SettingsScreen({ lang, settings, set, onLang, locked, health }) {
+export default function SettingsScreen({ lang, settings, set, onLang, onTheme, locked, health }) {
   return (
     <div className="page">
       <div className="page-head"><div><span className="eyebrow">{t(lang, 'savedOnDevice')}</span><h2>{t(lang, 'settings')}</h2></div></div>
@@ -16,6 +19,14 @@ export default function SettingsScreen({ lang, settings, set, onLang, locked, he
         <section className="card">
           <h3 className="card-title">{t(lang, 'langDetection')}</h3>
           <div className="field">{t(lang, 'language')}<LangSwitch lang={lang} onChange={onLang} disabled={locked} /></div>
+          <div className="field">{t(lang, 'appearance')}
+            <div className="seg" role="group" aria-label={t(lang, 'appearance')}>
+              {THEMES.map((th) => (
+                <button key={th} className={settings.theme === th ? 'on' : ''} aria-pressed={settings.theme === th}
+                  onClick={() => onTheme(th)}>{t(lang, THEME_KEY[th])}</button>
+              ))}
+            </div>
+          </div>
           <label className="check"><input type="checkbox" checked={settings.use_l3} onChange={set('use_l3')} /> {t(lang, 'useL3')}</label>
           <label className="check"><input type="checkbox" checked={settings.voice_demo} onChange={set('voice_demo')} /> {t(lang, 'readAloud')}</label>
           {health && (
