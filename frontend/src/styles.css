@@ -256,7 +256,8 @@ q { quotes: '“' '”'; }
   padding: 11px 18px; border: 0; border-radius: 14px; font-weight: 600; font-size: 14px;
   text-decoration: none; background: var(--surface-2); color: var(--ink); transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
 }
-.btn:hover { transform: translateY(-1px); }
+.btn:hover:not(:disabled) { transform: translateY(-1px); }
+.btn:disabled { opacity: 0.6; }
 .btn.primary { background: var(--primary); color: #fff; box-shadow: 0 10px 22px rgba(108, 93, 211, 0.32); }
 .btn.danger { background: var(--crit); color: #fff; box-shadow: 0 10px 22px rgba(236, 63, 99, 0.3); }
 .btn.soft { background: var(--primary-50); color: var(--accent-strong); }

@@ -24,10 +24,12 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
   const [error, setError] = useState('')
   const [level, setLevel] = useState(0)
   const [elapsed, setElapsed] = useState(0)
+  const [connecting, setConnecting] = useState(false)
   const sock = useRef(null)
   const stopper = useRef(null)
   const demoTimer = useRef(null)
   const reportTimer = useRef(null)
+  const starting = useRef(false) // set synchronously, so a double tap can't open two sockets
   const lang = settings.lang
 
   useEffect(() => {
@@ -86,8 +88,20 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
     if (message) setError((e) => e || message)
   }
 
-  // Resolves true once the call is live, false if it could not start.
+  // Resolves true once the call is live, false if it could not start (or one is already starting / live).
   async function start() {
+    if (starting.current || active) return false
+    starting.current = true
+    setConnecting(true)
+    try {
+      return await connect()
+    } finally {
+      starting.current = false
+      setConnecting(false)
+    }
+  }
+
+  async function connect() {
     const fail = (key) => {
       setError(t(lang, key))
       return false
@@ -192,7 +206,7 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
   }
 
   return {
-    active, state, lines, interim, alert, overlay, error, level, elapsed,
+    active, connecting, state, lines, interim, alert, overlay, error, level, elapsed,
     start, end, reset, setError, dismissOverlay: () => setOverlay(false),
   }
 }

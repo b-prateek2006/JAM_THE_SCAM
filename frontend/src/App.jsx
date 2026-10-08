@@ -71,7 +71,7 @@ export default function App() {
   }
 
   const call = useGuardCall({ settings, file, micReady, onReport })
-  const { active, state, lines, interim, alert, overlay, error, level, elapsed, setError } = call
+  const { active, connecting, state, lines, interim, alert, overlay, error, level, elapsed, setError } = call
 
   async function startGuard() {
     if (await call.start()) go('live')
@@ -116,7 +116,7 @@ export default function App() {
         )}
         {screen === 'live' && (
           <>
-            <GuardHero lang={lang} active={active} settings={settings} set={set} scenarios={scenarios} micReady={micReady}
+            <GuardHero lang={lang} active={active} connecting={connecting} settings={settings} set={set} scenarios={scenarios} micReady={micReady}
               tactics={state.tactics} onFile={setFile} onStart={startGuard} onStop={endCall} />
             <LivePanel lang={lang} onLang={setLang} active={active} state={state} lines={lines} interim={interim}
               alert={alert} level={level} elapsed={elapsed} callerNumber={settings.caller_number} status={status} />

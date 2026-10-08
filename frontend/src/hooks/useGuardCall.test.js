@@ -78,6 +78,18 @@ describe('useGuardCall start', () => {
     expect(call().error).toMatch(/Cannot reach/)
   })
 
+  it('ignores a second start while the first is connecting or live', async () => {
+    const { call } = setup()
+    let results
+    await act(async () => { results = await Promise.all([call().start(), call().start()]) })
+    expect(results).toEqual([true, false])
+    expect(h.sockets).toHaveLength(1)
+    let again
+    await act(async () => { again = await call().start() })
+    expect(again).toBe(false)
+    expect(h.sockets).toHaveLength(1)
+  })
+
   it('goes live, sends start and plays the scenario lines', async () => {
     const { call } = setup({ lang: 'te' })
     let ok

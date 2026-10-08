@@ -4,7 +4,7 @@ import { browserSttSupported } from '../audio/browserStt.js'
 import { t } from '../lib/i18n.js'
 
 // Purple hero card: pitch, call-source setup and the start / stop button.
-export default function GuardHero({ lang, active, settings, set, scenarios, micReady, tactics, onFile, onStart, onStop }) {
+export default function GuardHero({ lang, active, connecting, settings, set, scenarios, micReady, tactics, onFile, onStart, onStop }) {
   return (
     <section className={`hero ${active ? 'is-active' : ''}`}>
       <div className="hero-copy">
@@ -42,7 +42,7 @@ export default function GuardHero({ lang, active, settings, set, scenarios, micR
               )}
             </div>
             {settings.source === 'mic' && !micReady && <p className="hero-note">{t(lang, 'sttUnavailable')}</p>}
-            <button className="btn hero-btn" onClick={onStart}>
+            <button className="btn hero-btn" onClick={onStart} disabled={connecting}>
               <Icon name="shieldCheck" size={18} /> {t(lang, 'guard')} <Icon name="arrowRight" size={18} />
             </button>
           </>
