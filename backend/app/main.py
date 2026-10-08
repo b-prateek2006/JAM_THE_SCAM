@@ -302,7 +302,7 @@ async def guard(ws: WebSocket):
 
 
 # ---------------------------------------------------------------- PWA
-dist = Path(settings.frontend_dist)
+dist = Path(settings.frontend_dist).resolve()  # resolved, so the traversal check below compares like with like
 if dist.exists():
     app.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
 

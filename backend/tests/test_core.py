@@ -223,3 +223,11 @@ def test_hard_rule_label_is_deterministic():
     s.add([Detection("CREDENTIAL", 0.9, "", "L1"), Detection("MONEY_ASK", 0.9, "", "L1")], t=5)
     s.update()
     assert s.state.hard_rule == "AUTHORITY then MONEY_ASK"
+
+
+def test_spa_does_not_serve_files_outside_dist(client):
+    if not main.dist.exists():
+        pytest.skip("frontend not built")
+    r = client.get("/..%2F..%2Fbackend%2Fapp%2Fconfig.py")
+    assert r.status_code == 200 and "<html" in r.text.lower()  # falls back to index.html
+    assert "_load_dotenv" not in r.text
