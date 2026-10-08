@@ -67,6 +67,7 @@ cd backend && .venv/Scripts/python -m uvicorn app.main:app --port 8000
 Open http://localhost:8000. The first start downloads the embedding model (~1 GB) and Whisper `small` (~0.5 GB).
 
 For frontend development, run `npm run dev` in `frontend/` (port 5173, proxies `/api` and `/ws` to :8000).
+Frontend tests (Vitest + Testing Library, no backend needed): `npm test` in `frontend/`.
 
 Phones need HTTPS for the microphone: expose port 8000 with a tunnel (for example `cloudflared tunnel --url http://localhost:8000`) and open the HTTPS URL on the phone.
 

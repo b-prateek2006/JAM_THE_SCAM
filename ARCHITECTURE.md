@@ -65,32 +65,46 @@ JAM_THE_SCAM/
 ├── frontend/                     React PWA (Vite)
 │   ├── index.html
 │   ├── package.json
-│   ├── vite.config.js            dev proxy to the backend
+│   ├── vite.config.js            dev proxy to the backend; Vitest config (npm test)
 │   ├── public/
 │   │   ├── pcm-worklet.js        C  AudioWorklet: downsample to 16 kHz Int16 PCM
 │   │   ├── manifest.webmanifest  PWA install
-│   │   ├── sw.js                 service worker (offline shell)
-│   │   └── icons/
+│   │   ├── sw.js                 service worker (offline shell + icons)
+│   │   └── icons/                SVG, 192/512 PNG, maskable 512, apple-touch-icon
 │   └── src/
-│       ├── main.jsx
-│       ├── App.jsx               dashboard shell: sidebar + pages (Live call, Past incidents, Settings, Help,
-│       │                         Report) with hash routes (#/history, #/report/<id>); call start/stop/abort
+│       ├── main.jsx              mounts App, bundles the Poppins font, registers the service worker
+│       ├── App.jsx               C  state + composition: settings, history, routes, which page shows
 │       ├── api.js                REST + WebSocket client
 │       ├── audio/
 │       │   ├── micCapture.js     C  WebAudio mic → 16 kHz PCM frames over the WebSocket
 │       │   └── browserStt.js     C  Web Speech API fallback (te-IN / hi-IN / en-IN)
+│       ├── hooks/
+│       │   └── useGuardCall.js   C  one guarded call: socket, input source, alerts, start / end / abort
+│       ├── screens/
+│       │   ├── HistoryScreen.jsx C  past incidents on this device, delete one / all
+│       │   ├── SettingsScreen.jsx C name, family contact, caller number, language, L3
+│       │   └── HelpScreen.jsx    C  what real police never do, how it works, 1930
 │       ├── components/
+│       │   ├── TopBar.jsx / Sidebar.jsx   brand, status, language; navigation (bottom bar on phones)
+│       │   ├── GuardHero.jsx     C  hero card: call source setup, start / end button
 │       │   ├── HeroPhone.jsx     C  hero illustration; its scam-tell chips light up as tactics are detected
+│       │   ├── LivePanel.jsx     C  caller, risk ring, inline alert, scam stages, transcript
 │       │   ├── RiskMeter.jsx     C  0–100 ring gauge (40 / 65 / 85 thresholds)
 │       │   ├── StageTrack.jsx    C  Hook → Authority → Isolation → Threat → Money ask, with evidence quotes
 │       │   ├── Transcript.jsx    C  rolling transcript with flagged lines (aria-live log)
+│       │   ├── SideRail.jsx      C  quick actions (hang up, alert family, complaint), caller details
 │       │   ├── AlertBanner.jsx   C  level 2/3 full-screen takeover (focus-trapped dialog)
 │       │   ├── ReportView.jsx    C  incident report, copy / share complaint, 1930 links
-│       │   └── Icon.jsx          C  inline SVG icon set
+│       │   ├── HowItWorks.jsx, LangSwitch.jsx, Icon.jsx
 │       ├── lib/
-│       │   ├── tts.js            C  spoken warnings via speechSynthesis
-│       │   └── i18n.js           C  EN / HI / TE UI strings
-│       └── styles.css
+│       │   ├── i18n.js           C  EN / HI / TE UI strings, t(lang, key, vars)
+│       │   ├── storage.js        C  settings + on-device incident history (localStorage)
+│       │   ├── route.js          C  hash routes: #/history, #/report/<id>, ...
+│       │   ├── format.js         C  clock, family WhatsApp link, status pill, hard-rule text
+│       │   └── tts.js            C  spoken warnings via speechSynthesis
+│       ├── test/setup.js         Vitest + Testing Library setup (jsdom)
+│       ├── **/*.test.js(x)       unit, component, hook and App tests
+│       └── styles.css            theme tokens, layout, three breakpoints
 │
 └── demo/
     ├── scenarios/*.json          scripted calls for stage (Inspector Sharma, genuine bank call)
