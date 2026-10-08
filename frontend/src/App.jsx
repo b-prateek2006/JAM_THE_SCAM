@@ -4,7 +4,7 @@ import { startAudioStream } from './audio/micCapture.js'
 import { browserSttSupported, startBrowserStt } from './audio/browserStt.js'
 import AlertBanner from './components/AlertBanner.jsx'
 import ReportView from './components/ReportView.jsx'
-import RiskMeter from './components/RiskMeter.jsx'
+import RiskMeter, { riskColor } from './components/RiskMeter.jsx'
 import StageTrack from './components/StageTrack.jsx'
 import TacticChips from './components/TacticChips.jsx'
 import Transcript from './components/Transcript.jsx'
@@ -286,7 +286,7 @@ export default function App() {
                 {history.slice(0, 5).map((h) => (
                   <li key={h.call_id} onClick={() => { setReport(h.report); setScreen('report') }}>
                     <span>{new Date(h.started_at).toLocaleString()}</span>
-                    <b style={{ color: h.peak_score >= 85 ? 'var(--crit)' : h.peak_score >= 40 ? 'var(--caution)' : 'var(--ok)' }}>{h.peak_score}</b>
+                    <b style={{ color: riskColor(h.peak_score) }}>{h.peak_score}</b>
                   </li>
                 ))}
               </ul>
