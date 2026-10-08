@@ -2,6 +2,7 @@
 // te-IN, hi-IN and en-IN) and we send the text. Used when server STT is busy,
 // or for Telugu where browser recognition can beat Whisper small.
 const LOCALES = { en: 'en-IN', hi: 'hi-IN', te: 'te-IN' }
+const FATAL = new Set(['not-allowed', 'service-not-allowed', 'audio-capture', 'language-not-supported'])
 
 export function browserSttSupported() {
   return Boolean(window.SpeechRecognition || window.webkitSpeechRecognition)
@@ -25,10 +26,16 @@ export function startBrowserStt({ lang, onFinal, onInterim, onError }) {
     onInterim?.(interim)
   }
   rec.onerror = (e) => {
+    if (FATAL.has(e.error)) stopped = true // restarting would just fail again in a loop
     if (e.error !== 'no-speech' && e.error !== 'aborted') onError?.(e.error)
   }
   rec.onend = () => {
-    if (!stopped) rec.start() // Chrome ends sessions after silence; keep listening
+    if (stopped) return
+    try {
+      rec.start() // Chrome ends sessions after silence; keep listening
+    } catch (err) {
+      onError?.(err.message || String(err))
+    }
   }
   rec.start()
   return {
