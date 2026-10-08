@@ -102,6 +102,8 @@ export default function App() {
         if (msg.alert.spoken) speak(msg.alert.spoken, lang)
       }
     } else if (msg.type === 'report') {
+      // The server can end the call itself (time limit), so stop listening here too.
+      stopCapture()
       setReport(msg.report)
       setHistory(saveToHistory(msg.report))
       setScreen('report')
@@ -176,11 +178,15 @@ export default function App() {
     stopper.current = { stop: () => clearTimeout(demoTimer.current) }
   }
 
-  function endCall() {
+  function stopCapture() {
     stopper.current?.stop()
     stopper.current = null
     clearTimeout(demoTimer.current)
     stopSpeaking()
+  }
+
+  function endCall() {
+    stopCapture()
     setOverlay(false)
     sock.current?.stop(true)
   }
