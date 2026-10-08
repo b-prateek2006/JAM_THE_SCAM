@@ -38,10 +38,16 @@ CONFIGS = {
 WARN_LEVEL = 2
 
 
-def load_scripts() -> list[dict]:
+SETS = {
+    "dev": "scripts",              # used while tuning the lexicon and libraries
+    "heldout": "scripts_heldout",  # written later and never tuned against: quote these numbers
+}
+
+
+def load_scripts(script_set: str = "dev") -> list[dict]:
     out = []
     for kind in ("scam", "benign"):
-        for p in sorted((HERE / "scripts" / kind).glob("*.json")):
+        for p in sorted((HERE / SETS[script_set] / kind).glob("*.json")):
             d = json.loads(p.read_text(encoding="utf-8"))
             d["id"] = p.stem
             d["kind"] = kind
@@ -97,7 +103,10 @@ def summarise(rows: list[dict]) -> dict:
 
 def markdown(results: dict, meta: dict) -> str:
     lines = [
-        "# Jam the Scam: evaluation results",
+        "# Jam the Scam: evaluation results" + (" (held-out set)" if meta.get("set") == "heldout" else " (dev set)"),
+        "",
+        ("Held-out scripts: written after tuning and never used to adjust the lexicon or libraries. " if meta.get("set") == "heldout"
+         else "Dev scripts: also used while tuning the lexicon and libraries, so these numbers are optimistic. "),
         "",
         f"Scripts: {meta['scam']} scam calls, {meta['benign']} benign hard negatives. "
         f"L2 backend: `{meta['l2']}`. L3: `{meta['l3']}`. Alert = Level 2 (WARNING, score ≥ 65) or higher.",
@@ -130,6 +139,8 @@ async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--configs", nargs="*", default=None)
     ap.add_argument("--embed", default=settings.embed_backend, help="auto | st | ngram")
+    ap.add_argument("--set", dest="script_set", choices=sorted(SETS), default="dev",
+                    help="dev (tuned against) or heldout (never tuned against)")
     ap.add_argument("--l3-gap", type=float, default=0.0,
                     help="seconds to wait (wall clock) before each L3 call, to stay inside free-tier rate limits")
     args = ap.parse_args()
@@ -146,7 +157,7 @@ async def main() -> None:
     configs = args.configs or [k for k in CONFIGS if k != "l1l2l3" or llm.enabled]
     semantic = SemanticMatcher(args.embed, settings.embed_model)
     engine = Engine(semantic=semantic, llm=llm)
-    scripts = load_scripts()
+    scripts = load_scripts(args.script_set)
 
     results = {}
     for key in configs:
@@ -158,13 +169,15 @@ async def main() -> None:
               f"{s['false_alerts']}/{s['benign_total']} (+{s['benign_cautions']} cautions)  "
               f"median lead {s['median_lead_before_money_s']}s  [{results[key]['seconds']}s]")
 
-    meta = {"scam": sum(s["kind"] == "scam" for s in scripts), "benign": sum(s["kind"] == "benign" for s in scripts),
+    meta = {"set": args.script_set, "scam": sum(s["kind"] == "scam" for s in scripts), "benign": sum(s["kind"] == "benign" for s in scripts),
             "l2": semantic.backend_name, "l3": f"{llm.provider}:{llm.model}" if llm.enabled else "off"}
     out = HERE / "results"
     out.mkdir(exist_ok=True)
-    (out / "results.json").write_text(json.dumps({"meta": meta, "results": results}, indent=1, ensure_ascii=False), encoding="utf-8")
-    (out / "RESULTS.md").write_text(markdown(results, meta), encoding="utf-8")
-    print(f"Wrote {out / 'RESULTS.md'}")
+    suffix = "" if args.script_set == "dev" else f"_{args.script_set}"
+    (out / f"results{suffix}.json").write_text(json.dumps({"meta": meta, "results": results}, indent=1, ensure_ascii=False),
+                                               encoding="utf-8")
+    (out / f"RESULTS{suffix}.md").write_text(markdown(results, meta), encoding="utf-8")
+    print(f"Wrote {out / f'RESULTS{suffix}.md'}")
 
 
 if __name__ == "__main__":

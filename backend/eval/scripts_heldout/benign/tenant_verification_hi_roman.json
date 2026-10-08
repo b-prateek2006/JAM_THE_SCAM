@@ -1,0 +1,27 @@
+{
+ "title": "Police tenant verification, thane aana hai",
+ "kind": "benign",
+ "lang": "hi",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Namaste, main Sector 21 police chowki se Head Constable Yadav bol raha hoon. Aapke makaan maalik ne tenant verification form diya hai."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "Haan ji, humne form bhara tha."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Kal subah gyarah baje chowki aa jaiye, Aadhaar aur rent agreement ki copy le aaiye. Bas signature aur photo lena hai."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Iski koi fees nahi hai. Phone pe hum kabhi paise nahi maangte."
+  }
+ ]
+}

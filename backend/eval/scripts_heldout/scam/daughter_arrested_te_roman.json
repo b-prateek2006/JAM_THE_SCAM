@@ -1,0 +1,33 @@
+{
+ "title": "Mee ammayi case lo pattubadindi (romanised Telugu)",
+ "kind": "scam",
+ "lang": "te",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, meeru Sravani gari nanna gaara? Nenu Banjara Hills police station nunchi SI Reddy matladutunnanu."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "Avunu, emaindi? Sravani bagundaa?"
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Mee ammayi drugs party lo pattubadindi. Case file chesthe aame future motham poyinatte."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Ee vishayam evvariki cheppakandi, media ki telisthe inka problem. Memu ikkade settle chestham."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Ippude ee UPI ki yabhai vela pampandi, ammayi ni vadilestham.",
+   "money_ask": true
+  }
+ ]
+}

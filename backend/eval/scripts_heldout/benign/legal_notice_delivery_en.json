@@ -1,0 +1,32 @@
+{
+ "title": "Courier scheduling delivery of a legal notice in person",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, this is Blue Dart. We have a registered legal notice for you from an advocate's office in Pune."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "A legal notice? About what?"
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "I don't know the contents, sir, it's sealed. It has to be signed for in person. Can I deliver it tomorrow between ten and one?"
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "Okay, tomorrow is fine."
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Thank you. There is nothing to pay; just keep an ID proof ready when you sign."
+  }
+ ]
+}

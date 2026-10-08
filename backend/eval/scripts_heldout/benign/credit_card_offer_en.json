@@ -1,0 +1,27 @@
+{
+ "title": "Credit card sales call with a 'today only' offer",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello sir, I'm calling from Axis Bank cards. You are pre-approved for a lifetime free credit card."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "I'm not interested right now."
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Sir, this offer is valid only today, and you also get airport lounge access."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "If you change your mind, apply on the Axis website or app. We never ask for card numbers or OTPs over the phone."
+  }
+ ]
+}

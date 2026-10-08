@@ -1,0 +1,38 @@
+{
+ "title": "DoT KYC: number to be disconnected, then 'cyber police'",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "This is an automated call from the Department of Telecommunications. Your mobile number will be disconnected in two hours. Press nine to speak to an officer."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Hello, I am officer Rakesh Verma from the DoT enforcement wing. A second SIM taken on your Aadhaar was used to send fraud messages."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "I don't have any second SIM."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "That is why we are connecting you to the cyber police headquarters. Please stay on the line and do not disconnect, otherwise a case is registered automatically."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "This is sub inspector Kadam, cyber police. To clear your name you must install the verification app I am sending and share your screen."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "There is also a clearance fee of 18,500 rupees. Pay it now on the link and your number will stay active.",
+   "money_ask": true
+  }
+ ]
+}

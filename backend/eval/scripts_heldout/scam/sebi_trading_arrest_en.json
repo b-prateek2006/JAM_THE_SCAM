@@ -1,0 +1,33 @@
+{
+ "title": "Stock tips group turns into a 'SEBI' arrest threat",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Sir, you joined our share market tips group last month. I am calling about your trading account."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Actually I must inform you, SEBI has flagged the group for illegal trading and I am now connecting you to the SEBI vigilance officer."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "Mr. Gupta, this is SEBI vigilance. Your PAN is linked to insider trading worth 2 crore. The police will arrest you today."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "I only invested twenty thousand!"
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "Then pay the settlement penalty of 1,20,000 rupees within one hour and the case is closed. Tell no one, this is a sealed proceeding.",
+   "money_ask": true
+  }
+ ]
+}

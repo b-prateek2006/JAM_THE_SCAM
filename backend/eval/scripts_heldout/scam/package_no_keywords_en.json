@@ -1,0 +1,33 @@
+{
+ "title": "Package with illegal items, paraphrased (few keywords)",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Good afternoon. A shipment booked with your identity card was stopped at the airport. Inside were forged passports and banned substances."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "I never sent anything."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Many people say that. The department has to take you into custody tonight unless your involvement is ruled out."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Keep this conversation to yourself. If anyone at home learns about it, the matter becomes public and your job is gone."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "To rule you out, the officer needs your funds parked with the government for a short check. Every rupee comes back after the check.",
+   "money_ask": true
+  }
+ ]
+}

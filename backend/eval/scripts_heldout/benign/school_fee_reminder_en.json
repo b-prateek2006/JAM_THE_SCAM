@@ -1,0 +1,27 @@
+{
+ "title": "School accounts office: term fee reminder",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, this is the accounts office of St. Joseph's school. I'm calling about Aarav's second term fee."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "The last date is the fifteenth. After that there is a late fee of two hundred rupees."
+  },
+  {
+   "delay": 5,
+   "speaker": "user",
+   "text": "Can I pay online?"
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Yes, through the parent portal or at the school office counter. Please don't pay to any personal account."
+  }
+ ]
+}

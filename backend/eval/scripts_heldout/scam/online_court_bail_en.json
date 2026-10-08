@@ -1,0 +1,33 @@
+{
+ "title": "'Online court hearing' with a judge, bail by UPI",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Please hold for the virtual hearing of the Supreme Court cyber bench. Your case number is SC/CYB/2291."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "This is Justice Malhotra. You are accused of financing illegal activity through your bank account. Do you understand the charges?"
+  },
+  {
+   "delay": 8,
+   "speaker": "user",
+   "text": "Yes, your honour, but I am innocent."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "The court orders you to remain on video until the hearing ends. Speaking to anyone during the hearing is contempt of court."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "Bail is fixed at three lakh rupees, payable now to the court registry UPI ID. It will be refunded when you are acquitted.",
+   "money_ask": true
+  }
+ ]
+}

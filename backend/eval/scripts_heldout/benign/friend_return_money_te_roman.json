@@ -1,0 +1,22 @@
+{
+ "title": "Friend asks to return borrowed money (romanised Telugu)",
+ "kind": "benign",
+ "lang": "te",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Ra Kiran, nenu Suresh ni. Last month nuvvu teesukunna aidu vela gurinchi."
+  },
+  {
+   "delay": 5,
+   "speaker": "user",
+   "text": "Avunu ra, marchipoya. Ee week lo istha."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Sare ra, emi tondara ledu. Salary vachaka GPay cheyyi chalu."
+  }
+ ]
+}

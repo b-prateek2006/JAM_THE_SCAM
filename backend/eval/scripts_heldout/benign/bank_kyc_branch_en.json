@@ -1,0 +1,27 @@
+{
+ "title": "Bank asks you to update KYC at the branch",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Good morning, this is Priya from State Bank, Koramangala branch. Your KYC documents are due for periodic update."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "What do I need to do?"
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Please visit the branch with your Aadhaar and PAN any working day this month, or update it in the YONO app."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "We will never ask for your OTP, PIN or password on a call. If anyone does, please report it."
+  }
+ ]
+}

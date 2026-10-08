@@ -1,0 +1,38 @@
+{
+ "title": "ED: your account was used as a money mule",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Am I speaking to Mrs. Lata Iyer? This call is from the Enforcement Directorate, Delhi zonal office."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "Your savings account received money from a hawala network. Fourteen accounts are under investigation and yours is one of them."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "That must be a mistake, I am a retired teacher."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Then you will cooperate. Until the investigation closes you are under watch. Don't discuss this with your son, he could also be named."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "For the audit, move your entire balance to the RBI escrow account I will send. It is returned in 48 hours once your funds are cleared.",
+   "money_ask": true
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "If the transfer is not done by evening, a non-bailable warrant will be issued in your name."
+  }
+ ]
+}

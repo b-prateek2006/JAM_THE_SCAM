@@ -1,0 +1,27 @@
+{
+ "title": "Cab driver asks for the ride OTP at pickup",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello madam, I am your Uber driver, I am at gate number two."
+  },
+  {
+   "delay": 5,
+   "speaker": "user",
+   "text": "I'm coming, two minutes."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Okay madam. When you sit in the car please tell me the ride OTP to start the trip."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "Sure, it's on my app."
+  }
+ ]
+}

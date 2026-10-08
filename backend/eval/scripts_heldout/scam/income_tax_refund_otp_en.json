@@ -1,0 +1,33 @@
+{
+ "title": "Income tax 'refund' needs your OTP, then penalty threat",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, I am calling from the Income Tax Department. You are eligible for a refund of 46,200 rupees."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "Oh, that is good news."
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "To credit it to your account we have sent a verification code to your phone. Please read out the six digit OTP.",
+   "money_ask": true
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "Why do you need my OTP?"
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Without it the refund is cancelled and a penalty for non-compliance is added. Officers may visit your house for recovery today."
+  }
+ ]
+}

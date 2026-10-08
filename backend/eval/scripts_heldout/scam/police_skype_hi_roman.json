@@ -1,0 +1,33 @@
+{
+ "title": "Mumbai police, Skype par aao, FIR ka darr",
+ "kind": "scam",
+ "lang": "hi",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, main Andheri police station se Inspector Patil bol raha hoon. Aapke naam pe ek FIR darj hui hai."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "Kaun si FIR? Maine kuch nahi kiya."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Aapke bank account se illegal transaction hua hai. Abhi Skype pe video call pe aaiye, statement record karna hai."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "Ye matter bahut confidential hai, apne parivaar ko bhi mat batana. Call cut kiya to turant arrest hoga."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "Apna saara balance is verification account mein daal dijiye, check hone ke baad wapas aa jayega.",
+   "money_ask": true
+  }
+ ]
+}

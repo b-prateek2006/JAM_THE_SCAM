@@ -1,0 +1,27 @@
+{
+ "title": "Real cyber police follow-up on a complaint you filed",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, this is the cyber crime police station, Hyderabad. You filed a complaint on the 1930 helpline about a UPI fraud."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "Yes, I lost twelve thousand rupees."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "We have frozen the beneficiary account. Please come to the station with your bank statement and the complaint number to give a statement."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "Remember, the police will never ask you to pay anything or share an OTP on the phone to recover your money."
+  }
+ ]
+}
