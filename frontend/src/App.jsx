@@ -9,6 +9,7 @@ import ReportView from './components/ReportView.jsx'
 import RiskMeter, { riskColor } from './components/RiskMeter.jsx'
 import StageTrack from './components/StageTrack.jsx'
 import Transcript from './components/Transcript.jsx'
+import { callStatus, familyWhatsApp, fmtClock, hardRuleText } from './lib/format.js'
 import { LANGS, t } from './lib/i18n.js'
 import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
 import { useHashRoute } from './lib/route.js'
@@ -20,18 +21,6 @@ const LEVEL_KEY = ['safe', 'caution', 'warning', 'critical']
 const FATAL_STT = ['not-allowed', 'service-not-allowed', 'audio-capture', 'language-not-supported']
 // If the server never answers "stop" with a report, give up after this long.
 const REPORT_TIMEOUT_MS = 15000
-
-// Same normalisation as the backend's whatsapp_link: bare 10-digit numbers are Indian.
-function familyWhatsApp(phone, name) {
-  const digits = (phone || '').replace(/\D/g, '')
-  if (!digits) return ''
-  const to = digits.length === 10 ? `91${digits}` : digits
-  const who = name || 'I'
-  const msg = `${who} may be on a scam call right now (someone claiming to be police/CBI). Please call immediately.`
-  return `https://wa.me/${to}?text=${encodeURIComponent(msg)}`
-}
-
-const fmtClock = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 
 const NAV = [
   { id: 'live', icon: 'phone', key: 'liveCall' },
@@ -278,11 +267,10 @@ export default function App() {
   const levelLabel = active || state.score > 0 ? t(lang, LEVEL_KEY[lvl] || 'safe') : ''
   const waLink = alert?.family?.whatsapp_link || familyWhatsApp(settings.family_phone, settings.user_name)
   const online = !!health?.ok
-  const status = lvl >= 2 ? ['suspected', 'bad'] : lvl === 1 ? ['caution', 'warn'] : active ? ['monitoring', 'good'] : ['waiting', 'idle']
+  const status = callStatus(lvl, active)
   const showRail = screen === 'live' || screen === 'report'
   const tacticLabels = Object.fromEntries(state.tactics.map((x) => [x.type, x.label]))
-  // The backend's hard rule reads like "AUTHORITY then MONEY_ASK"; show it with the localized tactic labels.
-  const hardRule = state.hard_rule.replace(' then ', ' → ').replace(/[A-Z_]{4,}/g, (k) => tacticLabels[k] || k.replace(/_/g, ' ').toLowerCase())
+  const hardRule = hardRuleText(state.hard_rule, tacticLabels)
   const langSwitch = (cls = '') => (
     <div className={`seg ${cls}`} role="group" aria-label={t(lang, 'language')}>
       {LANGS.map((l) => (
