@@ -14,3 +14,4 @@ frontend/dist
 **/.env
 backend/data/incidents.db
 backend/eval/results/*.wav
+e2e

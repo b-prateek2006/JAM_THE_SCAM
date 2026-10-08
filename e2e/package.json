@@ -1,0 +1,13 @@
+{
+  "name": "jam-the-scam-e2e",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end tests: the real PWA in Chromium, with a WAV file as the microphone, against the running app.",
+  "scripts": {
+    "fixtures": "python make_fixtures.py",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0"
+  }
+}

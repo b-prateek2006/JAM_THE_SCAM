@@ -10,6 +10,10 @@ backend/eval/results/*.wav
 # Node
 node_modules/
 frontend/dist/
+# e2e
+e2e/fixtures/generated/
+e2e/test-results/
+e2e/playwright-report/
 # OS / editors
 .DS_Store
 Thumbs.db
