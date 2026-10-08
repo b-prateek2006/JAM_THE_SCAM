@@ -66,6 +66,7 @@ export default function App() {
   const sock = useRef(null)
   const stopper = useRef(null)
   const demoTimer = useRef(null)
+  const gotReport = useRef(false)
   const lang = settings.lang
 
   useEffect(() => {
@@ -104,6 +105,7 @@ export default function App() {
     } else if (msg.type === 'report') {
       // The server can end the call itself (time limit), so stop listening here too.
       stopCapture()
+      gotReport.current = true
       setReport(msg.report)
       setHistory(saveToHistory(msg.report))
       setScreen('report')
@@ -114,6 +116,16 @@ export default function App() {
     }
   }
 
+  // A close without a report means the server dropped us (busy, restart, network),
+  // so stop listening and go back home instead of leaving a dead live screen.
+  function onSocketClose(s) {
+    if (sock.current !== s || gotReport.current) return
+    stopCapture()
+    setOverlay(false)
+    setScreen('home')
+    setError((e) => e || 'Lost connection to the Jam the Scam server.')
+  }
+
   async function startGuard() {
     setError('')
     setState(EMPTY)
@@ -122,7 +134,8 @@ export default function App() {
     setOverlay(false)
     setReport(null)
     setInterim('')
-    const s = new GuardSocket({ onMessage })
+    gotReport.current = false
+    const s = new GuardSocket({ onMessage, onClose: () => onSocketClose(s) })
     sock.current = s
     try {
       await s.ready
