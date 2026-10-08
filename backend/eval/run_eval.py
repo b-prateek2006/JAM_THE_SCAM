@@ -130,9 +130,19 @@ async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--configs", nargs="*", default=None)
     ap.add_argument("--embed", default=settings.embed_backend, help="auto | st | ngram")
+    ap.add_argument("--l3-gap", type=float, default=0.0,
+                    help="seconds to wait (wall clock) before each L3 call, to stay inside free-tier rate limits")
     args = ap.parse_args()
 
     llm = LLMReasoner()
+    if args.l3_gap > 0:
+        analyze = llm.analyze
+
+        async def paced(*a, **kw):
+            await asyncio.sleep(args.l3_gap)
+            return await analyze(*a, **kw)
+
+        llm.analyze = paced
     configs = args.configs or [k for k in CONFIGS if k != "l1l2l3" or llm.enabled]
     semantic = SemanticMatcher(args.embed, settings.embed_model)
     engine = Engine(semantic=semantic, llm=llm)
