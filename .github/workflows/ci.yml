@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      LLM_PROVIDER: none  # no keys in CI: L1 + L2 only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements*.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Tests
+        run: python -m pytest -q tests
+      - name: Eval smoke test (char n-gram L2, no ML packages)
+        run: python -m eval.run_eval --embed ngram
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    # The full image (torch + baked-in models) takes ~10 minutes, so only for main.
+    if: github.event_name == 'push'
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t jam-the-scam .
+      - name: Start it offline and wait for /api/health
+        run: |
+          docker run -d --name jam -p 8000:8000 jam-the-scam
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:8000/api/health; then echo; exit 0; fi
+            sleep 3
+          done
+          docker logs jam
+          exit 1
+      - name: Inspector Sharma goes critical, the genuine bank call stays safe
+        run: |
+          python3 - <<'EOF'
+          import json, urllib.request
+          def run(sid):
+              sc = json.load(open(f"demo/scenarios/{sid}.json", encoding="utf-8"))
+              body = {"lines": [{"text": l["text"], "speaker": l["speaker"]} for l in sc["lines"]],
+                      "lang": sc.get("lang", "en"), "use_l3": False}
+              req = urllib.request.Request("http://127.0.0.1:8000/api/analyze", json.dumps(body).encode(),
+                                           {"Content-Type": "application/json"})
+              return json.load(urllib.request.urlopen(req, timeout=120))["final"]
+          scam, bank = run("inspector_sharma"), run("genuine_bank_call")
+          print("inspector_sharma", scam["score"], scam["level_name"], "| genuine_bank_call", bank["score"], bank["level_name"])
+          assert scam["level"] == 3 and bank["level"] == 0
+          EOF
