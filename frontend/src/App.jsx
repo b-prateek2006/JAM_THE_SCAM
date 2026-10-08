@@ -4,10 +4,11 @@ import AlertBanner from './components/AlertBanner.jsx'
 import GuardHero from './components/GuardHero.jsx'
 import HowItWorks from './components/HowItWorks.jsx'
 import Icon from './components/Icon.jsx'
-import LangSwitch from './components/LangSwitch.jsx'
 import LivePanel from './components/LivePanel.jsx'
 import ReportView from './components/ReportView.jsx'
 import SideRail from './components/SideRail.jsx'
+import Sidebar from './components/Sidebar.jsx'
+import TopBar from './components/TopBar.jsx'
 import { useGuardCall } from './hooks/useGuardCall.js'
 import { callStatus, familyWhatsApp } from './lib/format.js'
 import { t } from './lib/i18n.js'
@@ -16,13 +17,6 @@ import { useHashRoute } from './lib/route.js'
 import HelpScreen from './screens/HelpScreen.jsx'
 import HistoryScreen from './screens/HistoryScreen.jsx'
 import SettingsScreen from './screens/SettingsScreen.jsx'
-
-const NAV = [
-  { id: 'live', icon: 'phone', key: 'liveCall' },
-  { id: 'history', icon: 'clock', key: 'history' },
-  { id: 'settings', icon: 'settings', key: 'settings' },
-  { id: 'help', icon: 'help', key: 'help' },
-]
 
 export default function App() {
   const [settings, setSettings] = useState(loadSettings)
@@ -102,46 +96,11 @@ export default function App() {
   const online = !!health?.ok
   const status = callStatus(lvl, active)
   const showRail = screen === 'live' || screen === 'report'
-  const langSwitch = (className = '') => <LangSwitch lang={lang} onChange={setLang} disabled={active} className={className} />
 
   return (
     <div className={`shell level-${lvl} ${active ? 'calling' : ''} ${showRail ? '' : 'no-rail'}`}>
-      <header className="topbar">
-        <div className="brand">
-          <span className="brand-mark"><Icon name="phone" size={22} /></span>
-          <div>
-            <b>Jam the Scam</b>
-            <small>{t(lang, 'tagline')}</small>
-          </div>
-        </div>
-        <div className="top-right">
-          <span className={`protect ${online ? 'on' : ''}`}><span className="dot" /> {online ? t(lang, 'protectionActive') : t(lang, 'offline')}</span>
-          {langSwitch('langs')}
-          <button className="avatar" onClick={() => go('settings')} aria-label={t(lang, 'settings')}>
-            {settings.user_name.trim() ? settings.user_name.trim()[0].toUpperCase() : <Icon name="user" size={18} />}
-          </button>
-        </div>
-      </header>
-
-      <nav className="sidebar" aria-label="Main">
-        <div className="nav-items">
-          {NAV.map((n) => {
-            const on = screen === n.id || (n.id === 'history' && screen === 'report')
-            return (
-              <button key={n.id} className={`nav ${on ? 'on' : ''}`} onClick={() => go(n.id)} aria-current={on ? 'page' : undefined}>
-                <Icon name={n.icon} size={20} />
-                <span>{t(lang, n.key)}</span>
-                {n.id === 'live' && active && <span className="nav-live" />}
-              </button>
-            )
-          })}
-        </div>
-        <div className="side-promo">
-          <span className="promo-icon"><Icon name="shieldCheck" size={20} /></span>
-          <b>{t(lang, 'promoTitle')}</b>
-          <small>{t(lang, 'promoBody')}</small>
-        </div>
-      </nav>
+      <TopBar lang={lang} onLang={setLang} locked={active} online={online} userName={settings.user_name} onAvatar={() => go('settings')} />
+      <Sidebar lang={lang} screen={screen} live={active} onNavigate={go} />
 
       <main className="main">
         {error && (
