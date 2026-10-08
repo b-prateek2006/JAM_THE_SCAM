@@ -4,13 +4,14 @@ import { browserSttSupported } from './audio/browserStt.js'
 import AlertBanner from './components/AlertBanner.jsx'
 import HeroPhone, { ScammerAvatar } from './components/HeroPhone.jsx'
 import Icon from './components/Icon.jsx'
+import LangSwitch from './components/LangSwitch.jsx'
 import ReportView from './components/ReportView.jsx'
 import RiskMeter, { riskColor } from './components/RiskMeter.jsx'
 import StageTrack from './components/StageTrack.jsx'
 import Transcript from './components/Transcript.jsx'
 import { useGuardCall } from './hooks/useGuardCall.js'
 import { callStatus, familyWhatsApp, fmtClock, hardRuleText } from './lib/format.js'
-import { LANGS, t } from './lib/i18n.js'
+import { t } from './lib/i18n.js'
 import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
 import { useHashRoute } from './lib/route.js'
 
@@ -117,14 +118,7 @@ export default function App() {
   const showRail = screen === 'live' || screen === 'report'
   const tacticLabels = Object.fromEntries(state.tactics.map((x) => [x.type, x.label]))
   const hardRule = hardRuleText(state.hard_rule, tacticLabels)
-  const langSwitch = (cls = '') => (
-    <div className={`seg ${cls}`} role="group" aria-label={t(lang, 'language')}>
-      {LANGS.map((l) => (
-        <button key={l.code} lang={l.code} className={l.code === lang ? 'on' : ''} disabled={active}
-          aria-pressed={l.code === lang} onClick={() => setLang(l.code)}>{l.label}</button>
-      ))}
-    </div>
-  )
+  const langSwitch = (className = '') => <LangSwitch lang={lang} onChange={setLang} disabled={active} className={className} />
 
   // ---------------------------------------------------------------- screens
   const hero = (
