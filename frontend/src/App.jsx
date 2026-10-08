@@ -7,7 +7,7 @@ import HowItWorks from './components/HowItWorks.jsx'
 import Icon from './components/Icon.jsx'
 import LangSwitch from './components/LangSwitch.jsx'
 import ReportView from './components/ReportView.jsx'
-import RiskMeter, { riskColor } from './components/RiskMeter.jsx'
+import RiskMeter from './components/RiskMeter.jsx'
 import StageTrack from './components/StageTrack.jsx'
 import Transcript from './components/Transcript.jsx'
 import { useGuardCall } from './hooks/useGuardCall.js'
@@ -16,6 +16,7 @@ import { t } from './lib/i18n.js'
 import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
 import { useHashRoute } from './lib/route.js'
 import HelpScreen from './screens/HelpScreen.jsx'
+import HistoryScreen from './screens/HistoryScreen.jsx'
 
 const LEVEL_KEY = ['safe', 'caution', 'warning', 'critical']
 
@@ -289,47 +290,6 @@ export default function App() {
     </aside>
   )
 
-  const historyScreen = (
-    <div className="page">
-      <div className="page-head spread">
-        <div><span className="eyebrow">{t(lang, 'onDevice')}</span><h2>{t(lang, 'history')}</h2></div>
-        {history.length > 0 && (
-          <button className="btn ghost small danger-text" onClick={clearHistory}><Icon name="x" size={14} /> {t(lang, 'clearAll')}</button>
-        )}
-      </div>
-      {history.length === 0 ? (
-        <div className="card empty-state">
-          <span className="tile-icon"><Icon name="inbox" size={22} /></span>
-          <b>{t(lang, 'noIncidents')}</b>
-          <p className="muted">{t(lang, 'noIncidentsBody')}</p>
-          <button className="btn primary" onClick={() => go('live')}>{t(lang, 'guard')}</button>
-        </div>
-      ) : (
-        <ul className="incidents">
-          {history.map((h) => {
-            const c = riskColor(h.peak_score)
-            return (
-              <li key={h.call_id}>
-                <button className="inc-open" onClick={() => go('report', h.call_id)}>
-                  <span className="inc-score" style={{ color: c, borderColor: c }}>{h.peak_score}</span>
-                  <span className="inc-body">
-                    <b>{h.report?.caller_number || t(lang, 'unknownCaller')}</b>
-                    <small>{new Date(h.started_at).toLocaleString()} · {h.report?.duration || ''} · {t(lang, 'nTactics', { n: h.report?.tactics?.length || 0 })}</small>
-                  </span>
-                  <Icon name="chevronRight" />
-                </button>
-                <button className="inc-delete" onClick={() => deleteIncident(h.call_id)} aria-label={`${t(lang, 'delete')}: ${new Date(h.started_at).toLocaleString()}`}>
-                  <Icon name="x" size={16} />
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-      )}
-      <p className="muted small center">{t(lang, 'privacy')}</p>
-    </div>
-  )
-
   const settingsScreen = (
     <div className="page">
       <div className="page-head"><div><span className="eyebrow">{t(lang, 'savedOnDevice')}</span><h2>{t(lang, 'settings')}</h2></div></div>
@@ -410,7 +370,10 @@ export default function App() {
             <HowItWorks lang={lang} />
           </>
         )}
-        {screen === 'history' && historyScreen}
+        {screen === 'history' && (
+          <HistoryScreen lang={lang} history={history} onOpen={(id) => go('report', id)}
+            onDelete={deleteIncident} onClear={clearHistory} onStart={() => go('live')} />
+        )}
         {screen === 'settings' && settingsScreen}
         {screen === 'help' && <HelpScreen lang={lang} />}
         {screen === 'report' && shownReport && (
