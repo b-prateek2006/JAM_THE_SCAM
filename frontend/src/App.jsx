@@ -14,6 +14,7 @@ import { callStatus, familyWhatsApp } from './lib/format.js'
 import { t } from './lib/i18n.js'
 import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
 import { useHashRoute } from './lib/route.js'
+import { applyTheme } from './lib/theme.js'
 import HelpScreen from './screens/HelpScreen.jsx'
 import HistoryScreen from './screens/HistoryScreen.jsx'
 import SettingsScreen from './screens/SettingsScreen.jsx'
@@ -36,6 +37,10 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = lang
   }, [lang])
+
+  useEffect(() => {
+    applyTheme(settings.theme)
+  }, [settings.theme])
 
   const refresh = () => {
     api.health().then(setHealth).catch(() => setHealth(null))

@@ -7,7 +7,7 @@ export const HISTORY_MAX = 20
 
 export const DEFAULT_SETTINGS = {
   lang: 'en', user_name: '', family_phone: '', caller_number: '', source: 'demo',
-  scenario: 'inspector_sharma', use_l3: true, voice_demo: false,
+  scenario: 'inspector_sharma', use_l3: true, voice_demo: false, theme: 'system',
 }
 
 function read(key) {

@@ -1,6 +1,8 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
+import { loadSettings } from './lib/storage.js'
+import { applyTheme } from './lib/theme.js'
 // Poppins is bundled with the app (no Google Fonts request: works offline and leaks no IP).
 // Each weight's CSS uses unicode-range, so only the Latin / Devanagari files a page needs load.
 import '@fontsource/poppins/400.css'
@@ -9,6 +11,9 @@ import '@fontsource/poppins/600.css'
 import '@fontsource/poppins/700.css'
 import '@fontsource/poppins/800.css'
 import './styles.css'
+
+// Apply a forced light / dark theme before the first paint, so it doesn't flash.
+applyTheme(loadSettings().theme)
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
