@@ -1,12 +1,15 @@
 """FastAPI app: REST routes, the /ws/guard WebSocket, and the built PWA.
 
 WebSocket protocol (client → server):
-  {"type": "start", "lang": "en|hi|te", "user_name", "family_phone", "caller_number", "use_l2", "use_l3"}
+  {"type": "start", "lang": "en|hi|te", "source": "mic|file|browser|demo", "user_name", "family_phone",
+   "caller_number", "use_l2", "use_l3"}
   binary frames: 16 kHz mono int16 PCM (mic or an audio file streamed by the browser)
   {"type": "text", "text": "...", "speaker": "caller|user|unknown"}  (browser speech recognition / demo)
   {"type": "stop", "keep": true|false}
 Server → client: {"type": "ready"}, {"type": "update", ...}, {"type": "stt", ...}, {"type": "report", ...},
   {"type": "error", "message"}  (server busy, STT unavailable, call time limit reached)
+  {"type": "hint", "code": "no_audio|no_speech", ...}  (an audio call where the server can't hear anything;
+   usually the app is on the same phone as the call, and phones give other apps silence during a call)
 
 Public-deploy limits come from config: MAX_SESSIONS concurrent sockets, MAX_SESSION_S per call,
 MAX_TEXT_CHARS per line, ANALYZE_PER_MIN per client IP on /api/analyze.
@@ -43,6 +46,9 @@ MAX_STT_BACKLOG = 8  # utterances waiting for STT; audio sent faster than real t
 TEXT_PER_MIN = 60  # text lines per call per minute (browser STT and the demo send ~10-20)
 LANGS = {"en", "hi", "te"}
 ANALYZE_LLM_BUDGET = 20  # L3 calls per /api/analyze request; a 200-line transcript could otherwise make ~100
+AUDIO_SOURCES = {"mic", "file"}
+NO_AUDIO_HINT_S = 5.0  # an audio call that has sent no audio this long after start gets a hint
+NO_SPEECH_HINT_S = 8.0  # ...and one that has sent this much audio without any speech in it
 engine: Engine | None = None
 store = IncidentStore(settings.db_path) if settings.store_incidents else None
 stt_status = {"backend": settings.stt_backend, "ready": False, "error": ""}
@@ -205,6 +211,29 @@ async def guard(ws: WebSocket):
     stt_queue: asyncio.Queue = asyncio.Queue(maxsize=MAX_STT_BACKLOG + 1)  # +1 keeps room for the stop sentinel
     text_limiter = RateLimiter(TEXT_PER_MIN)
     backlog_warned = False
+    source = ""
+    counts = {"utterances": 0, "stt_runs": 0, "stt_texts": 0}
+    hints_sent: set[str] = set()
+    hint_task: asyncio.Task | None = None
+
+    async def hint(code: str) -> None:
+        if code in hints_sent or session is None:
+            return
+        hints_sent.add(code)
+        log.info("call %s: hint %s %s", session.call_id, code, endpointer.stats())
+        await emit({"type": "hint", "code": code, **endpointer.stats()})
+
+    async def watch_for_audio() -> None:
+        await asyncio.sleep(NO_AUDIO_HINT_S)
+        if endpointer.frames == 0:
+            await hint("no_audio")
+
+    def log_summary(how: str) -> None:
+        if session is None:
+            return
+        log.info("call %s %s: source=%s lang=%s %s utterances=%d stt_texts=%d/%d lines=%d peak_score=%.0f",
+                 session.call_id, how, source or "?", session.opts.lang, endpointer.stats(), counts["utterances"],
+                 counts["stt_texts"], counts["stt_runs"], len(session.transcript), session.peak_score)
 
     async def stt_worker():
         while True:
@@ -216,11 +245,13 @@ async def guard(ws: WebSocket):
                 await emit({"type": "error", "message": "Server speech-to-text is still loading or unavailable. "
                                                         "Use browser speech recognition instead."})
                 continue
+            counts["stt_runs"] += 1
             try:
                 tr = await asyncio.to_thread(engine.stt.transcribe, audio, session.opts.lang)
             except Exception as e:
                 log.warning("STT failed: %s", e)
                 continue
+            counts["stt_texts"] += bool(tr.text)
             await emit({"type": "stt", "text": tr.text, "lang": tr.lang, "latency_ms": tr.latency_ms, "t": round(start_t, 1)})
             if tr.text:
                 await session.process(tr.text, t=start_t, speaker="unknown", lang=tr.lang)
@@ -229,6 +260,7 @@ async def guard(ws: WebSocket):
 
     async def queue_utterance(utt) -> None:
         nonlocal backlog_warned
+        counts["utterances"] += 1
         if stt_queue.qsize() < MAX_STT_BACKLOG:
             stt_queue.put_nowait(utt)
         elif not backlog_warned:
@@ -238,6 +270,8 @@ async def guard(ws: WebSocket):
 
     async def finish_call(keep: bool, keep_transcript: bool) -> None:
         nonlocal session, worker
+        if hint_task:
+            hint_task.cancel()
         for utt in endpointer.finish():
             await queue_utterance(utt)
         await stt_queue.put(None)
@@ -247,6 +281,7 @@ async def guard(ws: WebSocket):
             except asyncio.TimeoutError:  # still report what we have rather than drop the call
                 log.warning("STT did not drain in 30 s on call %s", session.call_id)
         report = await session.finish()
+        log_summary("ended")
         if store is not None and keep:
             store.save(report, session.transcript_dicts() if keep_transcript else None)
         await emit({"type": "report", "report": report})
@@ -269,6 +304,8 @@ async def guard(ws: WebSocket):
                     continue
                 for utt in endpointer.feed(msg["bytes"]):
                     await queue_utterance(utt)
+                if endpointer.speech_frames == 0 and endpointer.seconds >= NO_SPEECH_HINT_S:
+                    await hint("no_speech")
                 continue
             try:
                 data = json.loads(msg.get("text") or "{}")
@@ -288,6 +325,11 @@ async def guard(ws: WebSocket):
                 session = CallSession(engine, opts, emit=emit)
                 endpointer = Endpointer()
                 worker = asyncio.create_task(stt_worker())
+                source = str(data.get("source", ""))[:16]
+                counts = dict.fromkeys(counts, 0)
+                hints_sent.clear()
+                if source in AUDIO_SOURCES:
+                    hint_task = asyncio.create_task(watch_for_audio())
                 await emit({"type": "ready", "call_id": session.call_id, **health()})
             elif kind == "text" and session is not None:
                 if not text_limiter.allow("text"):
@@ -300,6 +342,9 @@ async def guard(ws: WebSocket):
         pass
     finally:
         active_sockets -= 1
+        log_summary("dropped")  # no-op when the call ended with a report
+        if hint_task:
+            hint_task.cancel()
         if worker and not worker.done():
             worker.cancel()
 

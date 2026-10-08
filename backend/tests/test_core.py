@@ -190,11 +190,11 @@ def test_stt_backlog_is_bounded(client, monkeypatch):
             return Transcript("", "en", 200)
 
     monkeypatch.setattr(ENGINE, "stt", SlowSTT())
-    loud = (np.full(32000, 8000, dtype=np.int16)).tobytes()  # 1 s of loud audio per 64 KB frame
+    loud = _pcm(_speechy(-12, 2.0, talk=1.0, pause=1.0))  # one 1 s utterance per 64 KB frame
     with client.websocket_connect("/ws/guard") as ws:
         ws.send_json({"type": "start", "use_l3": False})
         assert ws.receive_json()["type"] == "ready"
-        for _ in range(12 * 30):  # ~30 max-length (12 s) utterances, far faster than real time
+        for _ in range(60):  # 60 utterances, far faster than real time
             ws.send_bytes(loud)
         msg = ws.receive_json()
         while msg["type"] != "error":
@@ -331,3 +331,100 @@ def test_llm_skips_rate_limited_provider(monkeypatch):
     assert asyncio.run(reasoner.analyze("x")) is not None
     assert asyncio.run(reasoner.analyze("x")) is not None
     assert calls == ["groq", "gemini", "gemini"]  # groq rests for its retry-after instead of failing again
+
+
+# ---------------------------------------------------------------- audio levels (live mic path)
+def _speechy(level_dbfs, seconds, talk=1.5, pause=1.0, seed=0):
+    """Speech-like test signal: noise in 4 Hz syllables, `talk` s on / `pause` s off, at `level_dbfs` while talking."""
+    import numpy as np
+    from app.audio.vad import SAMPLE_RATE
+    t = np.arange(int(seconds * SAMPLE_RATE)) / SAMPLE_RATE
+    env = 0.5 * (1 + np.sin(2 * np.pi * 4 * t)) * ((t % (talk + pause)) < talk)
+    x = np.random.default_rng(seed).standard_normal(len(t)) * env
+    return x * (32768 * 10 ** (level_dbfs / 20) / np.sqrt(np.mean(x[env > 0] ** 2)))
+
+
+def _noise(level_dbfs, seconds, seed=1):
+    import numpy as np
+    from app.audio.vad import SAMPLE_RATE
+    return np.random.default_rng(seed).standard_normal(int(seconds * SAMPLE_RATE)) * 32768 * 10 ** (level_dbfs / 20)
+
+
+def _pcm(x) -> bytes:
+    import numpy as np
+    return np.clip(x, -32768, 32767).astype(np.int16).tobytes()
+
+
+def _utterances(x) -> tuple[int, dict]:
+    from app.audio.vad import Endpointer
+    ep, pcm, n = Endpointer(), _pcm(x), 0
+    for i in range(0, len(pcm), 3200):  # 100 ms frames, like the PWA
+        n += len(ep.feed(pcm[i:i + 3200]))
+    return n + len(ep.finish()), ep.stats()
+
+
+@pytest.mark.parametrize("level", [-20, -35, -45])
+def test_endpointer_hears_quiet_far_field_speech(level):
+    n, stats = _utterances(_speechy(level, 12) + _noise(-55, 12))
+    assert n >= 4, stats  # 5 bursts of speech
+
+
+def test_endpointer_ignores_noise_and_tracks_a_fan():
+    assert _utterances(_noise(-55, 12))[0] == 0
+    assert _utterances(_noise(-40, 12))[0] == 0  # a fan or AC is not speech...
+    assert _utterances(_noise(-40, 12) + _speechy(-30, 12))[0] >= 4  # ...and doesn't hide speech over it
+    n, stats = _utterances(_noise(-200, 10))  # digital silence
+    assert n == 0 and stats["peak_dbfs"] < -80 and stats["audio_s"] == 10.0
+
+
+def test_silent_mic_gets_a_hint_and_a_logged_summary(client, caplog):
+    import logging
+    caplog.set_level(logging.INFO, logger="jam")
+    with client.websocket_connect("/ws/guard") as ws:
+        ws.send_json({"type": "start", "source": "mic", "use_l3": False})
+        assert ws.receive_json()["type"] == "ready"
+        silence = bytes(3200)  # what a phone gives the browser during a call
+        for _ in range(int(main.NO_SPEECH_HINT_S * 10) + 1):
+            ws.send_bytes(silence)
+        hint = ws.receive_json()
+        assert hint["type"] == "hint" and hint["code"] == "no_speech" and hint["speech_s"] == 0
+        for _ in range(20):  # sent once per call, not on every frame
+            ws.send_bytes(silence)
+        ws.send_json({"type": "stop"})
+        assert ws.receive_json()["type"] == "report"
+    summary = [r.getMessage() for r in caplog.records if " ended: " in r.getMessage()]
+    assert len(summary) == 1 and "source=mic" in summary[0] and "utterances=0" in summary[0]
+
+
+def test_speech_on_the_mic_gets_no_hint(client, monkeypatch):
+    from app.audio.stt_whisper import Transcript
+
+    class FakeSTT:
+        name = "fake"
+
+        def transcribe(self, audio, lang):
+            return Transcript("I am Inspector Sharma from CBI.", "en", 1)
+
+    monkeypatch.setattr(ENGINE, "stt", FakeSTT())
+    with client.websocket_connect("/ws/guard") as ws:
+        ws.send_json({"type": "start", "source": "mic", "use_l3": False})
+        assert ws.receive_json()["type"] == "ready"
+        pcm = _pcm(_speechy(-30, 10) + _noise(-55, 10))
+        for i in range(0, len(pcm), 3200):
+            ws.send_bytes(pcm[i:i + 3200])
+        ws.send_json({"type": "stop"})
+        kinds = []
+        while (msg := ws.receive_json())["type"] != "report":
+            kinds.append(msg["type"])
+    assert "hint" not in kinds and "stt" in kinds and "update" in kinds
+
+
+def test_audio_call_that_sends_nothing_gets_a_hint(client, monkeypatch):
+    monkeypatch.setattr(main, "NO_AUDIO_HINT_S", 0.2)
+    with client.websocket_connect("/ws/guard") as ws:
+        ws.send_json({"type": "start", "source": "mic", "use_l3": False})
+        assert ws.receive_json()["type"] == "ready"
+        hint = ws.receive_json()  # nothing sent: the worklet never started, or the browser blocked the mic
+        assert hint["type"] == "hint" and hint["code"] == "no_audio" and hint["audio_s"] == 0
+        ws.send_json({"type": "stop"})
+        assert ws.receive_json()["type"] == "report"
