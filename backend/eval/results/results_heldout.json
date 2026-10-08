@@ -1,0 +1,1006 @@
+{
+ "meta": {
+  "set": "heldout",
+  "scam": 10,
+  "benign": 10,
+  "l2": "st:paraphrase-multilingual-mpnet-base-v2",
+  "l3": "groq:qwen/qwen3.8-27b"
+ },
+ "results": {
+  "l1": {
+   "summary": {
+    "scam_total": 10,
+    "benign_total": 10,
+    "recall": 0.3,
+    "precision": 1.0,
+    "detected": 3,
+    "false_alerts": 0,
+    "benign_cautions": 0,
+    "median_time_to_alert_s": 25.0,
+    "median_lead_before_money_s": 0.0,
+    "alerted_before_money_ask": 1
+   },
+   "rows": [
+    {
+     "id": "customs_video_hi_dev",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "कस्टम्स अधिकारी, वीडियो कॉल पर पैसे की मांग",
+     "max_level": 0,
+     "peak_score": 35,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 20.0,
+     "lead_s": null,
+     "tactics": [
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "AUTHORITY"
+     ]
+    },
+    {
+     "id": "daughter_arrested_te_roman",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Mee ammayi case lo pattubadindi (romanised Telugu)",
+     "max_level": 0,
+     "peak_score": 18,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 23.0,
+     "lead_s": null,
+     "tactics": [
+      "ISOLATION"
+     ]
+    },
+    {
+     "id": "dot_kyc_disconnect_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "DoT KYC: number to be disconnected, then 'cyber police'",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 25.0,
+     "caution_t": 25.0,
+     "money_t": 32.0,
+     "lead_s": 7.0,
+     "tactics": [
+      "ACCUSATION",
+      "ISOLATION",
+      "AUTHORITY",
+      "REMOTE_ACCESS",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "ed_money_mule_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "ED: your account was used as a money mule",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 23.0,
+     "caution_t": 23.0,
+     "money_t": 23.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "MONEY_ASK",
+      "ARREST_THREAT"
+     ]
+    },
+    {
+     "id": "income_tax_refund_otp_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Income tax 'refund' needs your OTP, then penalty threat",
+     "max_level": 0,
+     "peak_score": 8,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 9.0,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY"
+     ]
+    },
+    {
+     "id": "online_court_bail_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "'Online court hearing' with a judge, bail by UPI",
+     "max_level": 1,
+     "peak_score": 45,
+     "alert_t": null,
+     "caution_t": 27.0,
+     "money_t": 27.0,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "package_no_keywords_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Package with illegal items, paraphrased (few keywords)",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 26.0,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "police_skype_hi_roman",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "Mumbai police, Skype par aao, FIR ka darr",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 26.0,
+     "caution_t": 18.0,
+     "money_t": 26.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "rbi_freeze_te_script",
+     "kind": "scam",
+     "lang": "te",
+     "title": "RBI అధికారి: ఖాతా ఫ్రీజ్, సేఫ్ అకౌంట్‌కు డబ్బు",
+     "max_level": 0,
+     "peak_score": 27,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 19.0,
+     "lead_s": null,
+     "tactics": [
+      "ACCUSATION",
+      "ARREST_THREAT"
+     ]
+    },
+    {
+     "id": "sebi_trading_arrest_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Stock tips group turns into a 'SEBI' arrest threat",
+     "max_level": 0,
+     "peak_score": 5,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 25.0,
+     "lead_s": null,
+     "tactics": [
+      "URGENCY"
+     ]
+    },
+    {
+     "id": "bank_kyc_branch_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Bank asks you to update KYC at the branch",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cab_ride_otp_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Cab driver asks for the ride OTP at pickup",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "credit_card_offer_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Credit card sales call with a 'today only' offer",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cyber_complaint_followup_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Real cyber police follow-up on a complaint you filed",
+     "max_level": 0,
+     "peak_score": 8,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY"
+     ]
+    },
+    {
+     "id": "friend_return_money_te_roman",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Friend asks to return borrowed money (romanised Telugu)",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "hospital_reminder_te_script",
+     "kind": "benign",
+     "lang": "te",
+     "title": "ఆసుపత్రి అపాయింట్‌మెంట్ రిమైండర్",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "legal_notice_delivery_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Courier scheduling delivery of a legal notice in person",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "lpg_booking_hi_dev",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "गैस सिलेंडर बुकिंग की पुष्टि, डिलीवरी OTP",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "school_fee_reminder_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "School accounts office: term fee reminder",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "tenant_verification_hi_roman",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Police tenant verification, thane aana hai",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    }
+   ],
+   "seconds": 0.0
+  },
+  "l1l2": {
+   "summary": {
+    "scam_total": 10,
+    "benign_total": 10,
+    "recall": 0.9,
+    "precision": 0.9,
+    "detected": 9,
+    "false_alerts": 1,
+    "benign_cautions": 0,
+    "median_time_to_alert_s": 23.0,
+    "median_lead_before_money_s": 0.0,
+    "alerted_before_money_ask": 2
+   },
+   "rows": [
+    {
+     "id": "customs_video_hi_dev",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "कस्टम्स अधिकारी, वीडियो कॉल पर पैसे की मांग",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 20.0,
+     "caution_t": 11.0,
+     "money_t": 20.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "REMOTE_ACCESS",
+      "ARREST_THREAT",
+      "MONEY_ASK",
+      "AUTHORITY"
+     ]
+    },
+    {
+     "id": "daughter_arrested_te_roman",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Mee ammayi case lo pattubadindi (romanised Telugu)",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 23.0,
+     "caution_t": 17.0,
+     "money_t": 23.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "dot_kyc_disconnect_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "DoT KYC: number to be disconnected, then 'cyber police'",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 17.0,
+     "caution_t": 17.0,
+     "money_t": 32.0,
+     "lead_s": 15.0,
+     "tactics": [
+      "AUTHORITY",
+      "URGENCY",
+      "ACCUSATION",
+      "ISOLATION",
+      "REMOTE_ACCESS",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "ed_money_mule_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "ED: your account was used as a money mule",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 23.0,
+     "caution_t": 15.0,
+     "money_t": 23.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK",
+      "ARREST_THREAT"
+     ]
+    },
+    {
+     "id": "income_tax_refund_otp_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Income tax 'refund' needs your OTP, then penalty threat",
+     "max_level": 0,
+     "peak_score": 27,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 9.0,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "online_court_bail_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "'Online court hearing' with a judge, bail by UPI",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 27.0,
+     "caution_t": 19.0,
+     "money_t": 27.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "package_no_keywords_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Package with illegal items, paraphrased (few keywords)",
+     "max_level": 2,
+     "peak_score": 76,
+     "alert_t": 26.0,
+     "caution_t": 18.0,
+     "money_t": 26.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "police_skype_hi_roman",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "Mumbai police, Skype par aao, FIR ka darr",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 26.0,
+     "caution_t": 18.0,
+     "money_t": 26.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "rbi_freeze_te_script",
+     "kind": "scam",
+     "lang": "te",
+     "title": "RBI అధికారి: ఖాతా ఫ్రీజ్, సేఫ్ అకౌంట్‌కు డబ్బు",
+     "max_level": 3,
+     "peak_score": 91,
+     "alert_t": 11.0,
+     "caution_t": 11.0,
+     "money_t": 19.0,
+     "lead_s": 8.0,
+     "tactics": [
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK",
+      "ARREST_THREAT"
+     ]
+    },
+    {
+     "id": "sebi_trading_arrest_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Stock tips group turns into a 'SEBI' arrest threat",
+     "max_level": 2,
+     "peak_score": 70,
+     "alert_t": 25.0,
+     "caution_t": 25.0,
+     "money_t": 25.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ARREST_THREAT",
+      "ISOLATION",
+      "URGENCY",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "bank_kyc_branch_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Bank asks you to update KYC at the branch",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cab_ride_otp_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Cab driver asks for the ride OTP at pickup",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "credit_card_offer_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Credit card sales call with a 'today only' offer",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cyber_complaint_followup_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Real cyber police follow-up on a complaint you filed",
+     "max_level": 0,
+     "peak_score": 32,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY",
+      "ARREST_THREAT"
+     ]
+    },
+    {
+     "id": "friend_return_money_te_roman",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Friend asks to return borrowed money (romanised Telugu)",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "hospital_reminder_te_script",
+     "kind": "benign",
+     "lang": "te",
+     "title": "ఆసుపత్రి అపాయింట్‌మెంట్ రిమైండర్",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "legal_notice_delivery_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Courier scheduling delivery of a legal notice in person",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "lpg_booking_hi_dev",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "गैस सिलेंडर बुकिंग की पुष्टि, डिलीवरी OTP",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "school_fee_reminder_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "School accounts office: term fee reminder",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "tenant_verification_hi_roman",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Police tenant verification, thane aana hai",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 18.0,
+     "caution_t": 18.0,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    }
+   ],
+   "seconds": 5.3
+  },
+  "l1l2l3": {
+   "summary": {
+    "scam_total": 10,
+    "benign_total": 10,
+    "recall": 1.0,
+    "precision": 0.9090909090909091,
+    "detected": 10,
+    "false_alerts": 1,
+    "benign_cautions": 0,
+    "median_time_to_alert_s": 17.0,
+    "median_lead_before_money_s": 8.0,
+    "alerted_before_money_ask": 9
+   },
+   "rows": [
+    {
+     "id": "customs_video_hi_dev",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "कस्टम्स अधिकारी, वीडियो कॉल पर पैसे की मांग",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 11.0,
+     "caution_t": 11.0,
+     "money_t": 20.0,
+     "lead_s": 9.0,
+     "tactics": [
+      "ACCUSATION",
+      "AUTHORITY",
+      "REMOTE_ACCESS",
+      "ARREST_THREAT",
+      "MONEY_ASK",
+      "ISOLATION"
+     ]
+    },
+    {
+     "id": "daughter_arrested_te_roman",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Mee ammayi case lo pattubadindi (romanised Telugu)",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 17.0,
+     "caution_t": 0.0,
+     "money_t": 23.0,
+     "lead_s": 6.0,
+     "tactics": [
+      "AUTHORITY",
+      "ISOLATION",
+      "ACCUSATION",
+      "URGENCY",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "dot_kyc_disconnect_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "DoT KYC: number to be disconnected, then 'cyber police'",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 17.0,
+     "caution_t": 6.0,
+     "money_t": 32.0,
+     "lead_s": 15.0,
+     "tactics": [
+      "AUTHORITY",
+      "URGENCY",
+      "ACCUSATION",
+      "ISOLATION",
+      "REMOTE_ACCESS",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "ed_money_mule_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "ED: your account was used as a money mule",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 15.0,
+     "caution_t": 15.0,
+     "money_t": 23.0,
+     "lead_s": 8.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK",
+      "ARREST_THREAT"
+     ]
+    },
+    {
+     "id": "income_tax_refund_otp_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Income tax 'refund' needs your OTP, then penalty threat",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 0.0,
+     "caution_t": 0.0,
+     "money_t": 9.0,
+     "lead_s": 9.0,
+     "tactics": [
+      "AUTHORITY",
+      "MONEY_ASK",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "online_court_bail_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "'Online court hearing' with a judge, bail by UPI",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 19.0,
+     "caution_t": 19.0,
+     "money_t": 27.0,
+     "lead_s": 8.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "package_no_keywords_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Package with illegal items, paraphrased (few keywords)",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 18.0,
+     "caution_t": 11.0,
+     "money_t": 26.0,
+     "lead_s": 8.0,
+     "tactics": [
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "AUTHORITY",
+      "URGENCY",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "police_skype_hi_roman",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "Mumbai police, Skype par aao, FIR ka darr",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 18.0,
+     "caution_t": 18.0,
+     "money_t": 26.0,
+     "lead_s": 8.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "REMOTE_ACCESS",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "rbi_freeze_te_script",
+     "kind": "scam",
+     "lang": "te",
+     "title": "RBI అధికారి: ఖాతా ఫ్రీజ్, సేఫ్ అకౌంట్‌కు డబ్బు",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 11.0,
+     "caution_t": 11.0,
+     "money_t": 19.0,
+     "lead_s": 8.0,
+     "tactics": [
+      "ACCUSATION",
+      "AUTHORITY",
+      "ISOLATION",
+      "MONEY_ASK",
+      "ARREST_THREAT",
+      "URGENCY"
+     ]
+    },
+    {
+     "id": "sebi_trading_arrest_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Stock tips group turns into a 'SEBI' arrest threat",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 25.0,
+     "caution_t": 25.0,
+     "money_t": 25.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ARREST_THREAT",
+      "ISOLATION",
+      "URGENCY",
+      "MONEY_ASK",
+      "AUTHORITY",
+      "ACCUSATION"
+     ]
+    },
+    {
+     "id": "bank_kyc_branch_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Bank asks you to update KYC at the branch",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cab_ride_otp_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Cab driver asks for the ride OTP at pickup",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "credit_card_offer_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Credit card sales call with a 'today only' offer",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cyber_complaint_followup_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Real cyber police follow-up on a complaint you filed",
+     "max_level": 0,
+     "peak_score": 34,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY",
+      "ARREST_THREAT"
+     ]
+    },
+    {
+     "id": "friend_return_money_te_roman",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Friend asks to return borrowed money (romanised Telugu)",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "hospital_reminder_te_script",
+     "kind": "benign",
+     "lang": "te",
+     "title": "ఆసుపత్రి అపాయింట్‌మెంట్ రిమైండర్",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "legal_notice_delivery_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Courier scheduling delivery of a legal notice in person",
+     "max_level": 0,
+     "peak_score": 12,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY"
+     ]
+    },
+    {
+     "id": "lpg_booking_hi_dev",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "गैस सिलेंडर बुकिंग की पुष्टि, डिलीवरी OTP",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "school_fee_reminder_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "School accounts office: term fee reminder",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "tenant_verification_hi_roman",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Police tenant verification, thane aana hai",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 18.0,
+     "caution_t": 18.0,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    }
+   ],
+   "seconds": 925.9
+  }
+ }
+}

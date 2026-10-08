@@ -34,14 +34,31 @@ Alert levels: **Caution 40+** (alert in the live-call panel), **Warning 65+** (f
 
 ## Evaluation
 
-`backend/eval/` holds 15 scam scripts and 15 benign hard negatives (bank fraud teams, delivery OTPs, passport police, a police cyber-awareness talk, relatives asking for money) across English, Hindi and Telugu. Current results are in [backend/eval/results/RESULTS.md](backend/eval/results/RESULTS.md):
+`backend/eval/` has two sets of scripted calls across English, Hindi and Telugu (script and romanised). An alert means Warning (65+) or higher. L2 is `paraphrase-multilingual-mpnet-base-v2`, and L3 is Groq `qwen/qwen3.8-27b` with Gemini fallback.
+
+**Held-out set: quote these.** It has 10 scam and 10 benign scripts written after tuning, never used to adjust anything ([RESULTS_heldout.md](backend/eval/results/RESULTS_heldout.md)).
+
+| Configuration | Scam calls caught | False alerts | Alerted before the money ask |
+|---|---|---|---|
+| L1 rules only | 3/10 | 0/10 | — |
+| L1 + L2 semantic | 9/10 | 1/10 | 2/10 |
+| L1 + L2 + L3 LLM | **10/10** | 1/10 | **9/10** |
+
+**Dev set.** It has 15 scam and 15 benign scripts. They were also used while tuning, so these numbers are optimistic ([RESULTS.md](backend/eval/results/RESULTS.md)).
 
 | Configuration | Scam calls caught | False alerts | Alerted before the money ask |
 |---|---|---|---|
 | L1 rules only | 11/15 | 0/15 | 1/11 |
 | L1 + L2 semantic | 15/15 | 0/15 (1 caution) | 9/15 |
+| L1 + L2 + L3 LLM | 15/15 | 0/15 (1 caution) | 9/15 |
 
-These scripts were also used while tuning the lexicon and libraries, so treat them as a dev set; write a fresh held-out set before quoting numbers on stage. L3 isn't in the table until an LLM key is configured.
+**What the held-out set shows:**
+- The keyword layer alone generalises poorly (3/10).
+- L3 catches the one scam the embeddings miss: an income-tax "refund" that only asks for an OTP.
+- L3 moves the warning ahead of the money ask in 9 of 10 calls.
+- **Known false alert:** a genuine police tenant-verification call in romanised Hindi ("bring your Aadhaar to the chowki") trips the authority-then-credential hard rule. It's left unfixed here on purpose; tuning against the held-out set would make its numbers meaningless.
+
+To rerun: `python -m eval.run_eval --set heldout --l3-gap 20`. The gap keeps it inside Groq's free per-minute limits.
 
 ## Run it
 
