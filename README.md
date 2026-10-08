@@ -81,6 +81,7 @@ Phones need HTTPS for the microphone: expose port 8000 with a tunnel (for exampl
 
 ```bash
 cd backend
+.venv/Scripts/python -m pip install -r requirements-dev.txt   # once: adds pytest
 .venv/Scripts/python -m pytest -q tests
 .venv/Scripts/python -m eval.run_eval                 # writes eval/results/RESULTS.md
 .venv/Scripts/python -m eval.run_eval --embed ngram   # no ML packages needed
