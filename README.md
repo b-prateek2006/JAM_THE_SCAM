@@ -30,7 +30,7 @@ Each utterance goes through three layers, fused into one confidence per tactic:
 
 The **risk scorer** models the call's trajectory, not keywords: tactic weights, combination multipliers (authority + secrecy, authority + money ask), a bonus for the script progressing through its stages in order, hard rules (authority followed by a money / OTP / remote-access ask is always critical), a benign dampener for genuine-call language, and asymmetric smoothing so small talk can't reset it.
 
-Alert levels: **Caution 40+** (banner), **Warning 65+** (full screen, vibration, spoken warning), **Critical 85+ or hard rule** (hang-up button, family alert).
+Alert levels: **Caution 40+** (alert in the live-call panel), **Warning 65+** (full screen, vibration, spoken warning), **Critical 85+ or hard rule** (hang-up button, family alert).
 
 ## Evaluation
 
@@ -67,6 +67,7 @@ cd backend && .venv/Scripts/python -m uvicorn app.main:app --port 8000
 Open http://localhost:8000. The first start downloads the embedding model (~1 GB) and Whisper `small` (~0.5 GB).
 
 For frontend development, run `npm run dev` in `frontend/` (port 5173, proxies `/api` and `/ws` to :8000).
+Frontend tests (Vitest + Testing Library, no backend needed): `npm test` in `frontend/`.
 
 Phones need HTTPS for the microphone: expose port 8000 with a tunnel (for example `cloudflared tunnel --url http://localhost:8000`) and open the HTTPS URL on the phone.
 
@@ -81,6 +82,7 @@ Phones need HTTPS for the microphone: expose port 8000 with a tunnel (for exampl
 
 ```bash
 cd backend
+.venv/Scripts/python -m pip install -r requirements-dev.txt   # once: adds pytest
 .venv/Scripts/python -m pytest -q tests
 .venv/Scripts/python -m eval.run_eval                 # writes eval/results/RESULTS.md
 .venv/Scripts/python -m eval.run_eval --embed ngram   # no ML packages needed

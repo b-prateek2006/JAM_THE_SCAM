@@ -1,8 +1,8 @@
 // Minimal service worker: caches the app shell so the PWA opens offline.
 // API and WebSocket traffic always goes to the network.
-const CACHE = 'jam-shell-v1'
+const CACHE = 'jam-shell-v3'
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['/', '/manifest.webmanifest', '/icons/icon.svg', '/pcm-worklet.js'])))
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-maskable-512.png', '/icons/apple-touch-icon.png', '/pcm-worklet.js'])))
   self.skipWaiting()
 })
 self.addEventListener('activate', (e) => {

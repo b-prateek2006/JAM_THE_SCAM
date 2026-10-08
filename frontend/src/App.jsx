@@ -1,80 +1,46 @@
-import { useEffect, useRef, useState } from 'react'
-import { api, GuardSocket } from './api.js'
-import { startAudioStream } from './audio/micCapture.js'
-import { browserSttSupported, startBrowserStt } from './audio/browserStt.js'
+import { useEffect, useState } from 'react'
+import { api } from './api.js'
 import AlertBanner from './components/AlertBanner.jsx'
+import GuardHero from './components/GuardHero.jsx'
+import HowItWorks from './components/HowItWorks.jsx'
+import Icon from './components/Icon.jsx'
+import LivePanel from './components/LivePanel.jsx'
 import ReportView from './components/ReportView.jsx'
-import RiskMeter, { riskColor } from './components/RiskMeter.jsx'
-import StageTrack from './components/StageTrack.jsx'
-import TacticChips from './components/TacticChips.jsx'
-import Transcript from './components/Transcript.jsx'
-import { LANGS, t } from './lib/i18n.js'
-import { speak, stopSpeaking } from './lib/tts.js'
-
-const EMPTY = { score: 0, level: 0, level_name: 'SAFE', stage: 0, tactics: [], hard_rule: '' }
-const LEVEL_KEY = ['safe', 'caution', 'warning', 'critical']
-
-function loadSettings() {
-  try {
-    return JSON.parse(localStorage.getItem('jam-settings')) || {}
-  } catch {
-    return {}
-  }
-}
-
-// Incident reports live on this device only; the server doesn't keep a shared list.
-const HISTORY_KEY = 'jam-history'
-const HISTORY_MAX = 20
-
-function loadHistory() {
-  try {
-    const h = JSON.parse(localStorage.getItem(HISTORY_KEY))
-    return Array.isArray(h) ? h : []
-  } catch {
-    return []
-  }
-}
-
-function saveToHistory(report) {
-  const entry = { call_id: report.call_id, started_at: report.started_at, peak_score: report.peak_score, report }
-  const history = [entry, ...loadHistory().filter((h) => h.call_id !== report.call_id)].slice(0, HISTORY_MAX)
-  try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
-  } catch {}
-  return history
-}
+import SideRail from './components/SideRail.jsx'
+import Sidebar from './components/Sidebar.jsx'
+import TopBar from './components/TopBar.jsx'
+import { useGuardCall } from './hooks/useGuardCall.js'
+import { callStatus, familyWhatsApp } from './lib/format.js'
+import { t } from './lib/i18n.js'
+import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
+import { useHashRoute } from './lib/route.js'
+import { applyTheme } from './lib/theme.js'
+import HelpScreen from './screens/HelpScreen.jsx'
+import HistoryScreen from './screens/HistoryScreen.jsx'
+import SettingsScreen from './screens/SettingsScreen.jsx'
 
 export default function App() {
-  const [settings, setSettings] = useState(() => ({
-    lang: 'en', user_name: '', family_phone: '', caller_number: '', source: 'demo',
-    scenario: 'inspector_sharma', use_l3: true, voice_demo: false, ...loadSettings(),
-  }))
-  const [screen, setScreen] = useState('home')
+  const [settings, setSettings] = useState(loadSettings)
+  const [route, go] = useHashRoute()
   const [health, setHealth] = useState(null)
   const [scenarios, setScenarios] = useState([])
   const [history, setHistory] = useState(loadHistory)
-  const [state, setState] = useState(EMPTY)
-  const [lines, setLines] = useState([])
-  const [interim, setInterim] = useState('')
-  const [alert, setAlert] = useState(null)
-  const [overlay, setOverlay] = useState(false)
   const [report, setReport] = useState(null)
-  const [error, setError] = useState('')
-  const [level, setLevel] = useState(0)
   const [file, setFile] = useState(null)
-  const [connecting, setConnecting] = useState(false)
-  const [elapsed, setElapsed] = useState(0)
-  const sock = useRef(null)
-  const stopper = useRef(null)
-  const demoTimer = useRef(null)
-  const gotReport = useRef(false)
   const lang = settings.lang
+  const screen = route.screen
 
   useEffect(() => {
-    try {
-      localStorage.setItem('jam-settings', JSON.stringify(settings))
-    } catch {}
+    saveSettings(settings)
   }, [settings])
+
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
+  useEffect(() => {
+    applyTheme(settings.theme)
+  }, [settings.theme])
 
   const refresh = () => {
     api.health().then(setHealth).catch(() => setHealth(null))
@@ -82,251 +48,100 @@ export default function App() {
   }
   useEffect(refresh, [])
 
+  // A report link that no longer exists (deleted, or another device's) falls back to the list.
+  const shownReport = screen === 'report'
+    ? history.find((h) => h.call_id === route.id)?.report || (report?.call_id === route.id ? report : null)
+    : null
   useEffect(() => {
-    if (screen !== 'guard') return
-    setElapsed(0)
-    const t0 = Date.now()
-    const id = setInterval(() => setElapsed((Date.now() - t0) / 1000), 500)
-    return () => clearInterval(id)
-  }, [screen])
+    if (screen === 'report' && !shownReport) location.replace('#/history')
+  }, [screen, shownReport])
 
   const set = (k) => (e) => setSettings((s) => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
+  const setLang = (code) => setSettings((s) => ({ ...s, lang: code }))
+  const setTheme = (theme) => setSettings((s) => ({ ...s, theme }))
 
-  function onMessage(msg) {
-    if (msg.type === 'update') {
-      setState(msg)
-      if (msg.utterance) setLines((l) => [...l, msg.utterance])
-      if (msg.alert) {
-        setAlert(msg.alert)
-        if (msg.alert.level >= 2) {
-          setOverlay(true)
-          navigator.vibrate?.(msg.alert.level >= 3 ? [400, 150, 400, 150, 400] : [300, 100, 300])
-        }
-        if (msg.alert.spoken) speak(msg.alert.spoken, lang)
-      }
-    } else if (msg.type === 'report') {
-      // The server can end the call itself (time limit), so stop listening here too.
-      stopCapture()
-      gotReport.current = true
-      setReport(msg.report)
-      setHistory(saveToHistory(msg.report))
-      setScreen('report')
-      sock.current?.close()
-      refresh()
-    } else if (msg.type === 'error') {
-      setError(msg.message)
-    }
+  // Server STT is only usable when /api/health says it loaded. Unknown health (still fetching) is allowed.
+  const micReady = !health || !!health.stt?.ready
+
+  function onReport(r) {
+    setReport(r)
+    setHistory(saveToHistory(r))
+    go('report', r.call_id)
+    refresh()
   }
 
-  // A close without a report means the server dropped us (busy, restart, network),
-  // so stop listening and go back home instead of leaving a dead live screen.
-  function onSocketClose(s) {
-    if (sock.current !== s || gotReport.current) return
-    stopCapture()
-    setOverlay(false)
-    setScreen('home')
-    setError((e) => e || 'Lost connection to the Jam the Scam server.')
-  }
+  const call = useGuardCall({ settings, file, micReady, onReport })
+  const { active, connecting, state, lines, interim, alert, overlay, error, level, elapsed, setError } = call
 
   async function startGuard() {
-    if (connecting) return
-    if (settings.source === 'file' && !file) {
-      setError('Choose an audio file first.')
-      return
-    }
-    setError('')
-    setState(EMPTY)
-    setLines([])
-    setAlert(null)
-    setOverlay(false)
+    if (await call.start()) go('live')
+  }
+  const endCall = call.end
+
+  function prepareComplaint() {
+    if (active) return endCall()
+    const r = report || history[0]?.report
+    if (!r) return window.open('https://cybercrime.gov.in', '_blank', 'noopener')
+    go('report', r.call_id, { scroll: false })
+    setTimeout(() => document.getElementById('complaint')?.scrollIntoView({ behavior: 'smooth' }), 80)
+  }
+
+  function deleteIncident(id) {
+    setHistory((h) => removeFromHistory(h, id))
+    if (report?.call_id === id) setReport(null)
+  }
+
+  function clearHistory() {
+    if (!window.confirm(t(lang, 'confirmClear'))) return
+    setHistory(writeHistory([]))
     setReport(null)
-    setInterim('')
-    gotReport.current = false
-    const s = new GuardSocket({ onMessage, onClose: () => onSocketClose(s) })
-    sock.current = s
-    setConnecting(true)
-    try {
-      await s.ready
-    } catch {
-      setError('Cannot reach the Jam the Scam server. Is the backend running?')
-      return
-    } finally {
-      setConnecting(false)
-    }
-    s.start({
-      lang, user_name: settings.user_name, family_phone: settings.family_phone,
-      caller_number: settings.caller_number, use_l3: settings.use_l3,
-    })
-    setScreen('guard')
-    try {
-      if (settings.source === 'mic' || settings.source === 'file') {
-        stopper.current = await startAudioStream({
-          file: settings.source === 'file' ? file : null,
-          onChunk: (pcm) => s.sendAudio(pcm),
-          onLevel: setLevel,
-          onEnded: () => { demoTimer.current = setTimeout(endCall, 2500) },
-        })
-      } else if (settings.source === 'browser') {
-        stopper.current = startBrowserStt({
-          lang,
-          onFinal: (text) => { setInterim(''); s.text(text, 'unknown') },
-          onInterim: setInterim,
-          onError: (e) => setError(`Speech recognition: ${e}`),
-        })
-      } else {
-        await playScenario(s)
-      }
-    } catch (e) {
-      setError(e.message || String(e))
-    }
   }
 
-  async function playScenario(s) {
-    const sc = await api.scenario(settings.scenario)
-    let i = 0
-    const next = () => {
-      if (i >= sc.lines.length) {
-        demoTimer.current = setTimeout(endCall, 4000)
-        return
-      }
-      const line = sc.lines[i++]
-      demoTimer.current = setTimeout(() => {
-        s.text(line.text, line.speaker)
-        if (settings.voice_demo && line.speaker === 'caller') speak(line.text, sc.lang, { rate: 1.05 })
-        next()
-      }, (i === 1 ? 600 : line.delay * 1000))
-    }
-    next()
-    stopper.current = { stop: () => clearTimeout(demoTimer.current) }
-  }
-
-  function stopCapture() {
-    stopper.current?.stop()
-    stopper.current = null
-    clearTimeout(demoTimer.current)
-    stopSpeaking()
-  }
-
-  function endCall() {
-    stopCapture()
-    setOverlay(false)
-    sock.current?.stop(true)
-  }
-
-  const levelLabel = t(lang, LEVEL_KEY[state.level] || 'safe')
-  const mm = `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(Math.floor(elapsed % 60)).padStart(2, '0')}`
+  const lvl = state.level
+  const waLink = alert?.family?.whatsapp_link || familyWhatsApp(settings.family_phone, settings.user_name)
+  const online = !!health?.ok
+  const status = callStatus(lvl, active)
+  const showRail = screen === 'live' || screen === 'report'
 
   return (
-    <div className={`app level-${state.level}`}>
-      <header className="top">
-        <div className="brand"><img src="/icons/icon.svg" alt="" /> Jam the Scam</div>
-        <div className="langs">
-          {LANGS.map((l) => (
-            <button key={l.code} className={l.code === lang ? 'on' : ''}
-              onClick={() => setSettings((s) => ({ ...s, lang: l.code }))}>{l.label}</button>
-          ))}
-        </div>
-      </header>
+    <div className={`shell level-${lvl} ${active ? 'calling' : ''} ${showRail ? '' : 'no-rail'}`}>
+      <TopBar lang={lang} onLang={setLang} locked={active} online={online} userName={settings.user_name} onAvatar={() => go('settings')} />
+      <Sidebar lang={lang} screen={screen} live={active} onNavigate={go} />
 
-      {error && <div className="banner error" onClick={() => setError('')}>{error}</div>}
-
-      {screen === 'home' && (
-        <main className="home">
-          <p className="tagline">{t(lang, 'tagline')}</p>
-
-          <section className="card">
-            <label className="field">{t(lang, 'source')}
-              <select value={settings.source} onChange={set('source')}>
-                <option value="demo">{t(lang, 'demo')}</option>
-                <option value="mic">{t(lang, 'mic')}</option>
-                <option value="browser" disabled={!browserSttSupported()}>{t(lang, 'browser')}</option>
-                <option value="file">{t(lang, 'file')}</option>
-              </select>
-            </label>
-            {settings.source === 'demo' && (
-              <>
-                <label className="field">Scenario
-                  <select value={settings.scenario} onChange={set('scenario')}>
-                    {scenarios.map((s) => <option key={s.id} value={s.id}>{s.title}</option>)}
-                  </select>
-                </label>
-                <label className="check"><input type="checkbox" checked={settings.voice_demo} onChange={set('voice_demo')} /> Read caller lines aloud</label>
-              </>
-            )}
-            {settings.source === 'file' && (
-              <label className="field">Audio file
-                <input type="file" accept="audio/*" onChange={(e) => setFile(e.target.files[0] || null)} />
-              </label>
-            )}
-            {settings.source === 'mic' && health && !health.stt?.ready && (
-              <p className="muted small">Server speech-to-text is {health.stt?.error ? 'unavailable' : 'still loading'}. Browser speech-to-text works meanwhile.</p>
-            )}
-          </section>
-
-          <button className="btn primary huge" onClick={startGuard} disabled={connecting}>🛡️ {t(lang, 'guard')}</button>
-
-          <details className="card">
-            <summary>{t(lang, 'settings')}</summary>
-            <label className="field">{t(lang, 'yourName')}<input value={settings.user_name} onChange={set('user_name')} placeholder="Lakshmi" /></label>
-            <label className="field">{t(lang, 'family')}<input value={settings.family_phone} onChange={set('family_phone')} placeholder="98xxxxxxxx" inputMode="tel" /></label>
-            <label className="field">{t(lang, 'caller')}<input value={settings.caller_number} onChange={set('caller_number')} placeholder="+91…" inputMode="tel" /></label>
-            <label className="check"><input type="checkbox" checked={settings.use_l3} onChange={set('use_l3')} /> Use LLM reasoner (L3) when configured</label>
-          </details>
-
-          {health && (
-            <p className="status muted small">
-              Engine: L1 lexicon · L2 {health.l2} · L3 {health.l3 ? `${health.l3.provider}` : 'off'} · STT {health.stt?.ready ? health.stt.name : 'browser'}
-            </p>
-          )}
-
-          {history.length > 0 && (
-            <section className="card">
-              <h3>{t(lang, 'history')}</h3>
-              <ul className="history">
-                {history.slice(0, 5).map((h) => (
-                  <li key={h.call_id} onClick={() => { setReport(h.report); setScreen('report') }}>
-                    <span>{new Date(h.started_at).toLocaleString()}</span>
-                    <b style={{ color: riskColor(h.peak_score) }}>{h.peak_score}</b>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-          <p className="muted small center">{t(lang, 'privacy')}</p>
-        </main>
-      )}
-
-      {screen === 'guard' && (
-        <main className="guard">
-          <div className="live"><span className="rec" /> LIVE CALL · {mm}
-            {(settings.source === 'mic' || settings.source === 'file') && <span className="vu" style={{ width: `${Math.min(100, level * 400)}%` }} />}
+      <main className="main">
+        {error && (
+          <div className="toast" role="alert" onClick={() => setError('')}>
+            <Icon name="alert" size={18} /> <span>{error}</span> <Icon name="x" size={16} />
           </div>
-          {alert && alert.level === 1 && <AlertBanner alert={alert} lang={lang} />}
-          <RiskMeter score={state.score} label={levelLabel}
-            sub={state.hard_rule ? `Hard rule: ${state.hard_rule.replace(/_/g, ' ').toLowerCase()}` : state.explanation || ''} />
-          <section className="card">
-            <h3>{t(lang, 'stage')}</h3>
-            <StageTrack tactics={state.tactics} />
-          </section>
-          <section className="card">
-            <h3>{t(lang, 'tactics')}</h3>
-            <TacticChips tactics={state.tactics} emptyText={t(lang, 'noTactics')} />
-          </section>
-          <section className="card grow">
-            <h3>{t(lang, 'transcript')}</h3>
-            {lines.length === 0 && !interim && <p className="muted small">{t(lang, 'listening')}</p>}
-            <Transcript lines={lines} interim={interim} />
-          </section>
-          <button className="btn danger big sticky" onClick={endCall}>{t(lang, 'endCall')}</button>
-          {overlay && <AlertBanner alert={alert} lang={lang} onDismiss={() => setOverlay(false)} onHangUp={endCall} />}
-        </main>
+        )}
+        {screen === 'live' && (
+          <>
+            <GuardHero lang={lang} active={active} connecting={connecting} settings={settings} set={set} scenarios={scenarios} micReady={micReady}
+              tactics={state.tactics} onFile={setFile} onStart={startGuard} onStop={endCall} />
+            <LivePanel lang={lang} onLang={setLang} active={active} state={state} lines={lines} interim={interim}
+              alert={alert} level={level} elapsed={elapsed} callerNumber={settings.caller_number} status={status} />
+            <HowItWorks lang={lang} />
+          </>
+        )}
+        {screen === 'history' && (
+          <HistoryScreen lang={lang} history={history} onOpen={(id) => go('report', id)}
+            onDelete={deleteIncident} onClear={clearHistory} onStart={() => go('live')} />
+        )}
+        {screen === 'settings' && <SettingsScreen lang={lang} settings={settings} set={set} onLang={setLang} onTheme={setTheme} locked={active} health={health} />}
+        {screen === 'help' && <HelpScreen lang={lang} />}
+        {screen === 'report' && shownReport && (
+          <ReportView report={shownReport} lang={lang} onBack={() => go('history')}
+            onNew={() => { call.reset(); go('live') }} />
+        )}
+      </main>
+
+      {showRail && (
+        <SideRail lang={lang} active={active} callerNumber={settings.caller_number} status={status} elapsed={elapsed}
+          tacticCount={state.tactics.length} waLink={waLink} onHangUp={endCall}
+          onAddContact={() => go('settings')} onPrepareComplaint={prepareComplaint} />
       )}
 
-      {screen === 'report' && report && (
-        <main>
-          <ReportView report={report} lang={lang} onNew={() => { setScreen('home'); setState(EMPTY) }} />
-        </main>
-      )}
+      {overlay && <AlertBanner alert={alert} lang={lang} onDismiss={call.dismissOverlay} onHangUp={endCall} />}
     </div>
   )
 }

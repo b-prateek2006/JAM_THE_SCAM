@@ -11,4 +11,11 @@ export default defineConfig({
       '/ws': { target: 'ws://localhost:8000', ws: true },
     },
   },
+  // Unit and component tests (npm test): jsdom stands in for the browser.
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.js'],
+    include: ['src/**/*.test.{js,jsx}'],
+    passWithNoTests: true,
+  },
 })
