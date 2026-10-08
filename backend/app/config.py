@@ -34,8 +34,10 @@ class Settings:
     whisper_model: str = os.getenv("WHISPER_MODEL", "small")
     whisper_device: str = os.getenv("WHISPER_DEVICE", "cpu")
     whisper_compute: str = os.getenv("WHISPER_COMPUTE", "int8")
-    # How often L3 runs at most, and the transcript window it sees.
-    llm_interval_s: float = float(os.getenv("LLM_INTERVAL_S", "12"))
+    # L3 pacing (free keys have daily caps): a routine check every LLM_INTERVAL_S, sooner when L1/L2
+    # flag something but never within LLM_MIN_GAP_S of the last call. Plus the transcript window it sees.
+    llm_interval_s: float = float(os.getenv("LLM_INTERVAL_S", "20"))
+    llm_min_gap_s: float = float(os.getenv("LLM_MIN_GAP_S", "8"))
     llm_window_s: float = float(os.getenv("LLM_WINDOW_S", "120"))
     db_path: str = os.getenv("DB_PATH", str(BACKEND_DIR / "data" / "incidents.db"))
     frontend_dist: str = os.getenv("FRONTEND_DIST", str(ROOT_DIR / "frontend" / "dist"))

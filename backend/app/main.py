@@ -42,6 +42,7 @@ MAX_AUDIO_FRAME = 64 * 1024  # the PWA sends 3.2 KB (100 ms) frames
 MAX_STT_BACKLOG = 8  # utterances waiting for STT; audio sent faster than real time is dropped past this
 TEXT_PER_MIN = 60  # text lines per call per minute (browser STT and the demo send ~10-20)
 LANGS = {"en", "hi", "te"}
+ANALYZE_LLM_BUDGET = 20  # L3 calls per /api/analyze request; a 200-line transcript could otherwise make ~100
 engine: Engine | None = None
 store = IncidentStore(settings.db_path) if settings.store_incidents else None
 stt_status = {"backend": settings.stt_backend, "ready": False, "error": ""}
@@ -134,7 +135,8 @@ async def analyze(req: AnalyzeRequest, request: Request):
     if not analyze_limiter.allow(request.client.host if request.client else "?"):
         raise HTTPException(429, "too many requests, try again in a minute")
     sess = CallSession(engine, SessionOptions(lang=req.lang, use_l2=req.use_l2, use_l3=req.use_l3,
-                                              llm_mode="sync", caller_number=req.caller_number))
+                                              llm_mode="sync", caller_number=req.caller_number,
+                                              llm_budget=ANALYZE_LLM_BUDGET))
     updates = []
     for i, line in enumerate(req.lines):
         u = await sess.process(line.text, t=line.t if line.t is not None else i * 6.0, speaker=line.speaker)

@@ -66,6 +66,7 @@ class SessionOptions:
     use_l2: bool = True
     use_l3: bool = True
     llm_mode: str = "async"  # async (live) | sync (eval: wait for L3 inline) | off
+    llm_budget: int | None = None  # max L3 calls for this session (None = no cap)
 
 
 class CallSession:
@@ -86,6 +87,8 @@ class CallSession:
         self.llm_explanation = ""
         self.last_llm: LLMResult | None = None
         self._last_llm_t = -1e9
+        self.llm_calls = 0
+        self._critical_explained = False  # L3 has explained the call since it went critical
         self._llm_task: asyncio.Task | None = None
         self._llm_pending = False
         self._lock = asyncio.Lock()
@@ -99,6 +102,17 @@ class CallSession:
     @property
     def llm_on(self) -> bool:
         return self.opts.use_l3 and self.opts.llm_mode != "off" and self.engine.llm.enabled
+
+    def _llm_wanted(self, t: float, nominated: bool) -> bool:
+        """Whether to spend an L3 call now. Free keys have daily caps, so: a routine check every
+        llm_interval_s, sooner on an L1/L2 flag but not within llm_min_gap_s, none once the budget
+        is spent, and none once L3 has explained the call after it went critical."""
+        if self.opts.llm_budget is not None and self.llm_calls >= self.opts.llm_budget:
+            return False
+        if self._critical_explained:
+            return False
+        since = t - self._last_llm_t
+        return since >= settings.llm_interval_s or (nominated and since >= settings.llm_min_gap_s)
 
     def _window_text(self, now_t: float) -> tuple[str, str]:
         recent = [u for u in self.transcript if u.t >= now_t - settings.llm_window_s]
@@ -158,8 +172,7 @@ class CallSession:
             update = self._rescore(t, utterance=utt, hits=hits)
 
         if self.llm_on and speaker != "user":
-            due = t - self._last_llm_t >= settings.llm_interval_s
-            if nominated or due:
+            if self._llm_wanted(t, nominated):
                 if self.opts.llm_mode == "sync":
                     await self._run_llm(t)
                     update = self.snapshot(utterance=utt, hits=hits)
@@ -177,6 +190,7 @@ class CallSession:
 
     async def _run_llm(self, t: float) -> None:
         self._last_llm_t = t
+        self.llm_calls += 1
         text, summary = self._window_text(t)
         res = await self.engine.llm.analyze(text, summary, self.opts.lang)
         if res is not None:
@@ -193,6 +207,8 @@ class CallSession:
                     ts = self.scorer.state.tactics[tac]
                     self.timeline.append(timeline_entry(t, "tactic", ts.evidence, tactic=tac, layers="L3"))
                 update = self._rescore(self.now() if self.opts.llm_mode == "async" else t, llm=True)
+                if self.alerts.level >= 3 and res.explanation:
+                    self._critical_explained = True
             if self.emit and self.opts.llm_mode == "async":
                 await self.emit(update)
         if self._llm_pending and self.opts.llm_mode == "async":

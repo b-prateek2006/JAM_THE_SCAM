@@ -257,3 +257,43 @@ def test_llm_falls_back_to_second_provider(monkeypatch):
     res = asyncio.run(reasoner.analyze("CALLER: send money"))
     assert res.tactics == {"MONEY_ASK": 0.9}
     assert used == [("gemini", "gemini-2.5-flash"), ("groq", "llama-3.3-70b-versatile")]
+
+
+def _counting_engine(explanation=""):
+    from app.detection.llm import LLMReasoner
+    llm = LLMReasoner()
+    llm.providers = ["groq"]
+    llm.calls = 0
+
+    async def fake(prompt, model):
+        llm.calls += 1
+        return {"tactics": [], "stage": 0, "explanation_for_user": explanation}
+
+    llm._groq = fake
+    return Engine(semantic=ENGINE.semantic, llm=llm)
+
+
+def test_analyze_caps_llm_calls(client, monkeypatch):
+    eng = _counting_engine()
+    monkeypatch.setattr(main, "engine", eng)
+    lines = [{"text": "This is CBI, you are under investigation.", "t": i * 30.0} for i in range(200)]
+    assert client.post("/api/analyze", json={"lines": lines}).status_code == 200
+    assert eng.llm.calls == main.ANALYZE_LLM_BUDGET
+
+
+def test_llm_pacing_gap_and_stop_after_critical():
+    async def run(eng, lines, step):
+        sess = CallSession(eng, SessionOptions(llm_mode="sync"))
+        for i, text in enumerate(lines):
+            await sess.process(text, t=i * step)
+        return sess
+
+    # Every line is flagged, 2 s apart: the 8 s minimum gap allows one call per 4 lines.
+    eng = _counting_engine()
+    asyncio.run(run(eng, ["You are under digital arrest."] * 12, step=2))
+    assert eng.llm.calls == 3
+    # Once the call is critical and L3 has given an explanation, it stops being called.
+    eng = _counting_engine(explanation="This is a scam.")
+    sess = asyncio.run(run(eng, ["I am Inspector Sharma from CBI.", "Transfer your savings to the RBI safe account."]
+                           + ["Do it now."] * 10, step=30))
+    assert sess.alerts.level == 3 and eng.llm.calls == 2
