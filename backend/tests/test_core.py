@@ -143,3 +143,17 @@ def test_extract_amounts_and_long_digit_runs_stay_fast():
     t0 = time.perf_counter()
     extract("9" * 20000)
     assert time.perf_counter() - t0 < 0.5
+
+
+def test_llm_off_schema_output_is_ignored(monkeypatch):
+    from app.detection import llm as llm_mod
+    reasoner = llm_mod.LLMReasoner()
+    reasoner.provider = "groq"
+    for bad in (["not", "an", "object"], {"tactics": [{"type": "AUTHORITY", "confidence": "high"}]}):
+        async def fake(prompt, bad=bad):
+            return bad
+        monkeypatch.setattr(reasoner, "_groq", fake)
+        assert asyncio.run(reasoner.analyze("CALLER: hello")) is None
+    good = llm_mod.parse_result({"tactics": [{"type": "authority", "confidence": 0.9, "evidence": "I am CBI"}, "junk"],
+                                 "stage": 2, "explanation_for_user": "x"})
+    assert good.tactics == {"AUTHORITY": 0.9}

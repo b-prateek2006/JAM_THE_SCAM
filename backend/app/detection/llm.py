@@ -100,8 +100,12 @@ def build_user_prompt(transcript: str, summary: str, lang: str) -> str:
 
 
 def parse_result(raw: dict, latency_ms: int = 0) -> LLMResult:
+    if not isinstance(raw, dict):
+        raise ValueError(f"expected a JSON object, got {type(raw).__name__}")
     res = LLMResult(latency_ms=latency_ms)
     for t in raw.get("tactics", []) or []:
+        if not isinstance(t, dict):
+            continue
         typ = str(t.get("type", "")).upper()
         if typ not in TACTICS:
             continue
@@ -167,10 +171,11 @@ class LLMReasoner:
                 raw = await self._gemini(prompt)
             else:
                 raw = await self._claude(prompt)
-        except Exception as e:  # the scorer must keep working if the LLM is slow or down
+            # Valid JSON in the wrong shape (a list, "confidence": "high") is treated like no answer.
+            return parse_result(raw, int((time.perf_counter() - t0) * 1000))
+        except Exception as e:  # the scorer must keep working if the LLM is slow, down or off-schema
             log.warning("L3 call failed (%s): %s", self.provider, e)
             return None
-        return parse_result(raw, int((time.perf_counter() - t0) * 1000))
 
     async def _groq(self, prompt: str) -> dict:
         async with httpx.AsyncClient(timeout=self.timeout) as client:
