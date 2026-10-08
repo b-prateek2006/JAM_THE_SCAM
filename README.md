@@ -115,7 +115,21 @@ docker compose up --build
 
 The image bakes in the embedding model and Whisper (`EMBED_MODEL` / `WHISPER_MODEL` build args) and runs offline at startup, so the first build takes a while and later starts take seconds. Keys go in `backend/.env`; the public-deploy limits (`MAX_SESSIONS`, `SMS_ALLOWLIST`, `STORE_INCIDENTS`, ...) are listed in [.env.example](.env.example).
 
+### Demo from a laptop (free, public HTTPS link)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\demo.ps1        # builds and starts the app, then prints a public https://….trycloudflare.com link
+powershell -ExecutionPolicy Bypass -File scripts\demo.ps1 -Stop  # stops the app
+```
+
+- **What it runs:** the full app (Whisper, embeddings, L3 from `backend/.env`) in Docker, exposed through a free Cloudflare quick tunnel.
+- **Phones:** open the printed link on a phone and the mic works, because it's HTTPS.
+- **The link:** it changes on every run and works while the script's window is open.
+- **Needs:** Docker Desktop and `cloudflared` (`winget install --id Cloudflare.cloudflared`).
+
 ### Deploy (Hugging Face Spaces)
+
+As of October 2026, new Hugging Face accounts get a free `cpu-basic` quota of 0, so a Docker Space stays **Paused** ("Quota exceeded … limit=0") until the account has quota. Use the laptop demo above until then.
 
 The YAML block at the top of this file is the Space config (Docker SDK, port 8000). Create a Docker Space, add the keys as Space secrets, and push this repo to it:
 
