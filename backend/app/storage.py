@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from contextlib import contextmanager
 from pathlib import Path
 
 SCHEMA = """
@@ -25,8 +26,15 @@ class IncidentStore:
         with self._conn() as c:
             c.executescript(SCHEMA)
 
-    def _conn(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.path)
+    @contextmanager
+    def _conn(self):
+        """Commit on success, roll back on error, and always close (sqlite3's own context manager doesn't close)."""
+        conn = sqlite3.connect(self.path)
+        try:
+            with conn:
+                yield conn
+        finally:
+            conn.close()
 
     def save(self, report: dict, transcript: list[dict] | None = None) -> None:
         with self._conn() as c:

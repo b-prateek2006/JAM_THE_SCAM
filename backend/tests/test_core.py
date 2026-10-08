@@ -204,3 +204,14 @@ def test_stt_backlog_is_bounded(client, monkeypatch):
         while ws.receive_json()["type"] != "report":
             pass
     assert SlowSTT.calls < 30  # the overflow was dropped, not queued
+
+
+def test_incident_store_round_trip(tmp_path):
+    from app.storage import IncidentStore
+    store = IncidentStore(str(tmp_path / "incidents.db"))
+    report = {"call_id": "abc", "started_at": "2026-10-08T10:00:00", "peak_score": 97, "peak_level": 3}
+    store.save(report, [{"t": 0, "text": "I am CBI"}])
+    assert store.list()[0]["call_id"] == "abc"
+    assert store.get("abc")["transcript"][0]["text"] == "I am CBI"
+    assert store.delete("abc") and store.get("abc") is None
+    (tmp_path / "incidents.db").unlink()  # fails on Windows if a connection were left open
