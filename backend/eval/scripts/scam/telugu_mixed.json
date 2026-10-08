@@ -1,0 +1,28 @@
+{
+ "title": "Telugu/English code-mixed ED call",
+ "kind": "scam",
+ "lang": "te",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Sir, ED office nunchi call chestunnam. Mee PAN card illegal transactions ki use ayyindi."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Idi chala confidential matter, evvariki cheppakudadhu."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Arrest warrant ready ga undi. Two hours lo action teesukuntam."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "AnyDesk install cheyandi, maa team mee account check chestaru.",
+   "money_ask": true
+  }
+ ]
+}

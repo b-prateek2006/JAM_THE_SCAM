@@ -1,0 +1,48 @@
+{
+ "title": "Slow burn, money ask late",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Good afternoon, am I speaking with Dr. Menon?"
+  },
+  {
+   "delay": 4,
+   "speaker": "user",
+   "text": "Yes"
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Doctor, I am calling from the Mumbai police headquarters regarding a complaint involving your mobile number."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "What complaint?"
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Someone used your SIM in a financial fraud of eleven crore rupees. We need to record your statement."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Please go to a private room. Nobody else should be present during the statement, it is a sealed inquiry."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "Okay sir, I am alone now."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Good. Now the judge needs proof your earnings are legal. I will share an account number, transfer your fixed deposits there.",
+   "money_ask": true
+  }
+ ]
+}

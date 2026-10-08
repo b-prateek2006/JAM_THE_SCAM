@@ -1,0 +1,29 @@
+{
+ "title": "Fake cyber police, screen share",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello madam, cyber police here. Your account has been hacked and money is going out right now."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "To stop the hackers we have to secure your account. Download the QuickSupport app and share your screen.",
+   "money_ask": true
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Don't cut the call and don't tell anyone, the hackers may be someone you know."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Now read me the code that came on your phone.",
+   "money_ask": true
+  }
+ ]
+}

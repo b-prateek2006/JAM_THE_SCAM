@@ -1,0 +1,22 @@
+{
+ "title": "Insurance renewal reminder",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, this is a reminder from LIC regarding your policy number ending 4417."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "Your premium of 12,500 rupees is due on the 15th. You can pay online on the official website or at any branch."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Please ignore this if already paid. Have a nice day."
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "title": "Delivery agent, Devanagari",
+ "kind": "benign",
+ "lang": "hi",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "नमस्ते, मैं फ्लिपकार्ट से डिलीवरी के लिए आया हूँ।"
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "आपका ऑर्डर गेट पर है, कृपया नीचे आ जाइए।"
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+{
+ "title": "Delivery agent asking for delivery OTP",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello sir, Amazon delivery, I am at your gate with your package."
+  },
+  {
+   "delay": 5,
+   "speaker": "user",
+   "text": "Coming down in two minutes."
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Okay sir, please tell me the delivery OTP when you come, it is on the SMS."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Cash on delivery amount is 1,299 rupees, you can pay by UPI also."
+  }
+ ]
+}

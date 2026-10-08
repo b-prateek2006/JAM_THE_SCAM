@@ -1,0 +1,17 @@
+{
+ "title": "Telugu delivery call",
+ "kind": "benign",
+ "lang": "te",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "హలో సార్, మీ పార్సెల్ డెలివరీ చేయడానికి వచ్చాను, గేట్ దగ్గర ఉన్నాను."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "డెలివరీ ఓటీపీ చెప్పండి సార్."
+  }
+ ]
+}

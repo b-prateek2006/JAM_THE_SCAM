@@ -33,6 +33,7 @@ class TacticState:
     evidence: str
     first_t: float
     layers: str
+    first_evidence: str = ""  # what was said when the tactic first appeared (for the report timeline)
 
 
 @dataclass
@@ -72,7 +73,7 @@ class RiskScorer:
                 continue
             cur = self.state.tactics.get(d.tactic)
             if cur is None:
-                self.state.tactics[d.tactic] = TacticState(d.confidence, d.evidence, t, d.layers)
+                self.state.tactics[d.tactic] = TacticState(d.confidence, d.evidence, t, d.layers, d.evidence)
             elif d.confidence > cur.confidence:
                 cur.confidence, cur.evidence, cur.layers = d.confidence, d.evidence, d.layers
 

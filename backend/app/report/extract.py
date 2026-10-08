@@ -15,13 +15,17 @@ AMOUNT = re.compile(r"(?:rs\.?|₹|inr|rupees)\s?([\d,]+(?:\.\d+)?\s?(?:lakh|lak
 BADGE = re.compile(r"(?:badge|employee|officer|id)\s*(?:number|no\.?|id)?\s*(?:is\s*)?[:#]?\s*([A-Z0-9][A-Z0-9/-]{2,15})", re.IGNORECASE)
 FIR = re.compile(r"(?:fir|case|complaint)\s*(?:number|no\.?)\s*(?:is\s*)?[:#]?\s*([A-Z0-9][A-Z0-9/-]{2,25})", re.IGNORECASE)
 NAME = re.compile(
-    r"(?:i am|i'm|this is|my name is|main|mera naam)\s+((?:inspector|sub[- ]inspector|officer|constable|dcp|acp|sp|mr\.?|mrs\.?)?\s*[A-Z][a-z]+(?:\s[A-Z][a-z]+)?)",
+    r"(?:[Ii] am|[Ii]'m|[Tt]his is|[Mm]y name is|[Mm]ain|[Mm]era naam)\s+"
+    r"((?i:inspector|sub[- ]inspector|officer|constable|dcp|acp|sp|mr\.?|mrs\.?|dr\.?)?\s*[A-Z][a-z]+(?:\s[A-Z][a-z]+)?)",
 )
+NOT_NAMES = {"delhi", "mumbai", "hyderabad", "bangalore", "bengaluru", "chennai", "kolkata", "calling", "speaking",
+             "from", "the", "fedex", "dhl", "trai", "customs"}
 AGENCIES = [
     "CBI", "Enforcement Directorate", "ED", "Narcotics Control Bureau", "NCB", "Customs", "Cyber Crime",
     "Cyber Cell", "Crime Branch", "TRAI", "RBI", "Reserve Bank", "Income Tax", "Supreme Court", "Mumbai Police",
     "Delhi Police", "Hyderabad Police", "FedEx", "DHL", "Interpol",
 ]
+CANONICAL = {"fedex": "FedEx", "dhl": "DHL", "ed": "ED", "rbi": "RBI", "trai": "TRAI", "cbi": "CBI", "ncb": "NCB"}
 AGENCY_RX = re.compile(r"\b(" + "|".join(re.escape(a) for a in AGENCIES) + r")\b", re.IGNORECASE)
 APPS = re.compile(r"\b(any ?desk|team ?viewer|quick ?support|skype|whatsapp)\b", re.IGNORECASE)
 EMAIL_DOMAINS = ("gmail", "yahoo", "outlook", "hotmail")
@@ -54,10 +58,11 @@ def extract(text: str) -> Entities:
     e = Entities()
     for m in NAME.finditer(text):
         name = m.group(1).strip()
-        if len(name) > 2 and name.split()[-1].lower() not in {"calling", "speaking", "from", "the"}:
+        words = name.lower().split()
+        if len(name) > 2 and words[-1] not in NOT_NAMES and words[0] not in NOT_NAMES:
             _add(e.claimed_names, name)
     for m in AGENCY_RX.finditer(text):
-        _add(e.agencies, m.group(1).upper() if len(m.group(1)) <= 4 else m.group(1).title())
+        _add(e.agencies, CANONICAL.get(m.group(1).lower(), m.group(1).upper() if len(m.group(1)) <= 4 else m.group(1).title()))
     for m in PHONE.finditer(text):
         _add(e.phone_numbers, re.sub(r"[\s-]", "", m.group(0)))
     for m in UPI.finditer(text):

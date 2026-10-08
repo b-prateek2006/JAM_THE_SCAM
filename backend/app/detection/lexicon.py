@@ -58,6 +58,9 @@ RAW_LEXICON: list[tuple[str, float, str]] = [
     # ---------------- ACCUSATION ----------------
     (ACCUSATION, STRONG, r"money laundering"),
     (ACCUSATION, MEDIUM, r"hawala"),
+    (ACCUSATION, MEDIUM, r"narcotic substances?|contraband"),
+    (ACCUSATION, MEDIUM, r"(caught|arrested|detained|picked up) (in|for|with) (a |an )?(rape|murder|drugs?|accident|fraud|case)"),
+    (ACCUSATION, MEDIUM, r"(linked|connected) to (a |an )?(drug|trafficking|laundering|terror|fraud|crime)"),
     (ACCUSATION, STRONG, r"(contains?|containing|found|seized|mili?|mile) .{0,40}(drugs|mdma|narcotics|fake passports?|ganja)"),
     (ACCUSATION, MEDIUM, r"(parcel|package|courier) .{0,50}(stopped|seized|held|intercepted|blocked) .{0,20}(customs|airport)"),
     (ACCUSATION, STRONG, r"(parcel|package|courier).{0,40}(drugs|mdma|narcotics|fake passports?|illegal)"),
@@ -83,6 +86,7 @@ RAW_LEXICON: list[tuple[str, float, str]] = [
     (ARREST_THREAT, MEDIUM, r"(you|aap) (will|would|can) be arrested"),
     (ARREST_THREAT, MEDIUM, r"(we|i) (will|are going to) arrest"),
     (ARREST_THREAT, MEDIUM, r"non[- ]bailable"),
+    (ARREST_THREAT, MEDIUM, r"(taken|put) (in|into) custody|digital custody|escaping from custody"),
     (ARREST_THREAT, MEDIUM, r"(jail|prison)"),
     (ARREST_THREAT, MEDIUM, r"giraft?aa?r"),
     (ARREST_THREAT, MEDIUM, r"arrest (ho jaye?ga|kar(enge|na padega))"),
@@ -100,6 +104,9 @@ RAW_LEXICON: list[tuple[str, float, str]] = [
     (ISOLATION, STRONG, r"stay on (the )?(video|call|line)"),
     (ISOLATION, MEDIUM, r"(strictly )?confidential( matter| investigation)?"),
     (ISOLATION, MEDIUM, r"national security"),
+    (ISOLATION, MEDIUM, r"(must|should|can) ?not (discuss|share|talk about|mention) (this|it|anything)"),
+    (ISOLATION, MEDIUM, r"(investigation|inquiry|matter|case) is (classified|sealed|secret)|sealed inquiry"),
+    (ISOLATION, MEDIUM, r"(do not|don'?t) call anyone|between (us|you and me)|nobody else should (be present|know|hear)"),
     (ISOLATION, MEDIUM, r"(go|sit|stay) (to|in) a (separate|closed|private) room"),
     (ISOLATION, MEDIUM, r"(keep|keeping) (this|it) (secret|confidential)"),
     (ISOLATION, STRONG, r"kisi(ko| ko) (bhi )?(mat|nahi|nahin) (batana|bataiye|bataye)"),
@@ -128,6 +135,10 @@ RAW_LEXICON: list[tuple[str, float, str]] = [
     # ---------------- MONEY_ASK ----------------
     (MONEY_ASK, STRONG, r"(safe|secure|secret|government|rbi|verification|escrow|supervisory) (bank )?account"),
     (MONEY_ASK, STRONG, r"(verification|security|clearance|bail) (amount|money|deposit|fee)"),
+    (MONEY_ASK, STRONG, r"(verification|security|clearance|bail|customs) (charges?|fees?)"),
+    (MONEY_ASK, MEDIUM, r"(move|shift|place|park|put) (all )?(the |your )?(funds|money|balance|savings|fixed deposits?)"),
+    (MONEY_ASK, MEDIUM, r"(will be|it will|we will|department will) (return|refund|give back)|comes back once"),
+    (MONEY_ASK, MEDIUM, r"(send|pay|transfer) (rs\.? ?)?(one|two|five|ten|fifteen|twenty|fifty|hundred)( thousand| lakh| lakhs)"),
     (MONEY_ASK, MEDIUM, r"(refundable|will be refunded|refund(ed)? after)"),
     (MONEY_ASK, MEDIUM, r"transfer (all )?(your |the )?(money|funds|amount|savings|balance)"),
     (MONEY_ASK, MEDIUM, r"(send|pay|deposit|transfer) (rs\.?|₹|inr)? ?\d[\d,]*"),
@@ -158,7 +169,7 @@ RAW_LEXICON: list[tuple[str, float, str]] = [
 ]
 
 # Phrases genuine callers use. They lower risk instead of raising it, and they
-# suppress weak CREDENTIAL / MONEY_ASK hits in the same sentence
+# suppress tactic hits in the same sentence
 # ("never share your OTP with anyone").
 PROTECTIVE_PATTERNS = [
     r"(never|do ?n[o']?t|do not|should not|shouldn'?t) (share|tell|give|disclose)[^.?!]{0,30}(otp|pin|cvv|password|code)",
@@ -170,12 +181,21 @@ PROTECTIVE_PATTERNS = [
     r"(cancel|cancellation) (of )?(your|the) order",
     r"(delivery|deliver) (your )?(order|parcel|package)",
     r"passport verification",
+    r"(police|bank|we|government|rbi|cbi) (will )?never ask (you )?to",
+    r"no such thing as|does not exist in (indian )?law",
+    r"(report|complain) (it |this )?(on|to|at) 1930|cybercrime\.gov\.in",
+    r"(fraudsters|scammers|cheats) (are )?(calling|pretending|posing)",
+    r"hang up and report",
+    r"enter it in the app( yourself)?|we do not need it on the call",
     r"ओटीपी किसी (को|से) (शेयर|साझा) (न|मत)",
     r"otp (kisi ko|kisiko) (mat|nahi|na) (batana|share)",
     r"ఓటీపీ ఎవరికీ (చెప్పకండి|ఇవ్వకండి)",
+    r"(ఎప్పుడూ )?ఓటీపీ అడగదు",
+    r"డెలివరీ",
+    r"डिलीवरी",
+    r"bank kabhi otp nahi",
 ]
 
-SUPPRESSIBLE = {CREDENTIAL, MONEY_ASK}
 
 
 def _compile(pat: str) -> re.Pattern:
@@ -220,8 +240,8 @@ def scan(text: str) -> tuple[dict[str, L1Hit], float]:
             if not m:
                 continue
             s = strength
-            if prot > 0 and tactic in SUPPRESSIBLE:
-                s = 0.0  # "never share your OTP" is advice, not an ask
+            if prot > 0:
+                s = 0.0  # "never share your OTP" / "police never ask for money" is advice, not an ask
             if s <= 0:
                 continue
             if tactic not in best or s > best[tactic].strength:

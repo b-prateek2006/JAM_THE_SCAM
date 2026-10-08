@@ -1,0 +1,994 @@
+{
+ "meta": {
+  "scam": 15,
+  "benign": 15,
+  "l2": "st:paraphrase-multilingual-mpnet-base-v2",
+  "l3": "off"
+ },
+ "results": {
+  "l1": {
+   "summary": {
+    "scam_total": 15,
+    "benign_total": 15,
+    "recall": 0.7333333333333333,
+    "precision": 1.0,
+    "detected": 11,
+    "false_alerts": 0,
+    "benign_cautions": 0,
+    "median_time_to_alert_s": 19.0,
+    "median_lead_before_money_s": 0.0,
+    "alerted_before_money_ask": 1
+   },
+   "rows": [
+    {
+     "id": "aadhaar_hindi_dev",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "Aadhaar misuse, Devanagari",
+     "max_level": 2,
+     "peak_score": 80,
+     "alert_t": 18.0,
+     "caution_t": 11.0,
+     "money_t": 18.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "aadhaar_laundering_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Aadhaar money laundering",
+     "max_level": 2,
+     "peak_score": 82,
+     "alert_t": 37.0,
+     "caution_t": 37.0,
+     "money_t": 37.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "cbi_hindi_roman",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "CBI officer, romanised Hindi",
+     "max_level": 2,
+     "peak_score": 73,
+     "alert_t": 19.0,
+     "caution_t": 13.0,
+     "money_t": 19.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "courier_hinglish",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "Courier drugs, Hinglish",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 35.0,
+     "caution_t": 18.0,
+     "money_t": 35.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "AUTHORITY",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "customs_gift_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Customs gift parcel fee",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 17.0,
+     "caution_t": 17.0,
+     "money_t": 17.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "ed_custody_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Enforcement Directorate digital custody",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 21.0,
+     "caution_t": 21.0,
+     "money_t": 21.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "REMOTE_ACCESS",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "paraphrase_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Paraphrased scam, few keywords",
+     "max_level": 1,
+     "peak_score": 54,
+     "alert_t": null,
+     "caution_t": 27.0,
+     "money_t": 27.0,
+     "lead_s": null,
+     "tactics": [
+      "ISOLATION",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "parcel_customs_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "DHL parcel held at customs",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 40.0,
+     "caution_t": 33.0,
+     "money_t": 40.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "AUTHORITY",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "remote_access_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Fake cyber police, screen share",
+     "max_level": 2,
+     "peak_score": 67,
+     "alert_t": 18.0,
+     "caution_t": 12.0,
+     "money_t": 6.0,
+     "lead_s": -12.0,
+     "tactics": [
+      "REMOTE_ACCESS",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "slow_burn_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Slow burn, money ask late",
+     "max_level": 0,
+     "peak_score": 33,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": 35.0,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY",
+      "ISOLATION"
+     ]
+    },
+    {
+     "id": "son_arrested_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Your son is arrested",
+     "max_level": 1,
+     "peak_score": 52,
+     "alert_t": null,
+     "caution_t": 23.0,
+     "money_t": 23.0,
+     "lead_s": null,
+     "tactics": [
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "telugu_mixed",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Telugu/English code-mixed ED call",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 19.0,
+     "caution_t": 13.0,
+     "money_t": 19.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "ISOLATION",
+      "ARREST_THREAT",
+      "REMOTE_ACCESS"
+     ]
+    },
+    {
+     "id": "telugu_parcel",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Telugu parcel scam",
+     "max_level": 1,
+     "peak_score": 45,
+     "alert_t": null,
+     "caution_t": 17.0,
+     "money_t": 23.0,
+     "lead_s": null,
+     "tactics": [
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "ISOLATION"
+     ]
+    },
+    {
+     "id": "telugu_roman",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Romanised Telugu police",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 18.0,
+     "caution_t": 12.0,
+     "money_t": 24.0,
+     "lead_s": 6.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "trai_sim_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "TRAI SIM block",
+     "max_level": 3,
+     "peak_score": 87,
+     "alert_t": 34.0,
+     "caution_t": 15.0,
+     "money_t": 34.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "AUTHORITY",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "bank_fraud_team_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Bank fraud team verifying a transaction",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "bank_hinglish",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Bank fraud team, Hinglish",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cancel_order_otp_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Customer care, cancellation OTP in app",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cyber_awareness_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Police cyber-awareness talk (lots of keywords)",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "delivery_hindi_dev",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Delivery agent, Devanagari",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "delivery_otp_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Delivery agent asking for delivery OTP",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "doctor_appointment_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Clinic appointment",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "electricity_hindi",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Electricity bill reminder, Hinglish",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "emi_bounce_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "EMI bounce notice",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "insurance_renewal_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Insurance renewal reminder",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "passport_police_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Genuine passport verification",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "relative_money_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Relative urgently asking for money",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "telugu_bank",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Telugu bank fraud team",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "telugu_delivery",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Telugu delivery call",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "telugu_relative",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Telugu relative asking for money",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    }
+   ],
+   "seconds": 0.1
+  },
+  "l1l2": {
+   "summary": {
+    "scam_total": 15,
+    "benign_total": 15,
+    "recall": 1.0,
+    "precision": 1.0,
+    "detected": 15,
+    "false_alerts": 0,
+    "benign_cautions": 1,
+    "median_time_to_alert_s": 18.0,
+    "median_lead_before_money_s": 7.0,
+    "alerted_before_money_ask": 9
+   },
+   "rows": [
+    {
+     "id": "aadhaar_hindi_dev",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "Aadhaar misuse, Devanagari",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 5.0,
+     "caution_t": 5.0,
+     "money_t": 18.0,
+     "lead_s": 13.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "MONEY_ASK",
+      "ARREST_THREAT",
+      "ISOLATION"
+     ]
+    },
+    {
+     "id": "aadhaar_laundering_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Aadhaar money laundering",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 24.0,
+     "caution_t": 24.0,
+     "money_t": 37.0,
+     "lead_s": 13.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "REMOTE_ACCESS",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "cbi_hindi_roman",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "CBI officer, romanised Hindi",
+     "max_level": 3,
+     "peak_score": 91,
+     "alert_t": 13.0,
+     "caution_t": 7.0,
+     "money_t": 19.0,
+     "lead_s": 6.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "courier_hinglish",
+     "kind": "scam",
+     "lang": "hi",
+     "title": "Courier drugs, Hinglish",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 18.0,
+     "caution_t": 18.0,
+     "money_t": 35.0,
+     "lead_s": 17.0,
+     "tactics": [
+      "ACCUSATION",
+      "AUTHORITY",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "URGENCY",
+      "CREDENTIAL",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "customs_gift_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Customs gift parcel fee",
+     "max_level": 3,
+     "peak_score": 95,
+     "alert_t": 17.0,
+     "caution_t": 17.0,
+     "money_t": 17.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "ed_custody_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Enforcement Directorate digital custody",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 14.0,
+     "caution_t": 6.0,
+     "money_t": 21.0,
+     "lead_s": 7.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "REMOTE_ACCESS",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "paraphrase_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Paraphrased scam, few keywords",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 20.0,
+     "caution_t": 13.0,
+     "money_t": 27.0,
+     "lead_s": 7.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "parcel_customs_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "DHL parcel held at customs",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 40.0,
+     "caution_t": 33.0,
+     "money_t": 40.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "AUTHORITY",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "remote_access_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Fake cyber police, screen share",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 6.0,
+     "caution_t": 6.0,
+     "money_t": 6.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "REMOTE_ACCESS",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "slow_burn_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Slow burn, money ask late",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 35.0,
+     "caution_t": 24.0,
+     "money_t": 35.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "son_arrested_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "Your son is arrested",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 23.0,
+     "caution_t": 16.0,
+     "money_t": 23.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "telugu_mixed",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Telugu/English code-mixed ED call",
+     "max_level": 3,
+     "peak_score": 97,
+     "alert_t": 19.0,
+     "caution_t": 13.0,
+     "money_t": 19.0,
+     "lead_s": 0.0,
+     "tactics": [
+      "ACCUSATION",
+      "ISOLATION",
+      "ARREST_THREAT",
+      "REMOTE_ACCESS"
+     ]
+    },
+    {
+     "id": "telugu_parcel",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Telugu parcel scam",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 11.0,
+     "caution_t": 11.0,
+     "money_t": 23.0,
+     "lead_s": 12.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ARREST_THREAT",
+      "ISOLATION",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "telugu_roman",
+     "kind": "scam",
+     "lang": "te",
+     "title": "Romanised Telugu police",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 12.0,
+     "caution_t": 12.0,
+     "money_t": 24.0,
+     "lead_s": 12.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "ARREST_THREAT",
+      "MONEY_ASK"
+     ]
+    },
+    {
+     "id": "trai_sim_en",
+     "kind": "scam",
+     "lang": "en",
+     "title": "TRAI SIM block",
+     "max_level": 3,
+     "peak_score": 100,
+     "alert_t": 21.0,
+     "caution_t": 15.0,
+     "money_t": 34.0,
+     "lead_s": 13.0,
+     "tactics": [
+      "AUTHORITY",
+      "ACCUSATION",
+      "ISOLATION",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "bank_fraud_team_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Bank fraud team verifying a transaction",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "bank_hinglish",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Bank fraud team, Hinglish",
+     "max_level": 0,
+     "peak_score": 15,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "URGENCY",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "cancel_order_otp_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Customer care, cancellation OTP in app",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "cyber_awareness_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Police cyber-awareness talk (lots of keywords)",
+     "max_level": 0,
+     "peak_score": 9,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "AUTHORITY"
+     ]
+    },
+    {
+     "id": "delivery_hindi_dev",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Delivery agent, Devanagari",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "delivery_otp_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Delivery agent asking for delivery OTP",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "doctor_appointment_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Clinic appointment",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "electricity_hindi",
+     "kind": "benign",
+     "lang": "hi",
+     "title": "Electricity bill reminder, Hinglish",
+     "max_level": 1,
+     "peak_score": 62,
+     "alert_t": null,
+     "caution_t": 0.0,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "ISOLATION",
+      "URGENCY",
+      "CREDENTIAL"
+     ]
+    },
+    {
+     "id": "emi_bounce_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "EMI bounce notice",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "insurance_renewal_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Insurance renewal reminder",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "passport_police_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Genuine passport verification",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "relative_money_en",
+     "kind": "benign",
+     "lang": "en",
+     "title": "Relative urgently asking for money",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "telugu_bank",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Telugu bank fraud team",
+     "max_level": 0,
+     "peak_score": 8,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "ACCUSATION"
+     ]
+    },
+    {
+     "id": "telugu_delivery",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Telugu delivery call",
+     "max_level": 0,
+     "peak_score": 0,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": []
+    },
+    {
+     "id": "telugu_relative",
+     "kind": "benign",
+     "lang": "te",
+     "title": "Telugu relative asking for money",
+     "max_level": 0,
+     "peak_score": 16,
+     "alert_t": null,
+     "caution_t": null,
+     "money_t": null,
+     "lead_s": null,
+     "tactics": [
+      "URGENCY",
+      "CREDENTIAL"
+     ]
+    }
+   ],
+   "seconds": 4.6
+  }
+ }
+}

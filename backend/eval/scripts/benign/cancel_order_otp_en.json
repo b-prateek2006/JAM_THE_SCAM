@@ -1,0 +1,22 @@
+{
+ "title": "Customer care, cancellation OTP in app",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hi, this is Swiggy customer support regarding your cancellation request."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "Your refund of 486 rupees will be credited to the original payment method in 3 to 5 days."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "You will get an OTP to confirm the cancellation, please enter it in the app yourself. We do not need it on the call."
+  }
+ ]
+}

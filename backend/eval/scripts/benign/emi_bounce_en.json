@@ -1,0 +1,22 @@
+{
+ "title": "EMI bounce notice",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Good afternoon, I am calling from Bajaj Finance collections."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "Your EMI for this month was not paid because of insufficient balance. A bounce charge of 500 rupees has been added."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Please pay through the app or the payment link sent to your registered email before the due date to avoid further charges."
+  }
+ ]
+}

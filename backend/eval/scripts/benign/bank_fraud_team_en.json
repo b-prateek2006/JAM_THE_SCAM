@@ -1,0 +1,37 @@
+{
+ "title": "Bank fraud team verifying a transaction",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, this is Rohan calling from ICICI Bank card security."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "We have flagged a transaction of 42,000 rupees on your credit card at an online store. Did you authorise this payment?"
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "No, I did not."
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Okay, I am blocking the card right now for your safety. A new card will reach you in five working days."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "You will receive an SMS confirming the block. Please do not share your OTP or card details with anyone who calls you."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "You can raise a dispute in the mobile app or at your branch. Thank you."
+  }
+ ]
+}

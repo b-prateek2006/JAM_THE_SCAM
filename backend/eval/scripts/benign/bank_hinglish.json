@@ -1,0 +1,27 @@
+{
+ "title": "Bank fraud team, Hinglish",
+ "kind": "benign",
+ "lang": "hi",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Namaste, main SBI fraud prevention team se bol raha hoon."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "Kya aapne abhi 25,000 ka online payment kiya hai?"
+  },
+  {
+   "delay": 5,
+   "speaker": "user",
+   "text": "Nahi, maine nahi kiya."
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Theek hai, hum aapka card block kar rahe hain. Apna OTP kisi ko mat batana, bank kabhi OTP nahi maangta."
+  }
+ ]
+}

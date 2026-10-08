@@ -1,0 +1,27 @@
+{
+ "title": "Genuine passport verification",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Good morning, I am head constable Suresh from Jubilee Hills police station."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "I am calling regarding your passport application for police verification."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "I will visit your house tomorrow between 11 and 1. Please keep your Aadhaar, address proof and two neighbours available as witnesses."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "If tomorrow is not convenient you can also come to the station with the originals."
+  }
+ ]
+}

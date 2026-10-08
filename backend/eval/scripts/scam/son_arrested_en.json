@@ -1,0 +1,38 @@
+{
+ "title": "Your son is arrested",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, is this the father of Rahul?"
+  },
+  {
+   "delay": 4,
+   "speaker": "user",
+   "text": "Yes, who is calling?"
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "I am calling from the police station. Your son has been caught in a rape case with three other boys."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "What? Where is he?"
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "He is with us. If you want to save his career we can settle it here without FIR. Do not call anyone, otherwise media will come."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Send fifty thousand on this UPI number immediately and I will release him.",
+   "money_ask": true
+  }
+ ]
+}

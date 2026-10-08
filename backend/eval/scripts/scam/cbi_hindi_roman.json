@@ -1,0 +1,28 @@
+{
+ "title": "CBI officer, romanised Hindi",
+ "kind": "scam",
+ "lang": "hi",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello sir, main CBI headquarters Delhi se baat kar raha hoon. Aapka naam ek bade scam mein aaya hai."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Agar aapne cooperate nahi kiya to aapko aaj hi giraftaar kar lenge."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Yeh national security ka mamla hai, aap kisi se baat nahi kar sakte."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Abhi turant apne account ki details aur OTP bataiye taaki hum verify kar sakein.",
+   "money_ask": true
+  }
+ ]
+}

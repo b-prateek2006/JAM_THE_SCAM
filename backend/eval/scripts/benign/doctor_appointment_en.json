@@ -1,0 +1,17 @@
+{
+ "title": "Clinic appointment",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, this is Apollo clinic. Your appointment with Dr. Sharma is confirmed for tomorrow at 10 am."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Please bring your old reports and come 15 minutes early for registration."
+  }
+ ]
+}

@@ -258,7 +258,7 @@ class CallSession:
                 pass
         full_text = "\n".join(u.text for u in self.transcript if u.speaker != "user")
         st = self.scorer.state
-        tactics = {k: {"confidence": v.confidence, "evidence": v.evidence, "first_t": v.first_t}
+        tactics = {k: {"confidence": v.confidence, "evidence": v.first_evidence or v.evidence, "first_t": v.first_t}
                    for k, v in st.tactics.items()}
         return build_report(
             call_id=self.call_id, started_at=self.started_at,

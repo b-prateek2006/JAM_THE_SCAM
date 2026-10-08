@@ -1,0 +1,28 @@
+{
+ "title": "Customs gift parcel fee",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, I am calling from the customs office at Mumbai airport."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "A parcel from London has come for you with gold and foreign currency. It was sent by your friend."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Because it was not declared, it is an offence under customs act. You can be arrested for smuggling."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "To avoid the case you have to pay customs clearance charge of 45,000 rupees today itself.",
+   "money_ask": true
+  }
+ ]
+}

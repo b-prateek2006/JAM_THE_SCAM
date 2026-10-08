@@ -1,124 +1,471 @@
 {
   "_note": "L2 semantic library. Scam lines are paraphrased from patterns described in public police advisories and news reports; benign lines are hard negatives. Do not copy eval/ scripts here, or the eval leaks.",
   "scam": [
-    {"tactic": "ACCUSATION", "text": "A parcel booked in your name has been seized and it contains illegal drugs"},
-    {"tactic": "ACCUSATION", "text": "Customs found five fake passports and synthetic drugs in a courier sent using your Aadhaar"},
-    {"tactic": "ACCUSATION", "text": "Your Aadhaar card has been used to open bank accounts for money laundering"},
-    {"tactic": "ACCUSATION", "text": "Your name has come up in a big financial fraud investigation"},
-    {"tactic": "ACCUSATION", "text": "A SIM card issued on your ID is being used for illegal activities and harassment"},
-    {"tactic": "ACCUSATION", "text": "There are seventeen complaints registered against your mobile number"},
-    {"tactic": "ACCUSATION", "text": "Your bank account received crores of rupees of hawala money"},
-    {"tactic": "ACCUSATION", "text": "Your son has been caught with drugs and he is in our custody"},
-    {"tactic": "ACCUSATION", "text": "Your number is connected to a terror funding case"},
-    {"tactic": "ACCUSATION", "text": "aapke Aadhaar se ek account khula hai jisme money laundering hui hai"},
-    {"tactic": "ACCUSATION", "text": "aapke naam par ek parcel aaya hai usme drugs mile hain"},
-    {"tactic": "ACCUSATION", "text": "आपके नाम पर भेजे गए पार्सल में ड्रग्स मिले हैं"},
-    {"tactic": "ACCUSATION", "text": "मनी लॉन्ड्रिंग केस में आपका आधार नंबर इस्तेमाल हुआ है"},
-    {"tactic": "ACCUSATION", "text": "మీ పేరు మీద వచ్చిన పార్సెల్ లో డ్రగ్స్ దొరికాయి"},
-    {"tactic": "ACCUSATION", "text": "మీ ఆధార్ నంబర్ తో మనీ లాండరింగ్ జరిగింది"},
-    {"tactic": "ACCUSATION", "text": "mee peru meeda oka case register ayyindi"},
-
-    {"tactic": "AUTHORITY", "text": "I am calling from Mumbai cyber crime department, this is an official call"},
-    {"tactic": "AUTHORITY", "text": "I am transferring your call to the CBI officer handling your case"},
-    {"tactic": "AUTHORITY", "text": "This is Inspector Verma from the Narcotics Control Bureau"},
-    {"tactic": "AUTHORITY", "text": "Note down my badge number and the FIR number for your records"},
-    {"tactic": "AUTHORITY", "text": "I am a senior IPS officer, you are speaking to the investigating officer"},
-    {"tactic": "AUTHORITY", "text": "This call is from the Telecom Regulatory Authority, your number will be disconnected"},
-    {"tactic": "AUTHORITY", "text": "We are from the Enforcement Directorate, financial crimes division"},
-    {"tactic": "AUTHORITY", "text": "Please join the video call, the officer is sitting in the police station"},
-    {"tactic": "AUTHORITY", "text": "The Supreme Court has issued an order in your name"},
-    {"tactic": "AUTHORITY", "text": "main Delhi crime branch se bol raha hoon"},
-    {"tactic": "AUTHORITY", "text": "मैं सीबीआई अधिकारी बोल रहा हूँ"},
-    {"tactic": "AUTHORITY", "text": "నేను హైదరాబాద్ సైబర్ క్రైమ్ పోలీస్ స్టేషన్ నుండి మాట్లాడుతున్నాను"},
-    {"tactic": "AUTHORITY", "text": "nenu CBI officer ni matladutunnanu"},
-
-    {"tactic": "ISOLATION", "text": "Do not tell anyone in your family about this, it is a confidential matter"},
-    {"tactic": "ISOLATION", "text": "This is a matter of national security, you cannot discuss it with anybody"},
-    {"tactic": "ISOLATION", "text": "Stay on the video call and do not disconnect until the investigation is over"},
-    {"tactic": "ISOLATION", "text": "Go into a room alone and lock the door, nobody should hear this"},
-    {"tactic": "ISOLATION", "text": "If you speak to a lawyer or your relatives you will be treated as an accomplice"},
-    {"tactic": "ISOLATION", "text": "You are under digital surveillance now, keep your camera on at all times"},
-    {"tactic": "ISOLATION", "text": "Do not cut the call, if you disconnect we will consider you absconding"},
-    {"tactic": "ISOLATION", "text": "kisi ko bhi mat batana, ghar walon ko bhi nahi"},
-    {"tactic": "ISOLATION", "text": "किसी को भी इस बारे में मत बताना, यह गोपनीय जांच है"},
-    {"tactic": "ISOLATION", "text": "ఈ విషయం మీ కుటుంబానికి కూడా చెప్పకండి, ఇది రహస్య విచారణ"},
-    {"tactic": "ISOLATION", "text": "call cut cheyakandi, evvariki cheppakandi"},
-
-    {"tactic": "ARREST_THREAT", "text": "You are under digital arrest from this moment"},
-    {"tactic": "ARREST_THREAT", "text": "A non bailable arrest warrant has been issued against you"},
-    {"tactic": "ARREST_THREAT", "text": "If you do not cooperate the local police will come and arrest you"},
-    {"tactic": "ARREST_THREAT", "text": "You will go to jail for seven years under this act"},
-    {"tactic": "ARREST_THREAT", "text": "All your bank accounts will be frozen today"},
-    {"tactic": "ARREST_THREAT", "text": "aapko abhi giraftaar kiya ja sakta hai"},
-    {"tactic": "ARREST_THREAT", "text": "आपके खिलाफ गिरफ्तारी वारंट जारी हो गया है"},
-    {"tactic": "ARREST_THREAT", "text": "మిమ్మల్ని డిజిటల్ అరెస్ట్ చేస్తున్నాం"},
-    {"tactic": "ARREST_THREAT", "text": "meeru arrest avutaru, jail ki veltaru"},
-
-    {"tactic": "URGENCY", "text": "You have only two hours to clear your name"},
-    {"tactic": "URGENCY", "text": "This has to be done today itself otherwise the case goes to court"},
-    {"tactic": "URGENCY", "text": "Act immediately, the officers are already on the way"},
-    {"tactic": "URGENCY", "text": "This is your final chance before we take action"},
-    {"tactic": "URGENCY", "text": "abhi ke abhi karna padega warna late ho jayega"},
-    {"tactic": "URGENCY", "text": "తొందరగా చేయండి, ఇంకా ఒక గంట మాత్రమే ఉంది"},
-
-    {"tactic": "MONEY_ASK", "text": "Transfer all your savings to the RBI safe account for verification"},
-    {"tactic": "MONEY_ASK", "text": "The money will be refunded after the investigation is complete"},
-    {"tactic": "MONEY_ASK", "text": "You need to deposit a security amount to prove your innocence"},
-    {"tactic": "MONEY_ASK", "text": "Break your fixed deposits and send the amount to this government account"},
-    {"tactic": "MONEY_ASK", "text": "Send the money to this UPI ID, it is a supervised escrow account"},
-    {"tactic": "MONEY_ASK", "text": "We need to check that your funds are legal, move them to our account"},
-    {"tactic": "MONEY_ASK", "text": "Pay the clearance fee and your name will be removed from the case"},
-    {"tactic": "MONEY_ASK", "text": "apne account ka saara paisa is account mein transfer kar dijiye"},
-    {"tactic": "MONEY_ASK", "text": "जांच के लिए अपने सारे पैसे इस सुरक्षित खाते में भेज दीजिए"},
-    {"tactic": "MONEY_ASK", "text": "మీ డబ్బు మొత్తం ఈ సురక్షిత ఖాతాకు పంపండి, తర్వాత తిరిగి ఇస్తాం"},
-    {"tactic": "MONEY_ASK", "text": "mee account lo unna dabbu motham ee account ki transfer cheyandi"},
-
-    {"tactic": "REMOTE_ACCESS", "text": "Install AnyDesk so our technical team can verify your account"},
-    {"tactic": "REMOTE_ACCESS", "text": "Download this app from the link and share your screen with us"},
-    {"tactic": "REMOTE_ACCESS", "text": "Open TeamViewer and read out the code on your screen"},
-    {"tactic": "REMOTE_ACCESS", "text": "Move to a Skype video call, the officer will record your statement"},
-
-    {"tactic": "CREDENTIAL", "text": "Read out the OTP you just received to complete verification"},
-    {"tactic": "CREDENTIAL", "text": "Tell me your UPI PIN so that we can freeze the suspicious transaction"},
-    {"tactic": "CREDENTIAL", "text": "Give me your card number and CVV for the verification process"},
-    {"tactic": "CREDENTIAL", "text": "jo OTP aaya hai woh bata dijiye"},
-    {"tactic": "CREDENTIAL", "text": "మీకు వచ్చిన ఓటీపీ చెప్పండి"}
+    {
+      "tactic": "ACCUSATION",
+      "text": "A parcel booked in your name has been seized and it contains illegal drugs"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "Customs found five fake passports and synthetic drugs in a courier sent using your Aadhaar"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "Your Aadhaar card has been used to open bank accounts for money laundering"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "Your name has come up in a big financial fraud investigation"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "A SIM card issued on your ID is being used for illegal activities and harassment"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "There are seventeen complaints registered against your mobile number"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "Your bank account received crores of rupees of hawala money"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "Your son has been caught with drugs and he is in our custody"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "Your number is connected to a terror funding case"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "aapke Aadhaar se ek account khula hai jisme money laundering hui hai"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "aapke naam par ek parcel aaya hai usme drugs mile hain"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "आपके नाम पर भेजे गए पार्सल में ड्रग्स मिले हैं"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "मनी लॉन्ड्रिंग केस में आपका आधार नंबर इस्तेमाल हुआ है"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "మీ పేరు మీద వచ్చిన పార్సెల్ లో డ్రగ్స్ దొరికాయి"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "మీ ఆధార్ నంబర్ తో మనీ లాండరింగ్ జరిగింది"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "mee peru meeda oka case register ayyindi"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "I am calling from Mumbai cyber crime department, this is an official call"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "I am transferring your call to the CBI officer handling your case"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "This is Inspector Verma from the Narcotics Control Bureau"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "Note down my badge number and the FIR number for your records"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "I am a senior IPS officer, you are speaking to the investigating officer"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "This call is from the Telecom Regulatory Authority, your number will be disconnected"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "We are from the Enforcement Directorate, financial crimes division"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "Please join the video call, the officer is sitting in the police station"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "The Supreme Court has issued an order in your name"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "main Delhi crime branch se bol raha hoon"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "मैं सीबीआई अधिकारी बोल रहा हूँ"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "నేను హైదరాబాద్ సైబర్ క్రైమ్ పోలీస్ స్టేషన్ నుండి మాట్లాడుతున్నాను"
+    },
+    {
+      "tactic": "AUTHORITY",
+      "text": "nenu CBI officer ni matladutunnanu"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "Do not tell anyone in your family about this, it is a confidential matter"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "This is a matter of national security, you cannot discuss it with anybody"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "Stay on the video call and do not disconnect until the investigation is over"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "Go into a room alone and lock the door, nobody should hear this"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "If you speak to a lawyer or your relatives you will be treated as an accomplice"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "You are under digital surveillance now, keep your camera on at all times"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "Do not cut the call, if you disconnect we will consider you absconding"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "kisi ko bhi mat batana, ghar walon ko bhi nahi"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "किसी को भी इस बारे में मत बताना, यह गोपनीय जांच है"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "ఈ విషయం మీ కుటుంబానికి కూడా చెప్పకండి, ఇది రహస్య విచారణ"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "call cut cheyakandi, evvariki cheppakandi"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "You are under digital arrest from this moment"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "A non bailable arrest warrant has been issued against you"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "If you do not cooperate the local police will come and arrest you"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "You will go to jail for seven years under this act"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "All your bank accounts will be frozen today"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "aapko abhi giraftaar kiya ja sakta hai"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "आपके खिलाफ गिरफ्तारी वारंट जारी हो गया है"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "మిమ్మల్ని డిజిటల్ అరెస్ట్ చేస్తున్నాం"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "meeru arrest avutaru, jail ki veltaru"
+    },
+    {
+      "tactic": "URGENCY",
+      "text": "You have only two hours to clear your name"
+    },
+    {
+      "tactic": "URGENCY",
+      "text": "This has to be done today itself otherwise the case goes to court"
+    },
+    {
+      "tactic": "URGENCY",
+      "text": "Act immediately, the officers are already on the way"
+    },
+    {
+      "tactic": "URGENCY",
+      "text": "This is your final chance before we take action"
+    },
+    {
+      "tactic": "URGENCY",
+      "text": "abhi ke abhi karna padega warna late ho jayega"
+    },
+    {
+      "tactic": "URGENCY",
+      "text": "తొందరగా చేయండి, ఇంకా ఒక గంట మాత్రమే ఉంది"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "Transfer all your savings to the RBI safe account for verification"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "The money will be refunded after the investigation is complete"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "You need to deposit a security amount to prove your innocence"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "Break your fixed deposits and send the amount to this government account"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "Send the money to this UPI ID, it is a supervised escrow account"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "We need to check that your funds are legal, move them to our account"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "Pay the clearance fee and your name will be removed from the case"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "apne account ka saara paisa is account mein transfer kar dijiye"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "जांच के लिए अपने सारे पैसे इस सुरक्षित खाते में भेज दीजिए"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "మీ డబ్బు మొత్తం ఈ సురక్షిత ఖాతాకు పంపండి, తర్వాత తిరిగి ఇస్తాం"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "mee account lo unna dabbu motham ee account ki transfer cheyandi"
+    },
+    {
+      "tactic": "REMOTE_ACCESS",
+      "text": "Install AnyDesk so our technical team can verify your account"
+    },
+    {
+      "tactic": "REMOTE_ACCESS",
+      "text": "Download this app from the link and share your screen with us"
+    },
+    {
+      "tactic": "REMOTE_ACCESS",
+      "text": "Open TeamViewer and read out the code on your screen"
+    },
+    {
+      "tactic": "REMOTE_ACCESS",
+      "text": "Move to a Skype video call, the officer will record your statement"
+    },
+    {
+      "tactic": "CREDENTIAL",
+      "text": "Read out the OTP you just received to complete verification"
+    },
+    {
+      "tactic": "CREDENTIAL",
+      "text": "Tell me your UPI PIN so that we can freeze the suspicious transaction"
+    },
+    {
+      "tactic": "CREDENTIAL",
+      "text": "Give me your card number and CVV for the verification process"
+    },
+    {
+      "tactic": "CREDENTIAL",
+      "text": "jo OTP aaya hai woh bata dijiye"
+    },
+    {
+      "tactic": "CREDENTIAL",
+      "text": "మీకు వచ్చిన ఓటీపీ చెప్పండి"
+    },
+    {
+      "tactic": "ISOLATION",
+      "text": "This investigation is sealed, you cannot discuss it with your spouse or anyone at home"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "Keep your money with the department for some time, it will be returned once you are cleared"
+    },
+    {
+      "tactic": "ACCUSATION",
+      "text": "Your son has been picked up by the police in a serious criminal case"
+    },
+    {
+      "tactic": "MONEY_ASK",
+      "text": "Pay the amount now and the matter will be settled without registering a case"
+    },
+    {
+      "tactic": "ARREST_THREAT",
+      "text": "If you do not cooperate you will be taken into custody tonight"
+    }
   ],
   "benign": [
-    {"text": "This is the fraud monitoring team from your bank, did you make a purchase of twelve thousand rupees just now"},
-    {"text": "If you did not make this transaction we will block your card for your safety"},
-    {"text": "Please never share your OTP or PIN with anyone, not even with bank staff"},
-    {"text": "The bank will never ask for your password or OTP over the phone"},
-    {"text": "You can visit your home branch with your ID proof to update your KYC"},
-    {"text": "For any doubt please call the number printed on the back of your card"},
-    {"text": "Hello sir, I am the delivery agent, I am outside your building with your parcel"},
-    {"text": "Please share the OTP for delivery when I hand over the package"},
-    {"text": "Your order has been shipped and will be delivered tomorrow"},
-    {"text": "Ma'am I am calling from customer care regarding your cancellation request"},
-    {"text": "To cancel your order you will receive an OTP, please enter it in the app"},
-    {"text": "This is constable Ramesh from the local police station, I am coming for your passport verification"},
-    {"text": "Please keep your Aadhaar and address proof ready for the passport verification visit"},
-    {"text": "You can come to the police station with your documents tomorrow morning"},
-    {"text": "Beta I urgently need some money for the hospital, can you send it on UPI"},
-    {"text": "Your electricity bill is due, please pay before the due date on the official app"},
-    {"text": "I am calling from the insurance company to remind you that your policy renewal is due"},
-    {"text": "Your EMI payment has bounced, please pay through net banking or visit the branch"},
-    {"text": "We noticed a login from a new device, if this was you please ignore this message"},
-    {"text": "Sir your cab is waiting at the gate, please share the ride OTP"},
-    {"text": "This is a courtesy call from your bank about a new credit card offer"},
-    {"text": "Your complaint has been registered and the reference number has been sent by SMS"},
-    {"text": "Please do not share your card details with anyone who calls you"},
-    {"text": "Hi this is Priya from HR, can you join the interview call at five"},
-    {"text": "The doctor's appointment is confirmed for tomorrow at ten"},
-    {"text": "main bank ki fraud team se bol raha hoon, kya aapne abhi koi payment kiya hai"},
-    {"text": "apna OTP kisi ko bhi mat batana, bank kabhi OTP nahi maangta"},
-    {"text": "सर आपका पार्सल डिलीवर करने आया हूँ, गेट पर हूँ"},
-    {"text": "कृपया अपना ओटीपी किसी के साथ साझा न करें"},
-    {"text": "మీ పార్సెల్ డెలివరీ చేయడానికి వచ్చాను, గేట్ దగ్గర ఉన్నాను"},
-    {"text": "బ్యాంక్ ఎప్పుడూ ఓటీపీ అడగదు, ఎవరికీ చెప్పకండి"},
-    {"text": "passport verification kosam police station ki raavali, documents teesukuni randi"},
-    {"text": "Amma I lost my wallet, can you send two thousand rupees on PhonePe"},
-    {"text": "Your gas cylinder booking is confirmed, delivery within two days"},
-    {"text": "We are calling to confirm your table reservation for tonight"}
+    {
+      "text": "This is the fraud monitoring team from your bank, did you make a purchase of twelve thousand rupees just now"
+    },
+    {
+      "text": "If you did not make this transaction we will block your card for your safety"
+    },
+    {
+      "text": "Please never share your OTP or PIN with anyone, not even with bank staff"
+    },
+    {
+      "text": "The bank will never ask for your password or OTP over the phone"
+    },
+    {
+      "text": "You can visit your home branch with your ID proof to update your KYC"
+    },
+    {
+      "text": "For any doubt please call the number printed on the back of your card"
+    },
+    {
+      "text": "Hello sir, I am the delivery agent, I am outside your building with your parcel"
+    },
+    {
+      "text": "Please share the OTP for delivery when I hand over the package"
+    },
+    {
+      "text": "Your order has been shipped and will be delivered tomorrow"
+    },
+    {
+      "text": "Ma'am I am calling from customer care regarding your cancellation request"
+    },
+    {
+      "text": "To cancel your order you will receive an OTP, please enter it in the app"
+    },
+    {
+      "text": "This is constable Ramesh from the local police station, I am coming for your passport verification"
+    },
+    {
+      "text": "Please keep your Aadhaar and address proof ready for the passport verification visit"
+    },
+    {
+      "text": "You can come to the police station with your documents tomorrow morning"
+    },
+    {
+      "text": "Beta I urgently need some money for the hospital, can you send it on UPI"
+    },
+    {
+      "text": "Your electricity bill is due, please pay before the due date on the official app"
+    },
+    {
+      "text": "I am calling from the insurance company to remind you that your policy renewal is due"
+    },
+    {
+      "text": "Your EMI payment has bounced, please pay through net banking or visit the branch"
+    },
+    {
+      "text": "We noticed a login from a new device, if this was you please ignore this message"
+    },
+    {
+      "text": "Sir your cab is waiting at the gate, please share the ride OTP"
+    },
+    {
+      "text": "This is a courtesy call from your bank about a new credit card offer"
+    },
+    {
+      "text": "Your complaint has been registered and the reference number has been sent by SMS"
+    },
+    {
+      "text": "Please do not share your card details with anyone who calls you"
+    },
+    {
+      "text": "Hi this is Priya from HR, can you join the interview call at five"
+    },
+    {
+      "text": "The doctor's appointment is confirmed for tomorrow at ten"
+    },
+    {
+      "text": "main bank ki fraud team se bol raha hoon, kya aapne abhi koi payment kiya hai"
+    },
+    {
+      "text": "apna OTP kisi ko bhi mat batana, bank kabhi OTP nahi maangta"
+    },
+    {
+      "text": "सर आपका पार्सल डिलीवर करने आया हूँ, गेट पर हूँ"
+    },
+    {
+      "text": "कृपया अपना ओटीपी किसी के साथ साझा न करें"
+    },
+    {
+      "text": "మీ పార్సెల్ డెలివరీ చేయడానికి వచ్చాను, గేట్ దగ్గర ఉన్నాను"
+    },
+    {
+      "text": "బ్యాంక్ ఎప్పుడూ ఓటీపీ అడగదు, ఎవరికీ చెప్పకండి"
+    },
+    {
+      "text": "passport verification kosam police station ki raavali, documents teesukuni randi"
+    },
+    {
+      "text": "Amma I lost my wallet, can you send two thousand rupees on PhonePe"
+    },
+    {
+      "text": "Your gas cylinder booking is confirmed, delivery within two days"
+    },
+    {
+      "text": "We are calling to confirm your table reservation for tonight"
+    },
+    {
+      "text": "Your refund will be credited to your original payment method within a few working days"
+    },
+    {
+      "text": "Hello, I am calling from the card security team of your bank about a suspicious transaction"
+    },
+    {
+      "text": "There is no such thing as a digital arrest, police will never ask you to transfer money"
+    },
+    {
+      "text": "If someone calls claiming to be from CBI or customs and asks for money, hang up and call 1930"
+    },
+    {
+      "text": "This is an awareness message, fraudsters are pretending to be police officers on video calls"
+    },
+    {
+      "text": "Cash on delivery amount can be paid by UPI or cash to the delivery person"
+    },
+    {
+      "text": "Please pay your bill through the official app or at the office counter"
+    },
+    {
+      "text": "We have blocked your card, a replacement card will be sent to your registered address"
+    },
+    {
+      "text": "Your appointment is confirmed, please bring your previous reports"
+    },
+    {
+      "text": "Please enter the OTP in the app yourself, do not read it out to anyone on the phone"
+    },
+    {
+      "text": "मैं बैंक से बोल रहा हूँ, क्या आपने यह लेनदेन किया है"
+    },
+    {
+      "text": "డెలివరీ ఓటీపీ చెప్పండి సార్, పార్సెల్ ఇస్తాను"
+    },
+    {
+      "text": "నేను బ్యాంక్ నుండి మాట్లాడుతున్నాను, ఈ లావాదేవీ మీరు చేశారా"
+    }
   ]
 }

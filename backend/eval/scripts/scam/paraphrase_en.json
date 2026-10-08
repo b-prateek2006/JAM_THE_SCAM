@@ -1,0 +1,33 @@
+{
+ "title": "Paraphrased scam, few keywords",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, this is regarding an official inquiry. Your identity has been found in records connected to illegal fund movement."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "I am the investigating officer assigned to your file."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "For your own protection, keep this conversation between us until the matter is closed. Your relatives might be questioned otherwise."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "There is very little time. If the file goes to the magistrate tonight you will be taken into custody."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "The only way to close the file is to place your balance with the department temporarily. It comes back once you are cleared.",
+   "money_ask": true
+  }
+ ]
+}

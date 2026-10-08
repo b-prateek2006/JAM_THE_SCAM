@@ -1,0 +1,17 @@
+{
+ "title": "Telugu relative asking for money",
+ "kind": "benign",
+ "lang": "te",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Amma, nenu ni. Naa wallet poyindi, urgent ga two thousand PhonePe cheyagalava?"
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Evening intiki vachaka istanu."
+  }
+ ]
+}

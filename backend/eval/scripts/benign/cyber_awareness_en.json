@@ -1,0 +1,27 @@
+{
+ "title": "Police cyber-awareness talk (lots of keywords)",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Namaste, this is a cyber awareness message from Hyderabad city police."
+  },
+  {
+   "delay": 5,
+   "speaker": "caller",
+   "text": "Fraudsters are calling people pretending to be CBI or customs officers and claiming a digital arrest. There is no such thing as digital arrest."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "Police will never ask you to transfer money to a safe account or to install AnyDesk."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "If you get such a call, hang up and report it on 1930. Please share this with your family."
+  }
+ ]
+}

@@ -52,21 +52,20 @@ JAM_THE_SCAM/
 │   ├── eval/                          ── section 7: data & evaluation ──
 │   │   ├── scripts/scam/*.json   B  ~30 scam call scripts (parcel, Aadhaar, TRAI, "son arrested", RBI)
 │   │   ├── scripts/benign/*.json B  ~30 hard negatives (bank fraud team, courier, passport police, relative)
-│   │   ├── run_eval.py           B  precision/recall at Level 2, time-to-alert vs money ask, false alerts
-│   │   ├── ablation.py           B  L1 → L1+L2 → L1+L2+L3 table for the slide
-│   │   ├── make_audio.py         A  TTS the scripts into WAVs for the audio path
+│   │   ├── run_eval.py           B  recall/false alerts at Level 2, time-to-alert vs money ask,
+│   │   │                             and the L1 → L1+L2 → L1+L2+L3 ablation table for the slide
+│   │   ├── make_audio.py         A  (todo) TTS the scripts into WAVs to test the audio path
 │   │   └── results/              generated metrics (JSON + markdown table)
 │   │
 │   └── tests/
-│       ├── test_lexicon.py
-│       ├── test_scorer.py        hard rules, smoothing, dampener
-│       └── test_pipeline.py      whole call through CallSession, text-only
+│       └── test_core.py          lexicon, hard rules, smoothing, entity extraction, whole calls
 │
 ├── frontend/                     React PWA (Vite)
 │   ├── index.html
 │   ├── package.json
 │   ├── vite.config.js            dev proxy to the backend
 │   ├── public/
+│   │   ├── pcm-worklet.js        C  AudioWorklet: downsample to 16 kHz Int16 PCM
 │   │   ├── manifest.webmanifest  PWA install
 │   │   ├── sw.js                 service worker (offline shell)
 │   │   └── icons/
@@ -76,7 +75,6 @@ JAM_THE_SCAM/
 │       ├── api.js                REST + WebSocket client
 │       ├── audio/
 │       │   ├── micCapture.js     C  WebAudio mic → 16 kHz PCM frames over the WebSocket
-│       │   ├── pcm-worklet.js    C  AudioWorklet downsampler
 │       │   └── browserStt.js     C  Web Speech API fallback (te-IN / hi-IN / en-IN)
 │       ├── components/
 │       │   ├── RiskMeter.jsx     C  0–100 gauge

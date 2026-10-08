@@ -1,0 +1,34 @@
+{
+ "title": "Enforcement Directorate digital custody",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Good evening, this call is from the Enforcement Directorate regarding a pending investigation against you."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Your PAN card has been used in a hawala transaction of 68 lakhs. The Supreme Court judge has issued an order for your digital custody."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "You are in digital custody now. Disconnecting this call will be treated as escaping from custody."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Install the AnyDesk app so our team can check your accounts for illegal transactions.",
+   "money_ask": true
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "After that you have to break your fixed deposit and deposit the amount for fund verification.",
+   "money_ask": true
+  }
+ ]
+}

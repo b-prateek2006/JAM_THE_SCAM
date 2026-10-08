@@ -1,0 +1,33 @@
+{
+ "title": "Romanised Telugu police",
+ "kind": "scam",
+ "lang": "te",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello andi, nenu Hyderabad cyber crime police station nundi Inspector Rao matladutunnanu."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Mee Aadhaar tho money laundering case lo mee peru vachindi."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Evvariki cheppakandi, mee family ki kuda. Call cut cheyakandi."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Meeru arrest avutaru, jail ki veltaru, ventane cooperate cheyandi."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Mee account lo unna dabbu motham RBI safe account ki transfer cheyandi.",
+   "money_ask": true
+  }
+ ]
+}

@@ -1,0 +1,38 @@
+{
+ "title": "TRAI SIM block",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "This is an automated message from the Telecom Regulatory Authority. Your mobile number will be suspended in two hours. Press 9 to speak to an officer."
+  },
+  {
+   "delay": 8,
+   "speaker": "caller",
+   "text": "Hello, I am from TRAI legal department. A SIM card registered on your name was used to send obscene messages and for fraud."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "I am forwarding your complaint to Mumbai police. Please stay on the line."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Mumbai police, Sub Inspector Pawar speaking. There are 17 complaints on your number. You need to give a statement on video."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Do not tell your family, they may be involved also. Keep your camera on."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Tell me the OTP you just received, it is to verify your identity with the court.",
+   "money_ask": true
+  }
+ ]
+}

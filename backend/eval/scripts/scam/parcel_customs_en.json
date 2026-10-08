@@ -1,0 +1,48 @@
+{
+ "title": "DHL parcel held at customs",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Good morning, this is DHL express, is this Mr. Rao?"
+  },
+  {
+   "delay": 5,
+   "speaker": "user",
+   "text": "Yes speaking"
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Sir, an international shipment under your name is held at Delhi airport customs. Inside we found expired passports and some narcotic substances."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "I will connect you to the narcotics department officer right now, do not put the phone down."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Hello, Officer Mehta here from the Narcotics Control Bureau. Your identity documents are linked to a drug trafficking racket."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "Sir I have no idea about this."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "That is what everybody says. For now this investigation is classified. You must not discuss it with your wife or anyone else."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "We will verify your bank balance. Move the funds to the account I message you, the department will return it in 48 hours once you are cleared.",
+   "money_ask": true
+  }
+ ]
+}

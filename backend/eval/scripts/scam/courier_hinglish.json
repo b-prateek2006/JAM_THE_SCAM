@@ -1,0 +1,43 @@
+{
+ "title": "Courier drugs, Hinglish",
+ "kind": "scam",
+ "lang": "hi",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hello, main FedEx courier se bol raha hoon. Aapke naam se ek parcel Taiwan bheja gaya hai."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Us parcel mein 150 gram MDMA aur teen passport mile hain. Yeh bahut serious matter hai."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Main aapki call Mumbai police ko transfer kar raha hoon."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Mumbai crime branch, main Inspector Shinde. Aapke khilaaf FIR darj ho gayi hai. Aap digital arrest mein hain."
+  },
+  {
+   "delay": 7,
+   "speaker": "user",
+   "text": "Ji sir, main kya karoon?"
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Ghar mein kisi ko kuch nahi batana hai. Video call band mat karna."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Apne bank ka saara balance RBI ke verification account mein daal dijiye, jaanch ke baad wapas mil jayega.",
+   "money_ask": true
+  }
+ ]
+}

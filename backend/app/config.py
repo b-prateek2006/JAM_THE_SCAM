@@ -28,7 +28,7 @@ _load_dotenv()
 class Settings:
     # L2 semantic backend: auto (sentence-transformers if installed) | st | ngram
     embed_backend: str = os.getenv("EMBED_BACKEND", "auto")
-    embed_model: str = os.getenv("EMBED_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    embed_model: str = os.getenv("EMBED_MODEL", "sentence-transformers/paraphrase-multilingual-mpnet-base-v2")
     # STT: whisper | sarvam | none  (browser speech recognition and demo scenarios send text instead)
     stt_backend: str = os.getenv("STT_BACKEND", "whisper")
     whisper_model: str = os.getenv("WHISPER_MODEL", "small")

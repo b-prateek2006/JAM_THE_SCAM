@@ -1,0 +1,17 @@
+{
+ "title": "Electricity bill reminder, Hinglish",
+ "kind": "benign",
+ "lang": "hi",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Namaste, bijli vibhag ki taraf se yaad dilana tha ki aapka bill 20 tareekh tak jama karna hai."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Aap official app se ya office aakar payment kar sakte hain."
+  }
+ ]
+}

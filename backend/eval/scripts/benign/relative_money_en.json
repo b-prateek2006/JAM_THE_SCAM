@@ -1,0 +1,22 @@
+{
+ "title": "Relative urgently asking for money",
+ "kind": "benign",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Hi Amma, it is me, my phone battery is dying."
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "I am at the hospital with Ravi, he had a small accident. They are asking for an advance of 15,000."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "Can you send it on Google Pay right now? I will explain later."
+  }
+ ]
+}

@@ -1,0 +1,48 @@
+{
+ "title": "Aadhaar money laundering",
+ "kind": "scam",
+ "lang": "en",
+ "lines": [
+  {
+   "delay": 0,
+   "speaker": "caller",
+   "text": "Am I talking to Mrs. Kavita Iyer?"
+  },
+  {
+   "delay": 4,
+   "speaker": "user",
+   "text": "Yes"
+  },
+  {
+   "delay": 3,
+   "speaker": "caller",
+   "text": "Madam this is the cyber crime cell. During a raid we seized 240 debit cards and one bank account was opened with your Aadhaar."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "Over two crore rupees of illegal money passed through that account. A case has been registered against you."
+  },
+  {
+   "delay": 6,
+   "speaker": "user",
+   "text": "Oh god, what do I do?"
+  },
+  {
+   "delay": 4,
+   "speaker": "caller",
+   "text": "Join a video call on Skype now. You will remain on camera and you cannot talk to any other person until the inquiry is finished."
+  },
+  {
+   "delay": 7,
+   "speaker": "caller",
+   "text": "If you do not cooperate, a non bailable warrant goes out today and police will come to your house."
+  },
+  {
+   "delay": 6,
+   "speaker": "caller",
+   "text": "To show your money is clean, send whatever is in your savings to the RBI supervision account. It will be refunded after verification.",
+   "money_ask": true
+  }
+ ]
+}
