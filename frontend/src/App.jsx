@@ -3,6 +3,7 @@ import { api } from './api.js'
 import { browserSttSupported } from './audio/browserStt.js'
 import AlertBanner from './components/AlertBanner.jsx'
 import HeroPhone, { ScammerAvatar } from './components/HeroPhone.jsx'
+import HowItWorks from './components/HowItWorks.jsx'
 import Icon from './components/Icon.jsx'
 import LangSwitch from './components/LangSwitch.jsx'
 import ReportView from './components/ReportView.jsx'
@@ -14,6 +15,7 @@ import { callStatus, familyWhatsApp, fmtClock, hardRuleText } from './lib/format
 import { t } from './lib/i18n.js'
 import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
 import { useHashRoute } from './lib/route.js'
+import HelpScreen from './screens/HelpScreen.jsx'
 
 const LEVEL_KEY = ['safe', 'caution', 'warning', 'critical']
 
@@ -22,13 +24,6 @@ const NAV = [
   { id: 'history', icon: 'clock', key: 'history' },
   { id: 'settings', icon: 'settings', key: 'settings' },
   { id: 'help', icon: 'help', key: 'help' },
-]
-
-const STEPS = [
-  { icon: 'mic', n: 1, tone: 'violet' },
-  { icon: 'waves', n: 2, tone: 'teal' },
-  { icon: 'brain', n: 3, tone: 'indigo' },
-  { icon: 'shield', n: 4, tone: 'pink' },
 ]
 
 const WHY = [
@@ -242,24 +237,6 @@ export default function App() {
     </section>
   )
 
-  const howItWorks = (
-    <section className="how">
-      <div className="how-intro">
-        <h2>{t(lang, 'howItWorks')}</h2>
-        <p className="muted">{t(lang, 'howSub')}</p>
-      </div>
-      <div className="steps">
-        {STEPS.map((s) => (
-          <div key={s.n} className="step">
-            <span className={`step-icon ${s.tone}`}><Icon name={s.icon} size={24} /></span>
-            <b>{s.n}. {t(lang, `step${s.n}t`)}</b>
-            <p>{t(lang, `step${s.n}b`)}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  )
-
   const rail = (
     <aside className="rail">
       <section className="card">
@@ -381,27 +358,6 @@ export default function App() {
     </div>
   )
 
-  const helpScreen = (
-    <div className="page">
-      <div className="page-head"><div><span className="eyebrow">{t(lang, 'staySafe')}</span><h2>{t(lang, 'help')}</h2></div></div>
-      <section className="card">
-        <h3 className="card-title">{t(lang, 'neverTitle')}</h3>
-        <ul className="never">
-          {[1, 2, 3, 4].map((n) => <li key={n}><Icon name="x" size={16} /> {t(lang, `never${n}`)}</li>)}
-        </ul>
-      </section>
-      {howItWorks}
-      <section className="card helplines">
-        <h3 className="card-title">{t(lang, 'reportScam')}</h3>
-        <div className="report-to">
-          <a className="btn danger" href="tel:1930"><Icon name="phone" size={16} /> {t(lang, 'call1930')}</a>
-          <a className="btn soft" href="https://cybercrime.gov.in" target="_blank" rel="noreferrer">cybercrime.gov.in <Icon name="external" size={14} /></a>
-          <a className="btn soft" href="https://sancharsaathi.gov.in" target="_blank" rel="noreferrer">Sanchar Saathi Chakshu <Icon name="external" size={14} /></a>
-        </div>
-      </section>
-    </div>
-  )
-
   return (
     <div className={`shell level-${lvl} ${active ? 'calling' : ''} ${showRail ? '' : 'no-rail'}`}>
       <header className="topbar">
@@ -451,12 +407,12 @@ export default function App() {
           <>
             {hero}
             {livePanel}
-            {howItWorks}
+            <HowItWorks lang={lang} />
           </>
         )}
         {screen === 'history' && historyScreen}
         {screen === 'settings' && settingsScreen}
-        {screen === 'help' && helpScreen}
+        {screen === 'help' && <HelpScreen lang={lang} />}
         {screen === 'report' && shownReport && (
           <ReportView report={shownReport} lang={lang} onBack={() => go('history')}
             onNew={() => { call.reset(); go('live') }} />
