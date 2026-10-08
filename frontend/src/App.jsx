@@ -11,6 +11,7 @@ import StageTrack from './components/StageTrack.jsx'
 import Transcript from './components/Transcript.jsx'
 import { LANGS, t } from './lib/i18n.js'
 import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
+import { useHashRoute } from './lib/route.js'
 import { speak, stopSpeaking } from './lib/tts.js'
 
 const EMPTY = { score: 0, level: 0, level_name: 'SAFE', stage: 0, tactics: [], hard_rule: '' }
@@ -19,14 +20,6 @@ const LEVEL_KEY = ['safe', 'caution', 'warning', 'critical']
 const FATAL_STT = ['not-allowed', 'service-not-allowed', 'audio-capture', 'language-not-supported']
 // If the server never answers "stop" with a report, give up after this long.
 const REPORT_TIMEOUT_MS = 15000
-
-// Hash routes (#/history, #/report/<call_id>, ...) so Back and reload work without a router.
-const SCREENS = ['live', 'history', 'settings', 'help', 'report']
-
-function parseHash() {
-  const [screen, id] = location.hash.replace(/^#\/?/, '').split('/')
-  return { screen: SCREENS.includes(screen) ? screen : 'live', id: id ? decodeURIComponent(id) : '' }
-}
 
 // Same normalisation as the backend's whatsapp_link: bare 10-digit numbers are Indian.
 function familyWhatsApp(phone, name) {
@@ -62,7 +55,7 @@ const WHY = [
 
 export default function App() {
   const [settings, setSettings] = useState(loadSettings)
-  const [route, setRoute] = useState(parseHash)
+  const [route, go] = useHashRoute()
   const [active, setActive] = useState(false)
   const [health, setHealth] = useState(null)
   const [scenarios, setScenarios] = useState([])
@@ -92,12 +85,6 @@ export default function App() {
     document.documentElement.lang = lang
   }, [lang])
 
-  useEffect(() => {
-    const onHash = () => setRoute(parseHash())
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
-  }, [])
-
   const refresh = () => {
     api.health().then(setHealth).catch(() => setHealth(null))
     api.scenarios().then(setScenarios).catch(() => {})
@@ -122,11 +109,6 @@ export default function App() {
 
   const set = (k) => (e) => setSettings((s) => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
   const setLang = (code) => setSettings((s) => ({ ...s, lang: code }))
-  const go = (id, reportId, { scroll = true } = {}) => {
-    const hash = id === 'live' ? '#/' : `#/${id}${reportId ? '/' + encodeURIComponent(reportId) : ''}`
-    if (location.hash !== hash) location.hash = hash
-    if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   // Server STT is only usable when /api/health says it loaded. Unknown health (still fetching) is allowed.
   const micReady = !health || !!health.stt?.ready
