@@ -157,3 +157,50 @@ def test_llm_off_schema_output_is_ignored(monkeypatch):
     good = llm_mod.parse_result({"tactics": [{"type": "authority", "confidence": 0.9, "evidence": "I am CBI"}, "junk"],
                                  "stage": 2, "explanation_for_user": "x"})
     assert good.tactics == {"AUTHORITY": 0.9}
+
+
+def test_websocket_ignores_malformed_input(client):
+    with client.websocket_connect("/ws/guard") as ws:
+        ws.send_text("not json")
+        ws.send_text("[1, 2]")
+        ws.send_json({"type": "start", "lang": "xx", "use_l3": False})
+        ready = ws.receive_json()
+        assert ready["type"] == "ready"
+        ws.send_bytes(b"\x00" * 3201)  # odd length
+        ws.send_json({"type": "text", "text": "I am Inspector Sharma from CBI.", "speaker": "caller"})
+        update = ws.receive_json()
+        assert update["type"] == "update" and update["tactics"][0]["label"] == "Authority claim"  # fell back to en
+        ws.send_json({"type": "stop"})
+        assert ws.receive_json()["type"] == "report"
+    assert client.post("/api/analyze", json={"lines": [{"text": "hi"}], "lang": "xx"}).status_code == 422
+
+
+def test_stt_backlog_is_bounded(client, monkeypatch):
+    import time as _time
+    import numpy as np
+    from app.audio.stt_whisper import Transcript
+
+    class SlowSTT:
+        name = "slow"
+        calls = 0
+
+        def transcribe(self, audio, lang):
+            SlowSTT.calls += 1
+            _time.sleep(0.2)
+            return Transcript("", "en", 200)
+
+    monkeypatch.setattr(ENGINE, "stt", SlowSTT())
+    loud = (np.full(32000, 8000, dtype=np.int16)).tobytes()  # 1 s of loud audio per 64 KB frame
+    with client.websocket_connect("/ws/guard") as ws:
+        ws.send_json({"type": "start", "use_l3": False})
+        assert ws.receive_json()["type"] == "ready"
+        for _ in range(12 * 30):  # ~30 max-length (12 s) utterances, far faster than real time
+            ws.send_bytes(loud)
+        msg = ws.receive_json()
+        while msg["type"] != "error":
+            msg = ws.receive_json()
+        assert "falling behind" in msg["message"]
+        ws.send_json({"type": "stop"})
+        while ws.receive_json()["type"] != "report":
+            pass
+    assert SlowSTT.calls < 30  # the overflow was dropped, not queued

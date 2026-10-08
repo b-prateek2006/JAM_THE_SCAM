@@ -39,6 +39,9 @@ log = logging.getLogger("jam")
 
 SCENARIO_DIR = ROOT_DIR / "demo" / "scenarios"
 MAX_AUDIO_FRAME = 64 * 1024  # the PWA sends 3.2 KB (100 ms) frames
+MAX_STT_BACKLOG = 8  # utterances waiting for STT; audio sent faster than real time is dropped past this
+TEXT_PER_MIN = 60  # text lines per call per minute (browser STT and the demo send ~10-20)
+LANGS = {"en", "hi", "te"}
 engine: Engine | None = None
 store = IncidentStore(settings.db_path) if settings.store_incidents else None
 stt_status = {"backend": settings.stt_backend, "ready": False, "error": ""}
@@ -118,7 +121,7 @@ class Line(BaseModel):
 
 class AnalyzeRequest(BaseModel):
     lines: list[Line] = Field(max_length=200)
-    lang: str = "en"
+    lang: str = Field("en", pattern="^(en|hi|te)$")
     use_l2: bool = True
     use_l3: bool = True
     caller_number: str = Field("", max_length=32)
@@ -196,7 +199,9 @@ async def guard(ws: WebSocket):
 
     session: CallSession | None = None
     endpointer = Endpointer()
-    stt_queue: asyncio.Queue = asyncio.Queue()
+    stt_queue: asyncio.Queue = asyncio.Queue(maxsize=MAX_STT_BACKLOG + 1)  # +1 keeps room for the stop sentinel
+    text_limiter = RateLimiter(TEXT_PER_MIN)
+    backlog_warned = False
 
     async def stt_worker():
         while True:
@@ -219,13 +224,25 @@ async def guard(ws: WebSocket):
 
     worker: asyncio.Task | None = None
 
+    async def queue_utterance(utt) -> None:
+        nonlocal backlog_warned
+        if stt_queue.qsize() < MAX_STT_BACKLOG:
+            stt_queue.put_nowait(utt)
+        elif not backlog_warned:
+            backlog_warned = True
+            log.warning("STT backlog full on call %s; dropping audio", session.call_id)
+            await emit({"type": "error", "message": "Speech-to-text is falling behind; some audio was skipped."})
+
     async def finish_call(keep: bool, keep_transcript: bool) -> None:
         nonlocal session, worker
         for utt in endpointer.finish():
-            await stt_queue.put(utt)
+            await queue_utterance(utt)
         await stt_queue.put(None)
         if worker:
-            await asyncio.wait_for(worker, timeout=30)
+            try:
+                await asyncio.wait_for(worker, timeout=30)
+            except asyncio.TimeoutError:  # still report what we have rather than drop the call
+                log.warning("STT did not drain in 30 s on call %s", session.call_id)
         report = await session.finish()
         if store is not None and keep:
             store.save(report, session.transcript_dicts() if keep_transcript else None)
@@ -248,13 +265,19 @@ async def guard(ws: WebSocket):
                 if session is None or len(msg["bytes"]) > MAX_AUDIO_FRAME:
                     continue
                 for utt in endpointer.feed(msg["bytes"]):
-                    await stt_queue.put(utt)
+                    await queue_utterance(utt)
                 continue
-            data = json.loads(msg.get("text") or "{}")
+            try:
+                data = json.loads(msg.get("text") or "{}")
+            except ValueError:
+                continue
+            if not isinstance(data, dict):
+                continue
             kind = data.get("type")
             if kind == "start" and session is None:
+                lang = data.get("lang", "en")
                 opts = SessionOptions(
-                    lang=data.get("lang", "en"), user_name=str(data.get("user_name", ""))[:60],
+                    lang=lang if lang in LANGS else "en", user_name=str(data.get("user_name", ""))[:60],
                     family_phone=str(data.get("family_phone", ""))[:32],
                     caller_number=str(data.get("caller_number", ""))[:32],
                     use_l2=data.get("use_l2", True), use_l3=data.get("use_l3", True),
@@ -264,6 +287,8 @@ async def guard(ws: WebSocket):
                 worker = asyncio.create_task(stt_worker())
                 await emit({"type": "ready", "call_id": session.call_id, **health()})
             elif kind == "text" and session is not None:
+                if not text_limiter.allow("text"):
+                    continue
                 text = str(data.get("text", ""))[:settings.max_text_chars]
                 await session.process(text, speaker=data.get("speaker", "caller"))
             elif kind == "stop" and session is not None:

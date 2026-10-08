@@ -37,6 +37,8 @@ class Endpointer:
     def feed(self, pcm: bytes) -> list[tuple[float, np.ndarray]]:
         """Feed raw int16 LE bytes. Returns finished utterances as (start_seconds, float32 audio)."""
         out: list[tuple[float, np.ndarray]] = []
+        if len(pcm) % 2:  # int16 frames come in byte pairs; a stray odd byte would make frombuffer raise
+            pcm = pcm[:-1]
         self._pending = np.concatenate([self._pending, np.frombuffer(pcm, dtype=np.int16)])
         while len(self._pending) >= FRAME:
             frame, self._pending = self._pending[:FRAME], self._pending[FRAME:]
