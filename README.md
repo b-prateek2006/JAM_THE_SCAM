@@ -50,7 +50,7 @@ Alert levels: **Caution 40+** (alert in the live-call panel), **Warning 65+** (f
 |---|---|---|---|
 | L1 rules only | 11/15 | 0/15 | 1/11 |
 | L1 + L2 semantic | 15/15 | 0/15 (1 caution) | 9/15 |
-| L1 + L2 + L3 LLM | 15/15 | 0/15 (1 caution) | 9/15 |
+| L1 + L2 + L3 LLM | 15/15 | 0/15 (1 caution) | 12/15 |
 
 **What the held-out set shows:**
 - The keyword layer alone generalises poorly (3/10).
