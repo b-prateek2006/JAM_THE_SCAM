@@ -10,6 +10,7 @@ import RiskMeter, { riskColor } from './components/RiskMeter.jsx'
 import StageTrack from './components/StageTrack.jsx'
 import Transcript from './components/Transcript.jsx'
 import { LANGS, t } from './lib/i18n.js'
+import { loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory, writeHistory } from './lib/storage.js'
 import { speak, stopSpeaking } from './lib/tts.js'
 
 const EMPTY = { score: 0, level: 0, level_name: 'SAFE', stage: 0, tactics: [], hard_rule: '' }
@@ -18,39 +19,6 @@ const LEVEL_KEY = ['safe', 'caution', 'warning', 'critical']
 const FATAL_STT = ['not-allowed', 'service-not-allowed', 'audio-capture', 'language-not-supported']
 // If the server never answers "stop" with a report, give up after this long.
 const REPORT_TIMEOUT_MS = 15000
-
-function loadSettings() {
-  try {
-    return JSON.parse(localStorage.getItem('jam-settings')) || {}
-  } catch {
-    return {}
-  }
-}
-
-// Incident reports live on this device only; the server doesn't keep a shared list.
-const HISTORY_KEY = 'jam-history'
-const HISTORY_MAX = 20
-
-function loadHistory() {
-  try {
-    const h = JSON.parse(localStorage.getItem(HISTORY_KEY))
-    return Array.isArray(h) ? h : []
-  } catch {
-    return []
-  }
-}
-
-function writeHistory(history) {
-  try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
-  } catch {}
-  return history
-}
-
-function saveToHistory(report) {
-  const entry = { call_id: report.call_id, started_at: report.started_at, peak_score: report.peak_score, report }
-  return writeHistory([entry, ...loadHistory().filter((h) => h.call_id !== report.call_id)].slice(0, HISTORY_MAX))
-}
 
 // Hash routes (#/history, #/report/<call_id>, ...) so Back and reload work without a router.
 const SCREENS = ['live', 'history', 'settings', 'help', 'report']
@@ -93,10 +61,7 @@ const WHY = [
 ]
 
 export default function App() {
-  const [settings, setSettings] = useState(() => ({
-    lang: 'en', user_name: '', family_phone: '', caller_number: '', source: 'demo',
-    scenario: 'inspector_sharma', use_l3: true, voice_demo: false, ...loadSettings(),
-  }))
+  const [settings, setSettings] = useState(loadSettings)
   const [route, setRoute] = useState(parseHash)
   const [active, setActive] = useState(false)
   const [health, setHealth] = useState(null)
@@ -120,9 +85,7 @@ export default function App() {
   const screen = route.screen
 
   useEffect(() => {
-    try {
-      localStorage.setItem('jam-settings', JSON.stringify(settings))
-    } catch {}
+    saveSettings(settings)
   }, [settings])
 
   useEffect(() => {
@@ -319,7 +282,7 @@ export default function App() {
   }
 
   function deleteIncident(id) {
-    setHistory((h) => writeHistory(h.filter((x) => x.call_id !== id)))
+    setHistory((h) => removeFromHistory(h, id))
     if (report?.call_id === id) setReport(null)
   }
 
