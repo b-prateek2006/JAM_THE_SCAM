@@ -11,7 +11,9 @@ PHONE = re.compile(r"(?<!\d)(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?!\d)")
 UPI = re.compile(r"\b[a-zA-Z0-9.\-_]{2,64}@(?:ok)?[a-zA-Z]{2,20}\b(?!\.[a-z])")
 IFSC = re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b")
 ACCOUNT = re.compile(r"(?:account|a/c|khata|ఖాతా|खाता)\D{0,25}(\d[\d\s-]{8,20}\d)", re.IGNORECASE)
-AMOUNT = re.compile(r"(?:rs\.?|₹|inr|rupees)\s?([\d,]+(?:\.\d+)?\s?(?:lakh|lakhs|crore|thousand|k)?)|([\d,]+\s?(?:lakh|lakhs|crore))\s?(?:rupees)?", re.IGNORECASE)
+# The (?<![\d,]) keeps the bare "5 lakh" branch from retrying at every digit of a long number,
+# which made extraction quadratic (seconds on a long digit run, blocking the event loop).
+AMOUNT = re.compile(r"(?:rs\.?|₹|inr|rupees)\s?([\d,]+(?:\.\d+)?\s?(?:lakh|lakhs|crore|thousand|k)?)|(?<![\d,])([\d,]+\s?(?:lakh|lakhs|crore))\s?(?:rupees)?", re.IGNORECASE)
 BADGE = re.compile(r"(?:badge|employee|officer|id)\s*(?:number|no\.?|id)?\s*(?:is\s*)?[:#]?\s*([A-Z0-9][A-Z0-9/-]{2,15})", re.IGNORECASE)
 FIR = re.compile(r"(?:fir|case|complaint)\s*(?:number|no\.?)\s*(?:is\s*)?[:#]?\s*([A-Z0-9][A-Z0-9/-]{2,25})", re.IGNORECASE)
 NAME = re.compile(

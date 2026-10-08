@@ -134,3 +134,12 @@ def test_websocket_session_cap(client, monkeypatch):
         first.send_json({"type": "stop"})
         assert first.receive_json()["type"] == "report"
     assert main.active_sockets == 0
+
+
+def test_extract_amounts_and_long_digit_runs_stay_fast():
+    import time
+    e = extract("Transfer Rs. 2,50,000 now, and 5 lakh rupees by tomorrow.")
+    assert e.amounts == ["2,50,000", "5 lakh"]
+    t0 = time.perf_counter()
+    extract("9" * 20000)
+    assert time.perf_counter() - t0 < 0.5
