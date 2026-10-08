@@ -118,6 +118,15 @@ describe('useGuardCall during a call', () => {
     expect(s.closed).toBe(true)
   })
 
+  it('stops the input when the server ends the call on its own', async () => {
+    const { call, s, onReport } = await live()
+    act(() => s.onMessage({ type: 'report', report: { call_id: 'c2' } }))
+    expect(onReport).toHaveBeenCalledWith({ call_id: 'c2' })
+    await act(async () => { vi.advanceTimersByTime(5000) })
+    expect(s.sent.filter((m) => m[0] === 'text')).toHaveLength(0) // demo playback was cancelled
+    expect(call().active).toBe(false)
+  })
+
   it('ends with a message when the connection drops', async () => {
     const { call, s } = await live()
     act(() => s.onClose())

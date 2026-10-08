@@ -51,6 +51,9 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
         if (msg.alert.spoken) speak(msg.alert.spoken, lang)
       }
     } else if (msg.type === 'report') {
+      // The server can end the call itself (time limit), so stop listening here too.
+      stopInput()
+      setOverlay(false)
       clearTimeout(reportTimer.current)
       if (sock.current) sock.current.done = true
       setActive(false)
