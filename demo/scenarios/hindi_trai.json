@@ -1,0 +1,13 @@
+{
+  "title": "Hindi TRAI SIM-block scam",
+  "kind": "scam",
+  "lang": "hi",
+  "description": "Romanised Hindi: TRAI SIM block, crime branch transfer, secrecy, OTP and transfer ask.",
+  "lines": [
+    {"delay": 0, "speaker": "caller", "text": "Namaste, main TRAI se bol raha hoon. Aapka SIM do ghante mein block ho jayega."},
+    {"delay": 6, "speaker": "caller", "text": "Aapke Aadhaar se ek aur SIM liya gaya hai jo illegal activities mein use ho raha hai. Main aapko Delhi crime branch se connect kar raha hoon."},
+    {"delay": 7, "speaker": "caller", "text": "Main Delhi crime branch se Inspector Yadav bol raha hoon. Aapke naam par money laundering ka case hai. Kisi ko bhi mat batana, ghar walon ko bhi nahi."},
+    {"delay": 7, "speaker": "caller", "text": "Agar cooperate nahi kiya to aapko abhi giraftaar kiya jayega."},
+    {"delay": 6, "speaker": "caller", "text": "Verification ke liye apna saara paisa is account mein transfer kar dijiye, sab refund ho jayega. Aur jo OTP aaya hai woh bata dijiye."}
+  ]
+}

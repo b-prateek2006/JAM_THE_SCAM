@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+backend/.venv/
+.env
+backend/.env
+backend/data/incidents.db
+backend/eval/results/*.wav
+# Node
+node_modules/
+frontend/dist/
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

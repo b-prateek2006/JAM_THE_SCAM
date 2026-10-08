@@ -1,0 +1,13 @@
+{
+  "title": "Telugu \"cyber crime police\" scam",
+  "kind": "scam",
+  "lang": "te",
+  "description": "Code-mixed Telugu/English: Aadhaar misuse, secrecy, digital arrest, money ask.",
+  "lines": [
+    {"delay": 0, "speaker": "caller", "text": "హలో, నేను హైదరాబాద్ సైబర్ క్రైమ్ పోలీస్ స్టేషన్ నుండి ఇన్స్పెక్టర్ రెడ్డి మాట్లాడుతున్నాను."},
+    {"delay": 6, "speaker": "caller", "text": "మీ ఆధార్ నంబర్ తో ముంబైలో ఒక బ్యాంక్ అకౌంట్ ఓపెన్ చేశారు, అందులో మనీ లాండరింగ్ జరిగింది."},
+    {"delay": 6, "speaker": "caller", "text": "ఈ విషయం ఎవరికీ చెప్పకండి, మీ కుటుంబానికి కూడా. ఇది రహస్య విచారణ."},
+    {"delay": 6, "speaker": "caller", "text": "మీరు ఇప్పుడు digital arrest లో ఉన్నారు. కాల్ కట్ చేయకండి."},
+    {"delay": 6, "speaker": "caller", "text": "మీ అకౌంట్ లో ఉన్న డబ్బు మొత్తం RBI సురక్షిత ఖాతా కి ట్రాన్స్ఫర్ చేయండి, తర్వాత తిరిగి ఇస్తాం."}
+  ]
+}

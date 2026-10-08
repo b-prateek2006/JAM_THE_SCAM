@@ -1,0 +1,5 @@
+# Heavy, optional. Without these the backend falls back to char n-gram L2 and browser speech recognition.
+# On CPU-only machines install torch from the CPU index first:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+faster-whisper>=1.1
+sentence-transformers>=3.0

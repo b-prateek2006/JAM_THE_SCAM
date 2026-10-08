@@ -1,0 +1,15 @@
+{
+  "title": "Genuine bank fraud-team call (false-positive proof)",
+  "kind": "benign",
+  "lang": "en",
+  "description": "A real bank verification call. Mentions OTP, bank and a transaction, and should stay low.",
+  "lines": [
+    {"delay": 0, "speaker": "caller", "text": "Good morning, this is Anita from the HDFC Bank fraud monitoring team."},
+    {"delay": 5, "speaker": "caller", "text": "We noticed a card transaction of 18,500 rupees at an electronics store in Pune a few minutes ago. Did you make this transaction?"},
+    {"delay": 6, "speaker": "user", "text": "No, I am in Hyderabad, that was not me."},
+    {"delay": 4, "speaker": "caller", "text": "Thank you. We will block your card for your safety and send a replacement card to your registered address."},
+    {"delay": 6, "speaker": "caller", "text": "Please remember, the bank will never ask you for your OTP, PIN or CVV. Never share your OTP with anyone, even if they say they are from the bank."},
+    {"delay": 6, "speaker": "caller", "text": "If you have any doubt, call the number printed on the back of your card. You can also visit your home branch."},
+    {"delay": 5, "speaker": "user", "text": "Okay, thank you."}
+  ]
+}

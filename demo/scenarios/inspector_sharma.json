@@ -1,0 +1,19 @@
+{
+  "title": "\"Inspector Sharma\" digital arrest (live demo)",
+  "kind": "scam",
+  "lang": "en",
+  "description": "The stage storyline: FedEx parcel hook, CBI transfer, secrecy, arrest threat, RBI safe account.",
+  "lines": [
+    {"delay": 0, "speaker": "caller", "text": "Hello, am I speaking with Mrs. Lakshmi? This is a call from FedEx international courier."},
+    {"delay": 5, "speaker": "user", "text": "Yes, who is this?"},
+    {"delay": 4, "speaker": "caller", "text": "Madam, a parcel booked with your Aadhaar number was stopped at Mumbai customs. It contains five fake passports and 200 grams of MDMA drugs."},
+    {"delay": 6, "speaker": "user", "text": "What? I never sent any parcel."},
+    {"delay": 4, "speaker": "caller", "text": "I am transferring your call to the Mumbai cyber crime branch. Please hold."},
+    {"delay": 6, "speaker": "caller", "text": "Good afternoon madam, I am Inspector Vikram Sharma, CBI, my badge number is CBI4521. Your FIR number is MH/2026/0917."},
+    {"delay": 6, "speaker": "caller", "text": "Your name has come up in a money laundering case. This is a matter of national security, so do not tell anyone, not even your family."},
+    {"delay": 6, "speaker": "user", "text": "Okay sir, I will not tell anyone."},
+    {"delay": 4, "speaker": "caller", "text": "Stay on the video call and do not disconnect. From this moment you are under digital arrest. An arrest warrant will be issued within two hours."},
+    {"delay": 7, "speaker": "caller", "text": "To prove your innocence, transfer your savings to the RBI safe account for verification. It is fully refundable after the investigation. The UPI ID is rbi.safe@okaxis."},
+    {"delay": 6, "speaker": "caller", "text": "Also install AnyDesk so our technical team can check your bank account."}
+  ]
+}
