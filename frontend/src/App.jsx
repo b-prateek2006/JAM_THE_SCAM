@@ -62,6 +62,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [level, setLevel] = useState(0)
   const [file, setFile] = useState(null)
+  const [connecting, setConnecting] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const sock = useRef(null)
   const stopper = useRef(null)
@@ -127,6 +128,11 @@ export default function App() {
   }
 
   async function startGuard() {
+    if (connecting) return
+    if (settings.source === 'file' && !file) {
+      setError('Choose an audio file first.')
+      return
+    }
     setError('')
     setState(EMPTY)
     setLines([])
@@ -137,11 +143,14 @@ export default function App() {
     gotReport.current = false
     const s = new GuardSocket({ onMessage, onClose: () => onSocketClose(s) })
     sock.current = s
+    setConnecting(true)
     try {
       await s.ready
     } catch {
       setError('Cannot reach the Jam the Scam server. Is the backend running?')
       return
+    } finally {
+      setConnecting(false)
     }
     s.start({
       lang, user_name: settings.user_name, family_phone: settings.family_phone,
@@ -150,7 +159,6 @@ export default function App() {
     setScreen('guard')
     try {
       if (settings.source === 'mic' || settings.source === 'file') {
-        if (settings.source === 'file' && !file) throw new Error('Choose an audio file first.')
         stopper.current = await startAudioStream({
           file: settings.source === 'file' ? file : null,
           onChunk: (pcm) => s.sendAudio(pcm),
@@ -254,7 +262,7 @@ export default function App() {
             )}
           </section>
 
-          <button className="btn primary huge" onClick={startGuard}>🛡️ {t(lang, 'guard')}</button>
+          <button className="btn primary huge" onClick={startGuard} disabled={connecting}>🛡️ {t(lang, 'guard')}</button>
 
           <details className="card">
             <summary>{t(lang, 'settings')}</summary>
