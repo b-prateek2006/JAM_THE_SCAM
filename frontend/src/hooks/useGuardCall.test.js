@@ -26,6 +26,10 @@ vi.mock('../api.js', () => ({
   },
 }))
 vi.mock('../lib/tts.js', () => ({ speak: vi.fn(), stopSpeaking: vi.fn() }))
+// Captures the audio callbacks so tests can play the end of a recorded file.
+vi.mock('../audio/micCapture.js', () => ({
+  startAudioStream: vi.fn(async (opts) => { h.audio = opts; return { stop: vi.fn() } }),
+}))
 
 const SCENARIO = { lang: 'en', lines: [{ delay: 0, speaker: 'caller', text: 'This is CBI.' }] }
 const base = { lang: 'en', source: 'demo', scenario: 'x', user_name: '', family_phone: '', caller_number: '', use_l3: false }
@@ -151,6 +155,16 @@ describe('useGuardCall during a call', () => {
     act(() => s.onMessage({ type: 'error', message: 'The server is busy' }))
     act(() => s.onClose())
     expect(call().error).toBe('The server is busy')
+  })
+
+  it('ends once when a recorded file finishes and the user also presses end', async () => {
+    const { call } = setup({ source: 'file' }, { file: new Blob(['x']) })
+    await act(async () => { await call().start() })
+    const s = h.sockets[0]
+    act(() => h.audio.onEnded()) // file finished: end is scheduled in 2.5 s
+    act(() => call().end()) // user ends first
+    act(() => { vi.advanceTimersByTime(3000) })
+    expect(s.sent.filter((m) => m[0] === 'stop')).toHaveLength(1)
   })
 
   it('gives up if the report never arrives', async () => {

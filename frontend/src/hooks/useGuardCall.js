@@ -143,7 +143,8 @@ export function useGuardCall({ settings, file, micReady, onReport }) {
           file: settings.source === 'file' ? file : null,
           onChunk: (pcm) => s.sendAudio(pcm),
           onLevel: setLevel,
-          onEnded: () => setTimeout(end, 2500),
+          // Tracked like the demo timer, so ending or restarting the call cancels it.
+          onEnded: () => { demoTimer.current = setTimeout(end, 2500) },
         })
       } else if (settings.source === 'browser') {
         stopper.current = startBrowserStt({
