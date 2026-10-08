@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { callStatus, familyWhatsApp, fmtClock, hardRuleText } from './format.js'
 import { LANGS, STRINGS, t } from './i18n.js'
 import { hashFor, parseHash } from './route.js'
+import { applyTheme } from './theme.js'
 import {
   DEFAULT_SETTINGS, HISTORY_MAX, loadHistory, loadSettings, removeFromHistory, saveSettings, saveToHistory,
 } from './storage.js'
@@ -100,5 +101,22 @@ describe('storage', () => {
   it('treats non-array history as empty', () => {
     localStorage.setItem('jam-history', '{"x":1}')
     expect(loadHistory()).toEqual([])
+  })
+})
+
+describe('theme', () => {
+  it('forces light or dark through data-theme and clears it for system', () => {
+    applyTheme('dark')
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    applyTheme('light')
+    expect(document.documentElement.dataset.theme).toBe('light')
+    applyTheme('system')
+    expect(document.documentElement.dataset.theme).toBeUndefined()
+    applyTheme(undefined)
+    expect(document.documentElement.dataset.theme).toBeUndefined()
+  })
+
+  it('defaults the saved setting to system', () => {
+    expect(loadSettings().theme).toBe('system')
   })
 })

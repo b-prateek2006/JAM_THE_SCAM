@@ -78,6 +78,16 @@ describe('App', () => {
     expect(JSON.parse(localStorage.getItem('jam-history'))).toEqual([])
   })
 
+  it('applies and saves the Appearance choice', async () => {
+    location.hash = '#/settings'
+    await renderApp()
+    fireEvent.click(screen.getByRole('button', { name: 'Dark' }))
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(JSON.parse(localStorage.getItem('jam-settings')).theme).toBe('dark')
+    fireEvent.click(screen.getByRole('button', { name: 'System' }))
+    expect(document.documentElement.dataset.theme).toBeUndefined()
+  })
+
   it('switches the whole UI language and html lang', async () => {
     await renderApp()
     fireEvent.click(screen.getAllByRole('button', { name: 'తెలుగు' })[0])

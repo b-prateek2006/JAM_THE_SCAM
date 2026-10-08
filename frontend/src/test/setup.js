@@ -10,4 +10,5 @@ afterEach(() => {
   cleanup()
   localStorage.clear()
   location.hash = ''
+  delete document.documentElement.dataset.theme
 })
