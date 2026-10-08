@@ -215,3 +215,11 @@ def test_incident_store_round_trip(tmp_path):
     assert store.get("abc")["transcript"][0]["text"] == "I am CBI"
     assert store.delete("abc") and store.get("abc") is None
     (tmp_path / "incidents.db").unlink()  # fails on Windows if a connection were left open
+
+
+def test_hard_rule_label_is_deterministic():
+    s = RiskScorer()
+    s.add([Detection("AUTHORITY", 0.9, "", "L1")], t=0)
+    s.add([Detection("CREDENTIAL", 0.9, "", "L1"), Detection("MONEY_ASK", 0.9, "", "L1")], t=5)
+    s.update()
+    assert s.state.hard_rule == "AUTHORITY then MONEY_ASK"

@@ -23,7 +23,7 @@ COMBOS = [
 ]
 STAGE_BONUS = 8
 HARD_RULE_SCORE = 95
-EXTRACTION_TACTICS = {MONEY_ASK, REMOTE_ACCESS, CREDENTIAL}
+EXTRACTION_TACTICS = (MONEY_ASK, REMOTE_ACCESS, CREDENTIAL)  # ordered: the hard-rule label names the first match
 DECAY = 0.85  # when the target drops, keep 85% of the old score each update
 
 
