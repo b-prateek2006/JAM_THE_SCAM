@@ -22,6 +22,28 @@ function loadSettings() {
   }
 }
 
+// Incident reports live on this device only; the server doesn't keep a shared list.
+const HISTORY_KEY = 'jam-history'
+const HISTORY_MAX = 20
+
+function loadHistory() {
+  try {
+    const h = JSON.parse(localStorage.getItem(HISTORY_KEY))
+    return Array.isArray(h) ? h : []
+  } catch {
+    return []
+  }
+}
+
+function saveToHistory(report) {
+  const entry = { call_id: report.call_id, started_at: report.started_at, peak_score: report.peak_score, report }
+  const history = [entry, ...loadHistory().filter((h) => h.call_id !== report.call_id)].slice(0, HISTORY_MAX)
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+  } catch {}
+  return history
+}
+
 export default function App() {
   const [settings, setSettings] = useState(() => ({
     lang: 'en', user_name: '', family_phone: '', caller_number: '', source: 'demo',
@@ -30,7 +52,7 @@ export default function App() {
   const [screen, setScreen] = useState('home')
   const [health, setHealth] = useState(null)
   const [scenarios, setScenarios] = useState([])
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState(loadHistory)
   const [state, setState] = useState(EMPTY)
   const [lines, setLines] = useState([])
   const [interim, setInterim] = useState('')
@@ -55,7 +77,6 @@ export default function App() {
   const refresh = () => {
     api.health().then(setHealth).catch(() => setHealth(null))
     api.scenarios().then(setScenarios).catch(() => {})
-    api.incidents().then(setHistory).catch(() => {})
   }
   useEffect(refresh, [])
 
@@ -82,6 +103,7 @@ export default function App() {
       }
     } else if (msg.type === 'report') {
       setReport(msg.report)
+      setHistory(saveToHistory(msg.report))
       setScreen('report')
       sock.current?.close()
       refresh()
@@ -234,7 +256,7 @@ export default function App() {
               <h3>{t(lang, 'history')}</h3>
               <ul className="history">
                 {history.slice(0, 5).map((h) => (
-                  <li key={h.call_id} onClick={() => api.incident(h.call_id).then((r) => { setReport(r); setScreen('report') })}>
+                  <li key={h.call_id} onClick={() => { setReport(h.report); setScreen('report') }}>
                     <span>{new Date(h.started_at).toLocaleString()}</span>
                     <b style={{ color: h.peak_score >= 85 ? 'var(--crit)' : h.peak_score >= 40 ? 'var(--caution)' : 'var(--ok)' }}>{h.peak_score}</b>
                   </li>

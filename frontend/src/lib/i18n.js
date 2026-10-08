@@ -34,7 +34,7 @@ const S = {
     caution: 'Caution',
     warning: 'Warning',
     critical: 'Critical: likely scam',
-    privacy: 'Audio is never stored. Transcripts stay in memory unless you keep the report.',
+    privacy: 'Audio is never stored. Reports are kept only on this device.',
   },
   hi: {
     tagline: 'इस धोखे की एक स्क्रिप्ट है. हमारा AI वह स्क्रिप्ट जानता है.',

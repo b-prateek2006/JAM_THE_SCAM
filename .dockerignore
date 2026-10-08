@@ -1,0 +1,16 @@
+# Keep the build context small and free of host-built binaries and secrets.
+.git
+.github
+.claude
+.vscode
+.idea
+**/.venv
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+frontend/dist
+.env
+**/.env
+backend/data/incidents.db
+backend/eval/results/*.wav

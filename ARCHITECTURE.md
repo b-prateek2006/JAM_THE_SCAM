@@ -7,13 +7,15 @@ Owner column maps to the 24h plan: **A** audio & backend, **B** detection & AI, 
 JAM_THE_SCAM/
 ├── README.md                     how to run (backend, frontend, demo, eval)
 ├── ARCHITECTURE.md               this file
-├── docker-compose.yml            backend + frontend for the cloud-VM deploy (slide 7)
+├── Dockerfile                    one image: built PWA + backend + baked-in models (Hugging Face Space / VM)
+├── docker-compose.yml            local / cloud-VM run of the same image (slide 7)
+├── .dockerignore                 keeps host venvs, node_modules and .env out of the build
 ├── .env.example                  every optional key (LLM, STT, SMS) with comments
 │
 ├── backend/                      Python FastAPI service
 │   ├── requirements.txt          core deps (FastAPI, uvicorn, numpy, httpx)
 │   ├── requirements-ml.txt       heavy optional deps (faster-whisper, sentence-transformers)
-│   ├── Dockerfile
+│   ├── requirements.lock         exact versions the Docker image installs (torch pinned in the Dockerfile)
 │   ├── app/
 │   │   ├── main.py               A  FastAPI app: REST routes + WebSocket /ws/guard, serves built frontend
 │   │   ├── config.py             A  env settings (model names, thresholds, which providers are on)
@@ -43,7 +45,7 @@ JAM_THE_SCAM/
 │   │   │   ├── extract.py        B  entities: caller no., claimed name/agency, badge/FIR, UPI IDs, accounts, IFSC
 │   │   │   └── complaint.py      B  complaint draft for 1930 / cybercrime.gov.in / Chakshu
 │   │   │
-│   │   └── storage.py            A  SQLite incidents (transcript kept only if the user chooses)
+│   │   └── storage.py            A  SQLite incidents, only when STORE_INCIDENTS=1 (the PWA keeps reports on-device)
 │   │
 │   ├── data/
 │   │   ├── script_library.json   B  L2 scam lines (tagged by tactic) + benign hard negatives
@@ -100,6 +102,6 @@ JAM_THE_SCAM/
 3. Each utterance goes through `lexicon.py` (L1) and `semantic.py` (L2) instantly; `llm.py` (L3) runs every 10–15 s or when L1/L2 flags something.
 4. `fusion.py` merges the layers, `scorer.py` updates the risk score, `manager.py` decides the alert level.
 5. The WebSocket pushes score, chips, evidence and alerts to the UI; level 3 triggers `notify.py`.
-6. On hang-up, `extract.py` + `complaint.py` build the report and `storage.py` saves it if the user keeps it.
+6. On hang-up, `extract.py` + `complaint.py` build the report; the PWA saves it on the device (and `storage.py` on the server if `STORE_INCIDENTS=1`).
 
 The pipeline is the same for mic, browser STT, demo scenario and eval: only the input differs (deep-dive section 8 fallback).

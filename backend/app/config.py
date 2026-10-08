@@ -39,6 +39,16 @@ class Settings:
     llm_window_s: float = float(os.getenv("LLM_WINDOW_S", "120"))
     db_path: str = os.getenv("DB_PATH", str(BACKEND_DIR / "data" / "incidents.db"))
     frontend_dist: str = os.getenv("FRONTEND_DIST", str(ROOT_DIR / "frontend" / "dist"))
+    # Server-side incident store. Off by default: the PWA keeps reports on the device, and a
+    # shared server list would show every visitor's reports to everyone on a public deploy.
+    store_incidents: bool = os.getenv("STORE_INCIDENTS", "0") == "1"
+    # Limits for a public deploy: Whisper on a small CPU box only serves a few live calls at once.
+    max_sessions: int = int(os.getenv("MAX_SESSIONS", "6"))
+    max_session_s: float = float(os.getenv("MAX_SESSION_S", "1200"))
+    max_text_chars: int = int(os.getenv("MAX_TEXT_CHARS", "1000"))
+    analyze_per_min: int = int(os.getenv("ANALYZE_PER_MIN", "10"))
+    # Extra origins allowed to call the API cross-site (comma-separated). The PWA is same-origin.
+    cors_origins: tuple[str, ...] = tuple(o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip())
 
 
 settings = Settings()

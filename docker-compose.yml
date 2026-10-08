@@ -2,13 +2,13 @@ services:
   jam:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     env_file:
       - path: backend/.env
         required: false
     volumes:
-      - hf-cache:/root/.cache/huggingface
+      - jam-data:/app/data  # SQLite incidents, only written when STORE_INCIDENTS=1
 volumes:
-  hf-cache:
+  jam-data:

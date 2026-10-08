@@ -1,3 +1,15 @@
+---
+title: Jam the Scam
+emoji: 🛡️
+colorFrom: indigo
+colorTo: red
+sdk: docker
+app_port: 8000
+startup_duration_timeout: 1h
+pinned: false
+short_description: Spots digital-arrest scam calls live
+---
+
 # Jam the Scam
 
 **This scam follows a script. Our AI knows the script.**
@@ -80,6 +92,19 @@ cd backend
 docker compose up --build
 ```
 
+The image bakes in the embedding model and Whisper (`EMBED_MODEL` / `WHISPER_MODEL` build args) and runs offline at startup, so the first build takes a while and later starts take seconds. Keys go in `backend/.env`; the public-deploy limits (`MAX_SESSIONS`, `SMS_ALLOWLIST`, `STORE_INCIDENTS`, ...) are listed in [.env.example](.env.example).
+
+### Deploy (Hugging Face Spaces)
+
+The YAML block at the top of this file is the Space config (Docker SDK, port 8000). Create a Docker Space, add the keys as Space secrets, and push this repo to it:
+
+```bash
+git remote add space https://huggingface.co/spaces/<hf-user>/jam-the-scam
+git push space main
+```
+
+Open the app at `https://<hf-user>-jam-the-scam.hf.space` (not the huggingface.co page, which wraps it in an iframe) so the microphone and PWA install work on phones.
+
 ## Privacy
 
-Opt-in per call. Audio is never stored. Transcripts stay in memory and are saved only if the user keeps the incident report. The app advises; it never blocks a call.
+Opt-in per call. Audio is never stored. Transcripts stay in memory for the length of the call. Incident reports are kept in the browser on the user's device; the server saves nothing unless it runs with `STORE_INCIDENTS=1`. The app advises; it never blocks a call.

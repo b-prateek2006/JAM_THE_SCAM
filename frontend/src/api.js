@@ -10,8 +10,6 @@ export const api = {
   health: () => getJSON('/api/health'),
   scenarios: () => getJSON('/api/scenarios'),
   scenario: (id) => getJSON(`/api/scenarios/${encodeURIComponent(id)}`),
-  incidents: () => getJSON('/api/incidents'),
-  incident: (id) => getJSON(`/api/incidents/${encodeURIComponent(id)}`),
 }
 
 export class GuardSocket {
