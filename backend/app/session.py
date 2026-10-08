@@ -90,6 +90,7 @@ class CallSession:
         self._llm_pending = False
         self._lock = asyncio.Lock()
         self.family_alert_sent: dict | None = None
+        self._background: set[asyncio.Task] = set()  # the loop only keeps weak refs to tasks
 
     # ------------------------------------------------------------------ helpers
     def now(self) -> float:
@@ -131,7 +132,8 @@ class CallSession:
                 l2_ev: dict[str, str] = {}
                 benign = protective
                 if self.opts.use_l2 and self.engine.semantic is not None:
-                    sem = self.engine.semantic.score(text)
+                    # Off the event loop: the embedding takes ~50 ms and would stall every other call.
+                    sem = await asyncio.to_thread(self.engine.semantic.score, text)
                     l2_scores, l2_ev = sem.tactic_scores, sem.evidence
                     benign = max(benign, self.engine.semantic.benign_strength(sem))
                 detections = []
@@ -209,7 +211,9 @@ class CallSession:
             if alert.family_alert and self.opts.family_phone and not self.family_alert_sent:
                 msg = family_message(self.opts.user_name, self.opts.caller_number, list(st.tactics))
                 self.family_alert_sent = {"whatsapp_link": whatsapp_link(self.opts.family_phone, msg), "text": msg}
-                asyncio.ensure_future(self._send_family_sms(msg))
+                task = asyncio.create_task(self._send_family_sms(msg))
+                self._background.add(task)
+                task.add_done_callback(self._background.discard)
             if self.family_alert_sent:
                 alert_dict["family"] = self.family_alert_sent
         return self.snapshot(alert=alert_dict, **extra)
