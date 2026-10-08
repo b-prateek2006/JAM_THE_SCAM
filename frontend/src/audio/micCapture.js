@@ -12,13 +12,17 @@ export async function startAudioStream({ file, onChunk, onLevel, onEnded }) {
   analyser.fftSize = 512
   let source
   let stream
+  let stopped = false
 
   if (file) {
     const buf = await ctx.decodeAudioData(await file.arrayBuffer())
     source = ctx.createBufferSource()
     source.buffer = buf
     source.connect(ctx.destination) // let the room hear the recorded call
-    source.onended = () => onEnded?.()
+    // source.stop() also fires 'ended'; only report a natural end of the file.
+    source.onended = () => {
+      if (!stopped) onEnded?.()
+    }
     source.start()
   } else {
     stream = await navigator.mediaDevices.getUserMedia({
@@ -43,6 +47,7 @@ export async function startAudioStream({ file, onChunk, onLevel, onEnded }) {
 
   return {
     stop() {
+      stopped = true
       cancelAnimationFrame(raf)
       try {
         source.stop?.()

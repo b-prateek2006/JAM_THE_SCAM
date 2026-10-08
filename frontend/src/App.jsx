@@ -164,7 +164,7 @@ export default function App() {
           file: settings.source === 'file' ? file : null,
           onChunk: (pcm) => s.sendAudio(pcm),
           onLevel: setLevel,
-          onEnded: () => setTimeout(endCall, 2500),
+          onEnded: () => { demoTimer.current = setTimeout(endCall, 2500) },
         })
       } else if (settings.source === 'browser') {
         stopper.current = startBrowserStt({
