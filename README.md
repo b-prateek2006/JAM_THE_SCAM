@@ -26,7 +26,7 @@ Each utterance goes through three layers, fused into one confidence per tactic:
 |---|---|---|
 | L1 | Multilingual regex lexicon (EN / HI / TE, script + romanised), plus "protective" phrases genuine callers use | ms |
 | L2 | kNN against a library of scam lines and genuine-call lines (multilingual sentence embeddings) | ~50 ms |
-| L3 | LLM reasoner over the last ~2 min of transcript, strict JSON with quoted evidence (Groq / Gemini / Claude, optional) | every ~12 s or on a flag |
+| L3 | LLM reasoner over the last ~2 min of transcript, strict JSON with quoted evidence, explained in the user's language (Groq / Gemini free keys with automatic fallback, or Claude; optional) | every ~20 s, or on a flag (≥15 s apart) |
 
 The **risk scorer** models the call's trajectory, not keywords: tactic weights, combination multipliers (authority + secrecy, authority + money ask), a bonus for the script progressing through its stages in order, hard rules (authority followed by a money / OTP / remote-access ask is always critical), a benign dampener for genuine-call language, and asymmetric smoothing so small talk can't reset it.
 
@@ -55,6 +55,8 @@ python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements-ml.txt       # optional: Whisper STT + embeddings
 cp ../.env.example .env                                          # optional: LLM / SMS keys
 ```
+
+**L3 with free keys.** Put a [Groq key](https://console.groq.com/keys) and a [Gemini key](https://aistudio.google.com/apikey) in `backend/.env` (both free, no card) with `LLM_PROVIDER=groq`. Groq (`qwen/qwen3.8-27b`, ~1 s) answers first; when its free per-minute limit is hit, the call goes to Gemini (`gemini-3.5-flash`, ~5 s) and Groq rests for its `retry-after`. `/api/health` shows both. Without keys the app runs on L1 + L2.
 
 ```bash
 cd frontend && npm install && npm run build

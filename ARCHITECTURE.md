@@ -10,6 +10,7 @@ JAM_THE_SCAM/
 ├── Dockerfile                    one image: built PWA + backend + baked-in models (Hugging Face Space / VM)
 ├── docker-compose.yml            local / cloud-VM run of the same image (slide 7)
 ├── .dockerignore                 keeps host venvs, node_modules and .env out of the build
+├── .github/workflows/ci.yml      tests + eval smoke, frontend tests + build, Docker image boot check
 ├── .env.example                  every optional key (LLM, STT, SMS) with comments
 │
 ├── backend/                      Python FastAPI service
@@ -30,7 +31,8 @@ JAM_THE_SCAM/
 │   │   │   ├── tactics.py        B  tactic taxonomy, weights, 5-stage model, labels in EN/HI/TE
 │   │   │   ├── lexicon.py        B  L1 multilingual regex lexicon + protective (genuine-caller) patterns
 │   │   │   ├── semantic.py       B  L2 embedding kNN vs scam + benign libraries (MiniLM/LaBSE, char-ngram fallback)
-│   │   │   ├── llm.py            B  L3 LLM reasoner: Groq / Gemini / Claude, strict JSON, async, rate-limited
+│   │   │   ├── llm.py            B  L3 LLM reasoner: Groq / Gemini / Claude, strict JSON, fallback to a second
+│   │   │   │                        provider on failure, 429 cooldown
 │   │   │   └── fusion.py         B  fuse L1/L2/L3 per tactic into one confidence
 │   │   │
 │   │   ├── scoring/                   ── 4.5 risk scorer ──
@@ -52,12 +54,12 @@ JAM_THE_SCAM/
 │   │   └── incidents.db          (created at runtime, git-ignored)
 │   │
 │   ├── eval/                          ── section 7: data & evaluation ──
-│   │   ├── scripts/scam/*.json   B  ~30 scam call scripts (parcel, Aadhaar, TRAI, "son arrested", RBI)
-│   │   ├── scripts/benign/*.json B  ~30 hard negatives (bank fraud team, courier, passport police, relative)
+│   │   ├── scripts/{scam,benign}/  B  dev set: 15 + 15 scripts, also used while tuning (numbers are optimistic)
+│   │   ├── scripts_heldout/{scam,benign}/  held-out set: 10 + 10 scripts never tuned against (--set heldout)
 │   │   ├── run_eval.py           B  recall/false alerts at Level 2, time-to-alert vs money ask,
 │   │   │                             and the L1 → L1+L2 → L1+L2+L3 ablation table for the slide
 │   │   ├── make_audio.py         A  (todo) TTS the scripts into WAVs to test the audio path
-│   │   └── results/              generated metrics (JSON + markdown table)
+│   │   └── results/              generated metrics: RESULTS.md (dev), RESULTS_heldout.md (held-out)
 │   │
 │   └── tests/
 │       └── test_core.py          lexicon, hard rules, smoothing, entity extraction, whole calls
@@ -115,7 +117,7 @@ JAM_THE_SCAM/
 
 1. `micCapture.js` streams PCM to `/ws/guard` (or `browserStt.js` / a demo scenario sends text).
 2. `session.py` passes audio to `vad.py` → `stt_whisper.py` and gets utterances back.
-3. Each utterance goes through `lexicon.py` (L1) and `semantic.py` (L2) instantly; `llm.py` (L3) runs every 10–15 s or when L1/L2 flags something.
+3. Each utterance goes through `lexicon.py` (L1) and `semantic.py` (L2) instantly; `llm.py` (L3) runs every ~20 s, or sooner (but ≥15 s apart) when L1/L2 flags something, and stops once it has explained a critical call.
 4. `fusion.py` merges the layers, `scorer.py` updates the risk score, `manager.py` decides the alert level.
 5. The WebSocket pushes score, chips, evidence and alerts to the UI; level 3 triggers `notify.py`.
 6. On hang-up, `extract.py` + `complaint.py` build the report; the PWA saves it on the device (and `storage.py` on the server if `STORE_INCIDENTS=1`).
