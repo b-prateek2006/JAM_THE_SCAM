@@ -84,6 +84,7 @@ export default function App() {
 
   useEffect(() => {
     if (screen !== 'guard') return
+    setElapsed(0)
     const t0 = Date.now()
     const id = setInterval(() => setElapsed((Date.now() - t0) / 1000), 500)
     return () => clearInterval(id)
