@@ -53,25 +53,44 @@ if (-not $health) { docker compose logs --tail 40; throw "The app did not become
 $l3 = if ($health.l3) { "$($health.l3.provider) ($($health.l3.model)), fallback $($health.l3.fallback)" } else { "off" }
 Write-Host "App is up: L2 $($health.l2) | L3 $l3 | STT $($health.stt.name)"
 
-# 3. Public HTTPS link
+# 3. Public HTTPS link. Quick tunnels are temporary: Cloudflare can delete one (after a network drop,
+# or hours later), and cloudflared then retries a dead link forever. So watch for that and open a new one.
 $cloudflared = Find-Cloudflared
 $log = Join-Path $env:TEMP "jam-tunnel.log"
-Remove-Item $log -ErrorAction SilentlyContinue
-$tunnel = Start-Process $cloudflared -ArgumentList "tunnel", "--no-autoupdate", "--url", "http://localhost:8000" `
-    -RedirectStandardError $log -NoNewWindow -PassThru
-$url = $null
-for ($i = 0; $i -lt 60 -and -not $url; $i++) {
-    Start-Sleep 1
-    if (Test-Path $log) {
-        $m = Select-String -Path $log -Pattern "https://[a-z0-9-]+\.trycloudflare\.com" | Select-Object -First 1
-        if ($m) { $url = $m.Matches[0].Value }
-    }
-}
-if (-not $url) { Stop-Process -Id $tunnel.Id -ErrorAction SilentlyContinue; Get-Content $log -Tail 20; throw "The tunnel did not start." }
 
-Write-Host ""
-Write-Host "  Open on any phone or laptop:  $url" -ForegroundColor Green
-Write-Host "  (new link each run; keep this window open while demoing)"
-Write-Host ""
-Write-Host "Press Ctrl+C to close the tunnel. The app keeps running; stop it with: scripts\demo.ps1 -Stop"
-try { Wait-Process -Id $tunnel.Id } finally { Stop-Process -Id $tunnel.Id -ErrorAction SilentlyContinue }
+function Start-Tunnel {
+    Remove-Item $log -ErrorAction SilentlyContinue
+    $proc = Start-Process $cloudflared -ArgumentList "tunnel", "--no-autoupdate", "--url", "http://localhost:8000" `
+        -RedirectStandardError $log -NoNewWindow -PassThru
+    for ($i = 0; $i -lt 60; $i++) {
+        Start-Sleep 1
+        if (Test-Path $log) {
+            $m = Select-String -Path $log -Pattern "https://[a-z0-9-]+\.trycloudflare\.com" | Select-Object -First 1
+            if ($m) { return @{ Proc = $proc; Url = $m.Matches[0].Value } }
+        }
+    }
+    Stop-Process -Id $proc.Id -ErrorAction SilentlyContinue
+    Get-Content $log -Tail 20
+    throw "The tunnel did not start."
+}
+
+$tunnel = $null
+try {
+    while ($true) {
+        $tunnel = Start-Tunnel
+        Write-Host ""
+        Write-Host "  Open on any phone or laptop:  $($tunnel.Url)" -ForegroundColor Green
+        Write-Host "  (new link each run; keep this window open while demoing)"
+        Write-Host ""
+        Write-Host "Press Ctrl+C to close the tunnel. The app keeps running; stop it with: scripts\demo.ps1 -Stop"
+        while (-not $tunnel.Proc.HasExited) {
+            Start-Sleep 10
+            if (Select-String -Path $log -Pattern "Tunnel not found" -Quiet) { break }
+        }
+        Stop-Process -Id $tunnel.Proc.Id -ErrorAction SilentlyContinue
+        Write-Warning "Cloudflare dropped the link. Opening a new one (the old link no longer works)..."
+        Start-Sleep 2
+    }
+} finally {
+    if ($tunnel) { Stop-Process -Id $tunnel.Proc.Id -ErrorAction SilentlyContinue }
+}

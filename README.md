@@ -130,7 +130,7 @@ powershell -ExecutionPolicy Bypass -File scripts\demo.ps1 -Stop  # stops the app
 
 - **What it runs:** the full app (Whisper, embeddings, L3 from `backend/.env`) in Docker, exposed through a free Cloudflare quick tunnel.
 - **Phones:** open the printed link on a phone and the mic works, because it's HTTPS.
-- **The link:** it changes on every run and works while the script's window is open.
+- **The link:** it changes on every run and works while the script's window is open. Cloudflare sometimes drops a quick tunnel; the script then opens a new one and prints the new link.
 - **Needs:** Docker Desktop and `cloudflared` (`winget install --id Cloudflare.cloudflared`).
 
 ### Deploy (Hugging Face Spaces)
